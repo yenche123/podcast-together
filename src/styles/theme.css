@@ -1,0 +1,25 @@
+
+/** 原理
+* 都会读到 .classic-theme
+* 当深色模式的时候 再追加读取 .dark-theme 此时 .classic-theme 仍然会读取到
+*/
+.classic-theme {
+  transition: color .45s, background-color .45s;
+  --bg-color: #ffffff;
+  --card-color: #f9f9f9;
+  --text-color: #333;
+  --note-color: #aaaaaa;
+  --main-btn-bg: #181818;
+  --main-btn-text: #eee;
+  --hover-btn-bg: #333333;
+}
+
+.dark-theme {
+  --bg-color: #181818;
+  --card-color: #282828;
+  --text-color: #eee;
+  --note-color: #888888;
+  --main-btn-bg: #eee;
+  --main-btn-text: #181818;
+  --main-hover-bg: #ddd;
+}
