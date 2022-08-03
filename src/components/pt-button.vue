@@ -2,6 +2,10 @@
 
 const props = defineProps({
   text: String,
+  type: {
+    type: String,
+    default: "main",     // main: 主要的  other: 一般的 
+  },
   disabled: {
     type: Boolean,
     default: false
@@ -11,8 +15,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["click"])
-const onTapBtn = () => {
-  
+const onTapBtn = (e: Event) => {
+  emit("click", e)
 }
 
 </script>
@@ -20,8 +24,12 @@ const onTapBtn = () => {
 
   <button 
     class="btn-container"
+    :class="{ 'btn-other': props.type == 'other' }"
     :disabled="props.disabled"
-    :style="{ width: props.width ? props.width : '100%'}"
+    :style="{ 
+      'width': props.width ? props.width : '100%',
+      'z-index': props.zIndex && props.zIndex > 0 ? props.zIndex : 'auto'
+    }"
     @click="onTapBtn"
   >{{ props.text }}</button>
 
@@ -29,16 +37,25 @@ const onTapBtn = () => {
 <style scoped>
 
 .btn-container {
-  height: 20px;
-  line-height: 20px;
+  height: 50px;
+  line-height: 50px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 50px;
   background-color: var(--main-btn-bg);
   color: var(--main-btn-text);
+  cursor: pointer;
+  font-size: var(--btn-font);
+  transition: .15s;
+}
+
+.btn-other {
+  background-color: var(--other-btn-bg);
+  color: var(--other-btn-text);
 }
 
 .btn-container:disabled {
-  background-color: var(--hover-btn-bg);
+  opacity: .6;
+  cursor: default;
 }
 
 .btn-container:hover {
@@ -49,5 +66,12 @@ const onTapBtn = () => {
   background-color: var(--hover-btn-bg);
 }
 
+.btn-other:hover {
+  background-color: var(--other-btn-hover);
+}
+
+.btn-other:active {
+  background-color: var(--other-btn-hover);
+}
 
 </style>

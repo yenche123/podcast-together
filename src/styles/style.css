@@ -10,6 +10,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  user-select: none;
 
   /** 一些全局的 css 变量 */
   /** 设备断点 */
@@ -17,11 +18,66 @@
   --max-pad: 1100px;
   --max-laptop: 1600px;
 
-  /** 标准页宽 */
-  --standard-max-px: 900px;
+  /** 标准页宽 竖列模式 */
+  --standard-max-px: 500px;
+
+  /** 各字号 */
+  --btn-font: 17px;
 }
 
 body {
   padding: 0;
   margin: 0;
+}
+
+a:link {
+  text-decoration: none;
+}
+a:visited {
+  text-decoration: none;
+}
+a:active {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.page > .page-container {
+  padding-top: 100px;
+  width: 92%;
+  max-width: var(--standard-max-px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.page-btns-container {
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.page-btns-container > .page-btns {
+  width: 92%;
+  max-width: var(--standard-max-px);
+  position: relative;
+}
+
+input {
+  background: transparent;
 }

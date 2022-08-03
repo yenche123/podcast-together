@@ -9,9 +9,17 @@
   --card-color: #f9f9f9;
   --text-color: #333;
   --note-color: #aaaaaa;
+  --desc-color: #686868;
+
+  /** 主按钮 */
   --main-btn-bg: #181818;
   --main-btn-text: #eee;
-  --hover-btn-bg: #333333;
+  --hover-btn-bg: #393939;
+
+  /** 副按钮 */
+  --other-btn-bg: #f3f3f3;
+  --other-btn-text: #333;
+  --other-btn-hover: #e6e6e6;
 }
 
 .dark-theme {
@@ -19,7 +27,15 @@
   --card-color: #282828;
   --text-color: #eee;
   --note-color: #888888;
+  --desc-color: #b0b0b0;
+
+  /** 主按钮 */
   --main-btn-bg: #eee;
   --main-btn-text: #181818;
-  --main-hover-bg: #ddd;
+  --hover-btn-bg: #e1e1e1;
+
+  /** 副按钮 */
+  --other-btn-bg: #404040;
+  --other-btn-text: #c0c0c0;
+  --other-btn-hover: #505050;
 }

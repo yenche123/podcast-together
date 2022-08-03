@@ -10,7 +10,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     component: IndexPage,
-    name: "index"
+    name: "index",
+    meta: {
+      keepAlive: true,
+    }
   },
   {
     path: "/create",

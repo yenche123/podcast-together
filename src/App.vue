@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useTheme } from './hooks/useTheme';
-import { useRoute } from 'vue-router';
+import { useTheme } from './hooks/useTheme'
 import time from "./utils/time"
-import { onMounted } from 'vue';
+import { initPtRouter } from './routes/pt-router'
 
 const { theme } = useTheme()
 let a1 = time.getTime()
 
-const route = useRoute()
+const { route } = initPtRouter()
 
 </script>
 
@@ -16,10 +15,14 @@ const route = useRoute()
     class="classic-theme app-global"
     :class="{ 'dark-theme': theme === 'dark' }"
   >
-    <keep-alive>
-      <router-view v-if="route.meta.keepAlive" ></router-view>
-    </keep-alive>
-    <router-view v-if="!route.meta.keepAlive"></router-view>
+
+    <router-view v-if="route.meta.keepAlive" v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
+
+    <router-view v-else></router-view>
   </div>
 </template>
 
