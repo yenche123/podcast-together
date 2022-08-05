@@ -33,7 +33,13 @@ const getTime = (): number => {
   return Date.now() + diff
 }
 
+// 返回未经过标定的时间
+const getLocalTime = (): number => {
+  return Date.now()
+}
+
 
 export default {
-  getTime
+  getTime,
+  getLocalTime
 }

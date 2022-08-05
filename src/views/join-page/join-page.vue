@@ -28,7 +28,7 @@ const onTapConfirm = () => {
 }
 
 const onTapBack = () => {
-  if(hasPrev) router.go(-1)
+  if(hasPrev.value) router.go(-1)
   else {
     goHome(router)
   }
