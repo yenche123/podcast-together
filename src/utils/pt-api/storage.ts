@@ -7,7 +7,7 @@ import util from "../util"
 
 let hasListenStorageChange = false
 let storageMap = new Map()   // { key1: { data: 元数据, stamp: 时间戳 } }
-
+const TAG = "pd_"
 
 // 去监听其他标签页 
 const _listenStorageChange = () => {
@@ -57,29 +57,29 @@ const getStorageSync = (key: string): any => {
   }
 
   if(!hasListenStorageChange) _listenStorageChange()
+  const _key = TAG + key
 
-  if(storageMap.has(key)) {
-    let s1 = storageMap.get(key)
+  if(storageMap.has(_key)) {
+    let s1 = storageMap.get(_key)
     return util.copyData(s1.data)
   }
 
   let s = null
   try {
-    s = localStorage.getItem(key)
+    s = localStorage.getItem(_key)
   }
   catch(err) {}
   
-  
   if(s && typeof s === "string") {
     let obj = JSON.parse(s)
-    storageMap.set(key, obj)
+    storageMap.set(_key, obj)
     return util.copyData(obj.data)
   }
-  storageMap.set(key, { data: s, stamp: Date.now() })
+  storageMap.set(_key, { data: s, stamp: Date.now() })
   return s
 }
 
-interface SetStorageRes {
+interface StorageRes {
   isOk: boolean
   err?: any
 }
@@ -87,7 +87,7 @@ interface SetStorageRes {
 /**
  * 设置缓存
  */
-const setStorageSync = (key: string, data: any): SetStorageRes => {
+const setStorageSync = (key: string, data: any): StorageRes => {
   if(!key) {
     console.warn(`setStorageSync 没有 key.......`)
     return { isOk: false }
@@ -98,9 +98,10 @@ const setStorageSync = (key: string, data: any): SetStorageRes => {
   }
   
   let s = { data, stamp: Date.now() }
-  storageMap.set(key, s)
+  const _key = TAG + key
+  storageMap.set(_key, s)
   try {
-    localStorage.setItem(key, JSON.stringify(s))
+    localStorage.setItem(_key, JSON.stringify(s))
   }
   catch(err) {
     _handleSetItemErr(err)
@@ -109,12 +110,44 @@ const setStorageSync = (key: string, data: any): SetStorageRes => {
   return { isOk: true }
 }
 
-const removeStorageSync = (key: string): void => {
-  
+const removeStorageSync = (key: string): StorageRes => {
+  if(!key) {
+    console.warn(`setStorageSync 没有 key.......`)
+    return { isOk: false }
+  }
+  const _key = TAG + key
+  if(storageMap.has(_key)) {
+    storageMap.delete(_key)
+  }
+  try {
+    localStorage.removeItem(_key)
+  }
+  catch(err) {
+    console.log("移除 ", _key, " localStorage 失败......")
+    console.log(err)
+    console.log(" ")
+  }
+  return { isOk: true }
+}
+
+
+/**
+ * 仅移除以 TAG对应关键字 为前缀的 storage
+ */
+const clearStorageSync = (): void => {
+  storageMap.clear()
+  for(let i=0; i<localStorage.length; i++) {
+    const key = localStorage.key(i)
+    const idx: number = key?.indexOf(TAG) ?? -1
+    if(idx !== 0) continue
+    localStorage.removeItem((key as string))
+    i--
+  }
 }
 
 export default {
   getStorageSync,
   setStorageSync,
   removeStorageSync,
+  clearStorageSync,
 }
