@@ -47,10 +47,8 @@ const _handleSetItemErr = (err: any) => {
 
 /**
  * 获取缓存
- * @param {String} key localStorage的键
- * @returns {Any}
  */
-const getStorageSync = (key: string): any => {
+const getStorageSync = <T = any>(key: string): T | undefined | null => {
   if(!key) {
     console.warn(`getStorageSync 没有 key.......`)
     return
@@ -64,7 +62,7 @@ const getStorageSync = (key: string): any => {
     return util.copyData(s1.data)
   }
 
-  let s = null
+  let s: string | null = null
   try {
     s = localStorage.getItem(_key)
   }
@@ -76,7 +74,7 @@ const getStorageSync = (key: string): any => {
     return util.copyData(obj.data)
   }
   storageMap.set(_key, { data: s, stamp: Date.now() })
-  return s
+  return s as null
 }
 
 interface StorageRes {

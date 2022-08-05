@@ -17,3 +17,8 @@ export interface RequestRes {
   data?: Record<string, any>
 }
 
+
+export interface StorageUserData {
+  nickName: string
+  nonce?: string
+}

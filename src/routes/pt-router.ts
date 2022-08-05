@@ -23,11 +23,17 @@ interface RouteAndRouter {
   router: VueRouter
 }
 
+export interface RouteAndPtRouter {
+  route: RouteLocationNormalizedLoaded
+  router: PtRouter
+}
+
 interface ToAndFrom {
   to?: RouteLocationNormalized
   from?: RouteLocationNormalized
 }
 
+export type VueRoute = RouteLocationNormalizedLoaded
 
 // 当前路由是否有前路由
 let hasPreRoute: boolean = false
@@ -204,9 +210,18 @@ const useRouter = (): PtRouter => {
   return new PtRouter()
 }
 
+
+const useRouteAndPtRouter = (): RouteAndPtRouter => {
+  const router = new PtRouter()
+  const vueRoute = useVueRoute()
+  return { router, route: vueRoute }
+}
+
 export {
+  PtRouter,
   initPtRouter,
   hasPreviousRouteInApp,
   goHome,
   useRouter,
+  useRouteAndPtRouter,
 }

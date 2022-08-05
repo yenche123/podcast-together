@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { hasPreviousRouteInApp, goHome, useRouter } from "../../routes/pt-router";
+import { hasPreviousRouteInApp, goHome, useRouteAndPtRouter } from "../../routes/pt-router";
 import PtButton from "../../components/pt-button.vue"
+import jh from "./jp-helper"
 
-const router = useRouter()
+const { router, route } = useRouteAndPtRouter()
 const hasPrev = hasPreviousRouteInApp()
 console.log("join-page setup............")
 console.log("hasPrev: ", hasPrev)
@@ -17,13 +18,13 @@ const canSubmit = computed(() => {
 })
 
 const onInputConfirm = () => {
-  console.log("点击了确认或回车键.......")
-  console.log("inputValue:")
-  console.log(inputValue.value)
+  if(!canSubmit.value) return
+  jh.finishInput(inputValue.value, router, route)
 }
 
 const onTapConfirm = () => {
-
+  if(!canSubmit.value) return
+  jh.finishInput(inputValue.value, router, route)
 }
 
 const onTapBack = () => {
