@@ -36,10 +36,16 @@ const strToObj = (str: string): any => {
   return res
 }
 
+// 快速把入参 val 包裹在 Promise 里返回
+const getPromise = <T = any>(val: T): Promise<T> => {
+  return new Promise(a => a(val)) 
+}
+
 export default {
   waitMilli,
   copyObj,
   copyData,
   strToObj,
+  getPromise,
 }
 
