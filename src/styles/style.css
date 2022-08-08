@@ -22,7 +22,10 @@
   --standard-max-px: 500px;
 
   /** 各字号 */
+  --title-font: 21px;
+  --desc-font: 18px;
   --btn-font: 17px;
+  --mini-font: 15px;
 }
 
 body {
