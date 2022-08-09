@@ -39,3 +39,8 @@
   --other-btn-text: #c0c0c0;
   --other-btn-hover: #505050;
 }
+
+p::selection {
+  background-color: var(--text-color);
+  color: var(--card-color);
+}

@@ -1,0 +1,17 @@
+{
+  "name": "pt-cloud-functions",
+  "version": "0.0.1",
+  "description": "cloud-functions for podcast-together",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "serverless"
+  ],
+  "author": "yenche123",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12"
+  }
+}

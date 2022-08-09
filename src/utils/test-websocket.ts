@@ -6,20 +6,20 @@ export const testWs = () => {
   console.log(import.meta.env)
 
   const { VITE_WEBSOCKET_URL } = import.meta.env
+  const url = VITE_WEBSOCKET_URL + "/ttt?room=xctgfrdesw"
 
-  const ws = new WebSocket(VITE_WEBSOCKET_URL);
+  const ws = new WebSocket(url);
 
   ws.onopen = (socket) => {
-    console.log("connected.........");
+    console.log("connected.........")
     console.log(socket)
     console.log(" ")
-    ws.send("hi 这里是前端测试...");
+    ws.send("hi 这里是前端测试...")
   };
   
   ws.onmessage = (res) => {
     console.log("收到了新的消息......")
     console.log(res.data)
-    console.log(res.toString())
     console.log(" ")
   };
   
