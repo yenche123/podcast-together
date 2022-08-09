@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { hasPreviousRouteInApp, goHome, useRouteAndPtRouter } from "../../routes/pt-router";
 import PtButton from "../../components/pt-button.vue"
 import jh from "./jp-helper"
 
 const { router, route } = useRouteAndPtRouter()
 const hasPrev = hasPreviousRouteInApp()
-console.log("join-page setup............")
-console.log("hasPrev: ", hasPrev)
 
 const inputValue = ref<string>("")
 const canSubmit = computed(() => {
@@ -34,6 +32,13 @@ const onTapBack = () => {
   }
 }
 
+// 让输入框在页面打开时聚焦
+const inputEl = ref<HTMLInputElement | null>(null)
+onMounted(() => {
+  if(canSubmit.value) return
+  inputEl.value?.focus()
+})
+
 </script>
 
 <template>
@@ -46,6 +51,7 @@ const onTapBack = () => {
         type="text" 
         @keyup.enter="onInputConfirm" 
         maxlength="20"
+        ref="inputEl"
       />
     </div>
   </div>
@@ -67,6 +73,7 @@ const onTapBack = () => {
 .page-container {
 
   h1 {
+    margin-block-start: 0;
     font-size: 38px;
     line-height: 50px;
     color: var(--text-color);
