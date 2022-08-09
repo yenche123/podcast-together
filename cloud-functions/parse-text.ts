@@ -77,6 +77,10 @@ function checkEntry(ctx: FunctionContext): ResType | null {
     return { code: "E4005" }
   }
 
+  console.log("看一下入参的 body:::")
+  console.log(body)
+  console.log(" ")
+
   const { link } = body
   const client_id = body["x-pt-local-id"]
   if(!link || !client_id) {
@@ -99,6 +103,7 @@ async function fetchLink(link: string): Promise<string | void> {
     setTimeout(() => {
       if(hasReturn) return
       hasReturn = true
+      console.log("fetch url 超时未响应..............")
       a("")
     }, MAX_FETCH_MILLI)
 

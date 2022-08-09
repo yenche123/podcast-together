@@ -27,13 +27,22 @@ const _getCommonParam = (): RequestParam => {
   }
 }
 
-const request = async (
+const request = async <T = Record<string, any>>(
   url: string, 
   body: Record<string, any> = {}, 
-  method: string = "POST"
-): Promise<RequestRes | void> => {
+  method: string = "POST",
+): Promise<RequestRes<T> | void> => {
   const newBody: RequestParam = { ..._getCommonParam(), ...body }
-  
+  const response = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newBody)
+  })
+
+  let res = await response.json() as RequestRes<T>
+  return res
 }
 
 

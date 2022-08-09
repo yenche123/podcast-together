@@ -7,6 +7,7 @@ import cp from "./cp-helper"
 const { router, route } = useRouteAndPtRouter()
 const hasPrev = hasPreviousRouteInApp()
 const inputValue = ref<string>("")
+const inputEl = ref<HTMLInputElement | null>(null)
 
 const canSubmit = computed(() => {
   let val = inputValue.value
@@ -17,13 +18,17 @@ const canSubmit = computed(() => {
 })
 
 const onInputConfirm = () => {
+  console.log("取消聚焦....................")
+  inputEl?.value?.blur()
   if(!canSubmit.value) return
   cp.finishInput(inputValue.value, router, route)
+  
 }
 
 const onTapConfirm = () => {
   if(!canSubmit.value) return
   cp.finishInput(inputValue.value, router, route)
+  inputEl?.value?.blur()
 }
 
 const onTapBack = () => {
@@ -32,7 +37,6 @@ const onTapBack = () => {
 }
 
 // 让输入框在页面打开时聚焦
-const inputEl = ref<HTMLInputElement | null>(null)
 onMounted(() => {
   if(canSubmit.value) return
   inputEl.value?.focus()

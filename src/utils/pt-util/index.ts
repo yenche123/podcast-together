@@ -11,6 +11,10 @@ const getUserData = (): StorageUserData => {
     }
     ptApi.setStorageSync("user_data", userData)
   }
+  else if(!userData.nonce) {
+    userData.nonce = nanoid()
+    ptApi.setStorageSync("user_data", userData)
+  }
   return userData
 }
 

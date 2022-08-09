@@ -1,6 +1,7 @@
 
 import { reactive, ref } from "vue"
 import util from "../../../utils/util"
+import { toListenEnterKeyUp, cancelListenEnterKeyUp } from "./listen-keyup"
 
 interface ModalSuccessRes {
   confirm: boolean
@@ -39,11 +40,15 @@ const _openModal = async (): Promise<void> => {
   enable.value = true
   await util.waitMilli(16)
   show.value = true
+  toListenEnterKeyUp(onTapConfirm)
 }
 
 const _closeModal = async (): Promise<void> => {
   if(!show.value) return
   show.value = false
+
+  cancelListenEnterKeyUp()
+
   await util.waitMilli(TRANSITION_DURATION)
   enable.value = false
 }
