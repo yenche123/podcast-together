@@ -5,15 +5,13 @@ import {
   createWebHistory,
   RouteLocationNormalized,
 } from "vue-router"
-import ptApi from "../utils/pt-api"
-
-import { StorageUserData } from "../type"
 
 import CreatePage from "../views/create-page/create-page.vue"
 import ErrPage from "../views/err-page/err-page.vue"
 import IndexPage from "../views/index-page/index-page.vue"
 import JoinPage from "../views/join-page/join-page.vue"
 import RoomPage from "../views/room-page/room-page.vue"
+import ptUtil from "../utils/pt-util"
 
 
 // 扩展 vue-router 下的 RouteMeta 接口
@@ -27,8 +25,8 @@ declare module 'vue-router' {
 // 给 room(房间) 和 create(创建房间) 页面进行导航守卫
 const _checkNickName = (to: RouteLocationNormalized): RouteLocationRaw | true => {
   if(to.name === "join") return true
-  let userData = ptApi.getStorageSync<StorageUserData>("user_data")
-  if(!userData || !userData.nickName) {
+  let userData = ptUtil.getUserData()
+  if(!userData.nickName) {
     return { name: "join" }
   }
   return true

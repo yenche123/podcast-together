@@ -1,9 +1,7 @@
 
 import { PtRouter, VueRoute } from "../../routes/pt-router"
-import ptApi from "../../utils/pt-api"
 import time from "../../utils/time"
-import { StorageUserData } from "../../type"
-
+import ptUtil from "../../utils/pt-util"
 
 let lastCheckInputStamp: number = 0
 
@@ -12,14 +10,9 @@ const finishInput = (nickName: string, router: PtRouter, route: VueRoute): void 
   if(lastCheckInputStamp + 300 > now) return
   lastCheckInputStamp = now
 
-  let userData = ptApi.getStorageSync<StorageUserData>("user_data")
-  if(userData) {
-    userData.nickName = nickName
-  }
-  else {
-    userData = { nickName }
-  }
-  ptApi.setStorageSync("user_data", userData)
+  let userData = ptUtil.getUserData()
+  userData.nickName = nickName
+  ptUtil.setUserData(userData)
 
   // 两种情况:
   // 1. 有 roomId 去加入会议

@@ -1,9 +1,7 @@
 // 发起网络请求
 import { RequestParam, RequestRes } from "../type"
-import ptApi from "../utils/pt-api"
 import time from "../utils/time"
-import { StorageUserData} from "../type"
-import { nanoid } from "nanoid"
+import ptUtil from "../utils/pt-util"
 
 let local_id: string = ""
 const _env = import.meta.env
@@ -17,12 +15,8 @@ const _getCommonParam = (): RequestParam => {
   const stamp: number = time.getTime()
   const language = navigator.language
   if(!local_id) {
-    let userData: StorageUserData = ptApi.getStorageSync<StorageUserData>("user_data") ?? {}
-    if(!userData.nonce) {
-      userData.nonce = nanoid()
-      ptApi.setStorageSync("user_data", userData)
-    }
-    local_id = userData.nonce
+    let userData = ptUtil.getUserData()
+    local_id = userData.nonce as string
   }
   return {
     "x-pt-version": version,
