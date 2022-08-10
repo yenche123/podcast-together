@@ -12,6 +12,5 @@ function judgeIsCdnLink(link: string) {
   console.log("结束...........")
 }
 
-
 judgeIsCdnLink(str)
 

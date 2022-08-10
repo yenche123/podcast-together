@@ -1,5 +1,4 @@
-//@ts-ignore
-import cloud from '@/cloud-sdk'
+import cloud from "@/cloud-sdk"
 import * as cheerio from "cheerio"
 
 interface ContentData {
@@ -19,8 +18,7 @@ interface ResType {
 
 const MAX_FETCH_MILLI = 4000
 
-//@ts-ignore
-exports.main = async function (ctx: FunctionContext): ResType {
+exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   // body, query 为请求参数, auth 是授权对象
 
   const s1 = Date.now()
@@ -69,7 +67,6 @@ function judgeIsCdnLink(link: string): boolean {
 /**
  * 检测入参和请求方式 
  */
-//@ts-ignore
 function checkEntry(ctx: FunctionContext): ResType | null {
   // body, query 为请求参数, auth 是授权对象
   const { auth, body = {}, query, method, headers } = ctx
