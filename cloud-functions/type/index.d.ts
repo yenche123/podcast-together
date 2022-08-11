@@ -1,6 +1,7 @@
 
 import { IncomingHttpHeaders } from "http"
 import { Response } from "express"
+import { WebSocket } from "ws"
 
 interface File {
   /** Name of the form field associated with this file. */
@@ -27,6 +28,7 @@ interface File {
 
 declare global {
   interface FunctionContext {
+    socket: WebSocket,
     files?: File[]
     headers?: IncomingHttpHeaders
     query?: any,
