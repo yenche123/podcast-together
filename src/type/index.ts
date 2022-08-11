@@ -19,6 +19,12 @@ export interface RequestRes<T = Record<string, any>> {
 }
 
 /**************** 一些正常情况下的返回参数 *************/
+export interface Participant {
+  nickName: string
+  guestId: string
+  heartbeatStamp: number
+}
+
 export interface ContentData {
   infoType: "podcast"
   audioUrl: string
@@ -29,7 +35,16 @@ export interface ContentData {
   linkUrl?: string
 }
 
-
+export interface RoRes {
+  roomId: string
+  content: ContentData
+  playStatus: "PLAYING" | "PAUSED"
+  speedRate: "1"
+  operator: string
+  contentStamp: number
+  participants: Participant[]
+  guestId?: string
+}
 
 
 /********************* 纯前端的类型 **********************/

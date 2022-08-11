@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import PtButton from "../../components/pt-button.vue"
-import { useRoute } from "vue-router";
-import { useRouter } from "../../routes/pt-router";
+import { useRouter } from "../../routes/pt-router"
 
 const router = useRouter()
 
