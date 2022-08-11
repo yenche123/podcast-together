@@ -69,12 +69,14 @@ interface Room {
   participants: Participant[]
 }
 
+type OperateType = "CREATE" | "ENTER" | "HEARTBEAT" | "LEAVE"
+
 exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   let err = checkEntry(ctx)
   if(err) return err
 
   let res: ResType = { code: "E4044" }
-  const t = ctx.body.operateType
+  const t = ctx.body.operateType as OperateType
   const { headers } = ctx
   const ua = headers?.['user-agent']
 
@@ -83,6 +85,12 @@ exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   }
   else if(t === "ENTER") {
     res = await handle_enter(ctx.body, ua)
+  }
+  else if(t === "HEARTBEAT") {
+    res = await handle_heartbeat(ctx.body)
+  }
+  else if(t === "LEAVE") {
+    res = await handle_leave(ctx.body)
   }
 
   return res
@@ -93,6 +101,83 @@ interface CommonBody extends RequestParam {
   roomId: string
   nickName: string
 }
+
+
+/**
+ * 离开房间
+ */
+async function handle_leave(body: CommonBody): Promise<ResType> {
+  const clientId = body["x-pt-local-id"]
+  const { roomId } = body
+
+  let room = await _getRoom(roomId)
+  if(!room || !room._id) return { code: "E4004" }
+  let { oState, participants = [] } = room
+  if(oState === "EXPIRED") return { code: "E4006" }
+  if(oState === "DELETED") return { code: "E4004" }
+  if(participants.length < 1) return { code: "0000" }
+
+  let me = participants.find(v => v.nonce === clientId)
+  if(!me) return { code: "E4003" }
+  if(participants.length === 1) {
+    room = _pausePlayer(room)
+    room.participants = []
+    let newRoom: Partial<Room> = { ...room }
+    delete newRoom._id
+    await _updateRoom(roomId, newRoom)
+    return { code: "0000" }
+  }
+
+  participants = participants.filter(v => v.nonce !== clientId)
+  await _updateRoom(roomId, { participants })
+  return { code: "0000" }
+}
+
+
+/**
+ * 上报心跳
+ */
+async function handle_heartbeat(body: CommonBody): Promise<ResType> {
+  const clientId = body["x-pt-local-id"]
+  const { roomId } = body
+
+  let room = await _getRoom(roomId)
+  if(!room || !room._id) return { code: "E4004" }
+  let { oState, participants = [] } = room
+  if(oState === "EXPIRED") return { code: "E4006" }
+  if(oState === "DELETED") return { code: "E4004" }
+
+  const now = Date.now()
+  let me = participants.find(v => v.nonce === clientId)
+  if(!me) return { code: "E4003" }
+  me.heartbeatStamp = now
+  participants = participants.map(v => {
+    if(v.nonce === clientId) v = me as Participant
+    return v
+  })
+  
+  await _updateRoom(roomId, { participants })
+  let pClients: ParticipantClient[] = participants.map(v => {
+    let p: ParticipantClient = {
+      nickName: v.nickName,
+      guestId: v.guestId,
+      heartbeatStamp: v.heartbeatStamp,
+    }
+    return p
+  })
+  let roRes: RoRes = {
+    roomId,
+    content: room.content,
+    playStatus: room.playStatus,
+    speedRate: room.speedRate,
+    operator: room.operator,
+    contentStamp: room.contentStamp,
+    participants: pClients,
+  }
+  return { code: "0000", data: roRes }
+}
+
+
 
 /**
  * 进入房间
@@ -285,10 +370,7 @@ async function _checkMyRoomAndDelete(clientId: string): Promise<boolean> {
     room.participants = []
     let newRoom: Partial<Room> = { ...room }
     delete newRoom._id
-    const res2 = await col.doc(roomId).update(newRoom)
-    console.log("打印删除房间的结果.......")
-    console.log(res2)
-    console.log(" ")
+    await _updateRoom(roomId, newRoom)
   }
   return true
 }
