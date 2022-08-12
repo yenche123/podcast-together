@@ -149,8 +149,10 @@ const onTapBtn = () => {
 }
 
 .page-container {
+  padding-top: 50px;
   align-items: flex-start;
   text-align: left;
+  max-width: 700px;
   
   .rp-player {
     width: 100%;
