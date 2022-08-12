@@ -203,6 +203,8 @@ interface ContentData {
   description?: string
   imageUrl?: string
   linkUrl?: string
+  seriesName?: string   // 播客专栏名称，比如 "商业就是这样"
+  seriesUrl?: string    // 播客专栏链接
 }
 
 
