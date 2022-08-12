@@ -4,10 +4,12 @@ const db = cloud.database()
 // 最小可操作的时间间隔，小于该值，不响应
 const MIN_DURATION_FOR_A_PERSON = 250   
 
+type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"
+
 interface RoomStatus {
   roomId: string
   playStatus: "PLAYING" | "PAUSED"
-  speedRate: "1"
+  speedRate: SpeedRate
   operator: string
   contentStamp: number
   operateStamp: number
@@ -203,6 +205,7 @@ interface ContentData {
   linkUrl?: string
 }
 
+
 interface Participant {
   nickName: string
   enterStamp: number
@@ -218,7 +221,7 @@ interface Room {
   content: ContentData
   oState: "OK" | "EXPIRED" | "DELETED"
   playStatus: "PLAYING" | "PAUSED"
-  speedRate: "1"
+  speedRate: SpeedRate
   contentStamp: number
   operateStamp: number
   operator: string
