@@ -34,6 +34,7 @@ interface ParticipantClient {
   nickName: string
   guestId: string
   heartbeatStamp: number
+  enterStamp: number
 }
 
 interface RoRes {
@@ -162,6 +163,7 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
       nickName: v.nickName,
       guestId: v.guestId,
       heartbeatStamp: v.heartbeatStamp,
+      enterStamp: v.enterStamp,
     }
     return p
   })
@@ -231,6 +233,7 @@ async function handle_enter(body: CommonBody, ua?: string): Promise<ResType> {
       nickName: v.nickName,
       guestId: v.guestId,
       heartbeatStamp: v.heartbeatStamp,
+      enterStamp: v.enterStamp,
     }
     return p
   })
