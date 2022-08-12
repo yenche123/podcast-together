@@ -16,7 +16,7 @@ console.log("index-page setup.............")
 
   <div class="page">
     <div class="page-container">
-      <div class="index-icon">📻</div>
+      <div class="index-icon-img"></div>
       <h1>一起听播客</h1>
     </div>
   </div>
@@ -45,6 +45,16 @@ console.log("index-page setup.............")
     .index-icon {
       font-size: 50px;
       margin-bottom: 50px;
+    }
+
+    .index-icon-img {
+      width: 60px;
+      height: 60px;
+      background-image: url(/radio_3d.png);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      margin-bottom: 50px;
+
     }
 
     h1 {

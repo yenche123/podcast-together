@@ -27,13 +27,13 @@ const copyData = (data: any) => {
 }
 
 // 将字符串 转为 object
-const strToObj = (str: string): any => {
+const strToObj = <T = any>(str: string): T => {
   let res = {}
   try {
     res = JSON.parse(str)
   }
   catch(err) {}
-  return res
+  return res as T
 }
 
 // 快速把入参 val 包裹在 Promise 里返回

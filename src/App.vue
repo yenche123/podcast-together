@@ -3,12 +3,6 @@ import CustomUi from "./components/custom-ui/custom-ui.vue"
 import { useTheme } from './hooks/useTheme'
 import time from "./utils/time"
 import { initPtRouter } from './routes/pt-router'
-import { testWs } from "./utils/test-websocket"
-
-import cui from "./components/custom-ui"
-import util from "./utils/util"
-
-// testWs()
 
 const { theme } = useTheme()
 let a1 = time.getTime()

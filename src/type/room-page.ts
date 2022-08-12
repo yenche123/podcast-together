@@ -1,5 +1,5 @@
 // 仅用于 room-page 的类型
-import { RoRes } from "./index"
+import { ContentData } from "./index"
 
 /**
  * 1: 正在进入房间...
@@ -18,7 +18,29 @@ export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 20
 export interface PageData {
   state: PageState
   roomId: string
-  roRes?: RoRes
+  content?: ContentData
+}
+
+export interface PageParticipant {
+  guestId: string
+  nickName: string
+  enterStr: string      // xx 分钟前进入
+}
+
+type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"
+
+export interface RoomStatus {
+  roomId: string
+  playStatus: "PLAYING" | "PAUSED"
+  speedRate: SpeedRate
+  operator: string
+  contentStamp: number
+  operateStamp: number
+}
+
+export interface WsMsgRes {
+  responseType: "CONNECTED" | "NEW_STATUS"
+  roomStatus?: RoomStatus
 }
 
 

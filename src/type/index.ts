@@ -23,6 +23,7 @@ export interface Participant {
   nickName: string
   guestId: string
   heartbeatStamp: number
+  enterStamp: number
 }
 
 export interface ContentData {

@@ -27,6 +27,8 @@ const _checkNickName = (to: RouteLocationNormalized): RouteLocationRaw | true =>
   if(to.name === "join") return true
   let userData = ptUtil.getUserData()
   if(!userData.nickName) {
+    let { roomId } = to.params
+    if(roomId) return { name: "join", query: { roomId } }
     return { name: "join" }
   }
   return true
