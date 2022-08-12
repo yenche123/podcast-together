@@ -141,6 +141,7 @@ function createPlayer() {
     title: content.title,
     cover: content.imageUrl,
     album: content.imageUrl,
+    artist: content.seriesName,
   }
 
   player = new Shikwasa({

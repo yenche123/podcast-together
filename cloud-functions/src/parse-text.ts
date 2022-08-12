@@ -147,6 +147,8 @@ function parseHtml(html: string, originLink: string): ResType {
   let imageUrl = ""
   let twitterImage = ""
   let linkUrl = ""
+  let seriesName = ""
+  let seriesUrl = ""
 
   $("head meta").each((i, el) => {
     let meta = $(el)
@@ -200,6 +202,33 @@ function parseHtml(html: string, originLink: string): ResType {
     let hd = $("head title")
     title = hd.text().trim() ?? ""
   }
+
+
+  // 查找 seriesName / seriesUrl
+  $("head script").each((i, el) => {
+    let spt = $(el)
+    let spt_name = spt.attr("name")
+    if(spt_name === "schema:podcast-show") {
+      const sptText = spt.text()
+      let sptJson: any = {}
+      try {
+        sptJson = JSON.parse(sptText)
+      }
+      catch(err) {
+        console.log("解析 schema:podcast-show 失败......")
+      }
+
+      // 单集链接
+      let epUrl: string = sptJson?.url ?? ""
+      if(epUrl) linkUrl = epUrl
+
+      // 专栏部分
+      let partOfSeries: Record<string, string> = sptJson?.partOfSeries ?? {}
+      seriesName = partOfSeries.name ?? ""
+      seriesUrl = partOfSeries.url ?? ""
+    }
+  })
+
   
   if(!linkUrl) linkUrl = originLink
   if(appName === "小宇宙") sourceType = "xiaoyuzhou"
@@ -214,6 +243,8 @@ function parseHtml(html: string, originLink: string): ResType {
       imageUrl,
       linkUrl,
       sourceType,
+      seriesName,
+      seriesUrl,
     }
   }
 
