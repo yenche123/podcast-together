@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import 'shikwasa/dist/shikwasa.min.css'
+import 'shikwasa2/dist/shikwasa.min.css'
 import PtButton from "../../components/pt-button.vue"
 import { useRoomPage, enterRoom } from "./tools/useRoomPage"
 import ListeningLoader from '../../components/listening-loader.vue'
@@ -43,6 +43,26 @@ const onTapBtn = () => {
 
       <!-- 播放器 -->
       <div ref="playerEl" class="rp-player"></div>
+
+      <div class="room-virtual-one"></div>
+
+      <h2 v-if="pageData.participants?.length" >正在听的有</h2>
+      <div v-if="pageData.participants?.length"
+        class="room-participants"
+      >
+        <template v-for="(item, index) in pageData.participants" :key="item.guestId">
+          <div class="room-participant">
+            <div class="rp-nickName">
+              <span>{{ item.nickName }}</span>
+            </div>
+            <div class="rp-enter-time">
+              <span>{{ item.enterStr }}进入</span>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="room-virtual-two"></div>
 
     </div>
 
@@ -128,10 +148,80 @@ const onTapBtn = () => {
 
 }
 
-.rp-player {
-  width: 100%;
-  position: relative;
+.page-container {
+  align-items: flex-start;
+  text-align: left;
+  
+  .rp-player {
+    width: 100%;
+    position: relative;
+    z-index: 500;
+  }
+
+  .room-virtual-one {
+    width: 100%;
+    height: 50px;
+  }
+
+  h2 {
+    font-size: var(--title-font);
+    color: var(--text-color);
+    margin-block-start: 0;
+    margin-block-end: 20px;
+  }
+
+  .room-participants {
+    width: 100%;
+    background-color: var(--card-color);
+    box-sizing: border-box;
+    padding: 20px 24px;
+    border-radius: 20px;
+    position: relative;
+
+    .room-participant {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 80px;
+      position: relative;
+    }
+
+    .rp-nickName {
+      width: 60%;
+      font-size: var(--desc-font);
+      color: var(--desc-color);
+      padding-right: 10px;
+      user-select: text;
+    }
+
+    .rp-enter-time {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      text-align: right;
+      font-size: var(--mini-font);
+      color: var(--note-color);
+    }
+
+  }
+
+  .room-virtual-two {
+    width: 100%;
+    height: 100px;
+  }
+
+  @media screen and (max-width: 640px) {
+    .room-virtual-one {
+      display: none;
+    }
+
+    .room-virtual-two {
+      height: 200px;
+    }
+  }
+
 }
+
 
 
 

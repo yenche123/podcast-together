@@ -1,4 +1,4 @@
-import { RoomStatus } from "../../../type/room-page";
+import { RoomStatus } from "../../../type/type-room-page";
 import time from "../../../utils/time";
 
 // 获取远端播放器当前播放到哪儿的 ms 

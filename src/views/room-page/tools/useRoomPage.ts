@@ -1,19 +1,21 @@
 import { ref, reactive, onActivated, onDeactivated, nextTick } from "vue"
-import { PageData, WsMsgRes, RoomStatus } from "../../../type/room-page"
+import { PageData, WsMsgRes, RoomStatus, PlayStatus } from "../../../type/type-room-page"
 import { ContentData, RoRes } from "../../../type"
 import { RouteLocationNormalizedLoaded } from "vue-router"
 import { useRouteAndPtRouter, PtRouter } from "../../../routes/pt-router"
 import ptUtil from "../../../utils/pt-util"
 import api from "../../../request/api"
 import rq from "../../../request"
-import Shikwasa from 'shikwasa'
+import Shikwasa from "shikwasa2"
 import util from "../../../utils/util"
 import time from "../../../utils/time"
 import playerTool from "./player-tool"
+import { showParticipants } from "./show-participants"
 
 // 播放器
 let player: any;
 const playerEl = ref<HTMLElement | null>(null)
+let playStatus: PlayStatus = "PAUSED"    // 播放状态
 
 // 路由
 let router: PtRouter
@@ -26,6 +28,7 @@ let ws: WebSocket | null = null
 const pageData: PageData = reactive({
   state: 1,
   roomId: "",
+  participants: []
 })
 
 // 其他杂七杂八的数据
@@ -87,7 +90,6 @@ export async function enterRoom() {
     return
   }
 
-
   console.log("看一下进入房间的结果.....")
   console.log(res)
   console.log(" ")
@@ -116,6 +118,7 @@ export async function enterRoom() {
 //    赋值 / 创建播放器 / 开启 20s 轮询机制 / 建立 webSocket
 function afterEnter(roRes: RoRes) {
   pageData.content = roRes.content
+  pageData.participants = showParticipants(roRes.participants)
   guestId = roRes?.guestId as string
 
   createPlayer()
@@ -211,7 +214,7 @@ function createPlayer() {
   })
 
   player.on("pause", (e: Event) => {
-    
+    playStatus = "PAUSED"
     if(isRemoteSetPaused) {
       isRemoteSetPaused = false
       return
@@ -223,6 +226,7 @@ function createPlayer() {
   })
 
   player.on("playing", (e: Event) => {
+    playStatus = "PLAYING"
     if(isRemoteSetPlaying) {
       isRemoteSetPlaying = false
       return
@@ -331,23 +335,54 @@ async function receiveNewStatusFromWs(newStatus: RoomStatus) {
   await waitPlayer
   console.log("player 已初始化完成..........")
   
+  let { contentStamp } = newStatus
 
   // 判断时间
-  let rCurrentTime = playerTool.getRemoteCurrentTime(newStatus, srcDuration)
-  let currentTime = player.currentTime
-  let diff1 = Math.abs(rCurrentTime - currentTime)
+  let rCurrentTimeMs = playerTool.getRemoteCurrentTime(newStatus, srcDuration)
+  let currentTimeMs = player.currentTime * 1000
+  let diff1 = Math.abs(rCurrentTimeMs - currentTimeMs)
 
-  console.log("远程播放器时间: ", rCurrentTime)
-  console.log("当前播放器时间: ", currentTime)
+  console.log("远程播放器时间 (ms): ", rCurrentTimeMs)
+  console.log("当前播放器时间 (ms): ", currentTimeMs)
   console.log(" ")
 
   if(diff1 > 1100) {
     isRemoteSetSeek = true
-    player.seek(rCurrentTime) 
+    let newCurrentTime = Math.round(rCurrentTimeMs / 1000)
+    player.seek(newCurrentTime)
   }
 
-  // 判断
+  // 判断倍速
+  let rSpeedRate = newStatus.speedRate
+  let speedRate = String(player.playbackRate)
+  console.log("远程播放器的倍速: ", rSpeedRate)
+  console.log("当前播放器的倍速: ", speedRate)
+  if(rSpeedRate !== speedRate) {
+    console.log("播放器倍速不一致，请求调整......")
+    isRemoteSetSpeedRate = true
+    let speedRateNum = Number(rSpeedRate)
+    console.log(speedRateNum)
+    player.playbackRate = speedRateNum
+  }
 
+  // 判断播放状态
+  let rPlayStatus = newStatus.playStatus
+  let diff2 = (srcDuration * 1000) - contentStamp
+  if(rPlayStatus !== playStatus) {
+    // 如果剩下 1s 就结束了 还要播放，进行阻挡
+    if(rPlayStatus === "PLAYING" && diff2 < 1000) return
+    if(rPlayStatus === "PLAYING") {
+      console.log("远端请求播放......")
+      isRemoteSetPlaying = true
+      player.play()
+    }
+    else {
+      console.log("远端请求暂停......")
+      isRemoteSetPaused = true
+      player.pause()
+    }
+  }
+  
 }
 
 

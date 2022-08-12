@@ -15,23 +15,26 @@ import { ContentData } from "./index"
  */
 export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 20
 
-export interface PageData {
-  state: PageState
-  roomId: string
-  content?: ContentData
-}
-
 export interface PageParticipant {
   guestId: string
   nickName: string
   enterStr: string      // xx 分钟前进入
 }
 
+export interface PageData {
+  state: PageState
+  roomId: string
+  content?: ContentData,
+  participants?: PageParticipant[]
+}
+
 type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"
+
+export type PlayStatus = "PLAYING" | "PAUSED"
 
 export interface RoomStatus {
   roomId: string
-  playStatus: "PLAYING" | "PAUSED"
+  playStatus: PlayStatus
   speedRate: SpeedRate
   operator: string
   contentStamp: number

@@ -1,1 +1,1 @@
-declare module 'shikwasa'
+declare module 'shikwasa2'

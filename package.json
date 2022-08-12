@@ -12,6 +12,7 @@
     "nanoid": "^4.0.0",
     "pinia": "^2.0.17",
     "shikwasa": "^2.1.4",
+    "shikwasa2": "^2.1.5",
     "vue": "^3.2.37",
     "vue-router": "4"
   },
