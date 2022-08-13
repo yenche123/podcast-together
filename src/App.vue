@@ -8,6 +8,11 @@ const { theme } = useTheme()
 let a1 = time.getTime()
 const { route } = initPtRouter()
 
+// 打印当前版本号
+console.log(`###### 欢迎使用 Podcast-Together ######`)
+console.log(`当前版本号: ${PT_ENV.version}`)
+console.log(` `)
+
 
 </script>
 

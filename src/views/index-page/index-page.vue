@@ -8,8 +8,6 @@ const onTapCreateBtn = (e: Event) => {
   router.push({ name: "join" })
 }
 
-console.log("index-page setup.............")
-
 </script>
 
 <template>
