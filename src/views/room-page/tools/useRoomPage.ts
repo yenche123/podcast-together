@@ -377,8 +377,9 @@ function heartbeat() {
 
 // 使用 web-socket 去建立连接
 function connectWebSocket() {
-  const { VITE_WEBSOCKET_URL } = import.meta.env
-  ws = new WebSocket(VITE_WEBSOCKET_URL)
+  const _env = util.getEnv()
+  const { WEBSOCKET_URL } = _env
+  ws = new WebSocket(WEBSOCKET_URL)
 
   ws.onopen = (socket: Event) => {
     console.log("ws opened.........")

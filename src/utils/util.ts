@@ -42,11 +42,9 @@ const getPromise = <T = any>(val: T): Promise<T> => {
 }
 
 const getEnv = (): EnvType => {
-  const _env = import.meta.env || {}
-  const WEBSOCKET_URL = _env.VITE_WEBSOCKET_URL
-  const API_URL = _env.VITE_API_URL
-  const HEARTBEAT_PERIOD = _env.VITE_HEARTBEAT_PERIOD ?? "15"
-  console.log("HEARTBEAT_PERIOD: ", HEARTBEAT_PERIOD)
+  const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL
+  const API_URL = import.meta.env.VITE_API_URL
+  const HEARTBEAT_PERIOD = import.meta.env.VITE_HEARTBEAT_PERIOD ?? "15"
   return {
     WEBSOCKET_URL,
     API_URL,
