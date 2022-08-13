@@ -9,6 +9,9 @@ const projectRoot = __dirname
 export default defineConfig(() => {
   return {
     plugins: [vue()],
+    server: {
+      host: "0.0.0.0"
+    },
     resolve: {
       alias: {
         "@": resolve(projectRoot, "src"),

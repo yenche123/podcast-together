@@ -1,8 +1,8 @@
 import { ref, reactive, onActivated, onDeactivated, nextTick } from "vue"
-import { PageData, WsMsgRes, RoomStatus, PlayStatus } from "../../../type/type-room-page"
+import { PageData, PageState, WsMsgRes, RoomStatus, PlayStatus } from "../../../type/type-room-page"
 import { ContentData, RoRes } from "../../../type"
 import { RouteLocationNormalizedLoaded } from "vue-router"
-import { useRouteAndPtRouter, PtRouter } from "../../../routes/pt-router"
+import { useRouteAndPtRouter, PtRouter, goHome } from "../../../routes/pt-router"
 import ptUtil from "../../../utils/pt-util"
 import api from "../../../request/api"
 import rq from "../../../request"
@@ -11,6 +11,9 @@ import util from "../../../utils/util"
 import time from "../../../utils/time"
 import playerTool from "./player-tool"
 import { showParticipants } from "./show-participants"
+
+// 一些常量
+const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
 
 // 播放器
 let player: any;
@@ -35,15 +38,21 @@ const pageData: PageData = reactive({
 let nickName: string = ""
 let localId: string = ""
 let guestId: string = ""
-let intervalHb: number = 0
-let srcDuration: number = 0  // 资源总时长（秒），如果为 0 代表还没解析出来
+let intervalHb: number = 0      // 维持心跳的 interval 的返回值
+let timeoutCollect: number = 0  // 上报最新播放状态的 timeout 的返回值
+let srcDuration: number = 0     // 资源总时长（秒），如果为 0 代表还没解析出来
 let waitPlayer: Promise<boolean>
+let isIniting: boolean = true   // 从 enterRoom 到第一次 receiveNewStatusFromWs 的过程
 
 // 是否为远端调整播放器状态，如果是，则在监听 player 各回调时不往下执行
 let isRemoteSetSeek = false
 let isRemoteSetPlaying = false
 let isRemoteSetPaused = false
 let isRemoteSetSpeedRate = false
+
+const toHome = () => {
+  goHome(router)
+}
 
 export const useRoomPage = () => {
   const rr = useRouteAndPtRouter()
@@ -52,7 +61,7 @@ export const useRoomPage = () => {
   
   init()
 
-  return { pageData, playerEl, route, router }
+  return { pageData, playerEl, route, router, toHome }
 }
 
 // 初始化一些东西，比如 onActivated / onDeactivated 
@@ -70,9 +79,9 @@ function init() {
 // 进入房间
 export async function enterRoom() {
   let roomId: string = route.params.roomId as string
-  console.log("进入房间，看一下当前的 roomId: ", roomId)
   pageData.roomId = roomId
   pageData.state = 1
+  isIniting = true
 
   let userData = ptUtil.getUserData()
   nickName = userData.nickName as string
@@ -90,10 +99,6 @@ export async function enterRoom() {
     return
   }
 
-  console.log("看一下进入房间的结果.....")
-  console.log(res)
-  console.log(" ")
-
   let { code, data } = res
   if(code === "0000") {
     pageData.state = 2
@@ -108,6 +113,9 @@ export async function enterRoom() {
   }
   else if(code === "E4003") {
     pageData.state = 14
+  }
+  else if(code === "R0001") {
+    pageData.state = 15
   }
   else {
     pageData.state = 20
@@ -173,7 +181,9 @@ function createPlayer() {
   player.on("durationchange", (e: any) => {
     let myAudio = e?.path?.[0]
     let duration = myAudio?.duration
+    console.log("player durationchange................")
     console.log("看一下时长: ", duration)
+    console.log(" ")
     if(duration) {
       srcDuration = duration
     }
@@ -224,6 +234,7 @@ function createPlayer() {
     console.log("player pause.............")
     console.log(e)
     console.log(" ")
+    collectLatestStauts()
   })
 
   player.on("playing", (e: Event) => {
@@ -236,7 +247,7 @@ function createPlayer() {
     console.log("player playing.............")
     console.log(e)
     console.log(" ")
-
+    collectLatestStauts()
   })
 
   player.on("ratechange", (e: Event) => {
@@ -247,6 +258,7 @@ function createPlayer() {
     console.log("player ratechange.............")
     console.log(e)
     console.log(" ")
+    collectLatestStauts()
   })
 
   player.on("seeked", (e: Event) => {
@@ -257,12 +269,13 @@ function createPlayer() {
     console.log("player seeked.............")
     console.log(e)
     console.log(" ")
+    collectLatestStauts()
   })
 
   player.on("timeupdate", (e: Event) => {
-    console.log("player timeupdate.............")
-    console.log(e)
-    console.log(" ")
+    // console.log("player timeupdate.............")
+    // console.log(e)
+    // console.log(" ")
   })
 
   player.on("waiting", (e: Event) => {
@@ -272,12 +285,94 @@ function createPlayer() {
   })
 }
 
+// 收集最新状态，再用 ws 上报
+function collectLatestStauts() {
+  if(timeoutCollect) clearTimeout(timeoutCollect)
 
-// 每 20s 的轮询开始
+  const _collect = () => {
+    if(!player) return
+    const currentTime = player.currentTime ?? 0
+    const contentStamp = currentTime * 1000
+    const param = {
+      operateType: "SET_PLAYER",
+      roomId: pageData.roomId,
+      "x-pt-local-id": localId,
+      "x-pt-stamp": time.getTime(),
+      playStatus,
+      speedRate: String(player.playbackRate),
+      contentStamp,
+    }
+
+    console.log("看一下使用 ws 的上报数据: ")
+    console.log(param)
+    console.log(" ")
+    const msg = JSON.stringify(param)
+    ws?.send(msg)
+  }
+
+  timeoutCollect = setTimeout(() => {
+    _collect()
+  }, COLLECT_TIMEOUT)
+}
+
+
+// 每若干秒的心跳
 function heartbeat() {
-  intervalHb = setInterval(() => {
+  const _env = util.getEnv()
+  console.log("_env: ")
+  console.log(_env)
+  console.log(" ")
 
-  }, 20 * 1000)
+  const _closeRoom = (val: PageState) => {
+    pageData.state = val
+    // 销毁心跳
+    if(intervalHb) clearInterval(intervalHb)
+    intervalHb = 0
+
+    // 关闭 web-socket
+    if(ws) {
+      ws.close()
+    }
+
+    // 销毁播放器
+    if(player) {
+      player.destroy()
+      player = null
+    }
+  }
+
+  const _newRoomStatus = (roRes: RoRes) => {
+    pageData.content = roRes.content
+    pageData.participants = showParticipants(roRes.participants)
+  }
+
+  intervalHb = setInterval(async () => {
+    const param = {
+      operateType: "HEARTBEAT",
+      roomId: pageData.roomId,
+      nickName,
+    }
+    const url = api.ROOM_OPERATE
+    const res = await rq.request<RoRes>(url, param)
+    console.log("看一下心跳结果.....")
+    console.log(res)
+    console.log(" ")
+    if(!res) return
+    const { code, data } = res
+    if(code === "0000") {
+      _newRoomStatus(data as RoRes)
+    }
+    else if(code === "E4004") {
+      _closeRoom(12)
+    }
+    else if(code === "E4006") {
+      _closeRoom(11)
+    }
+    else if(code === "E4003") {
+      _closeRoom(14)
+    }
+
+  }, _env.HEARTBEAT_PERIOD * 1000)
 }
 
 // 使用 web-socket 去建立连接
@@ -330,7 +425,12 @@ function firstSend() {
 
 async function receiveNewStatusFromWs(newStatus: RoomStatus) {
   if(newStatus.roomId !== pageData.roomId) return
-  if(newStatus.operator === guestId) return
+  if(isIniting) {
+    isIniting = false
+  }
+  else if(newStatus.operator === guestId) {
+    return
+  }
 
   console.log("等待 player 初始化成功..........")
   await waitPlayer
@@ -417,6 +517,3 @@ async function leaveRoom() {
   console.log(res)
   console.log(" ")
 }
-
-
-

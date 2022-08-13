@@ -55,3 +55,9 @@ export interface StorageUserData {
   nickName?: string
   nonce?: string
 }
+
+export interface EnvType {
+  WEBSOCKET_URL: string
+  API_URL: string
+  HEARTBEAT_PERIOD: number
+}

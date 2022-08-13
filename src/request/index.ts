@@ -4,7 +4,6 @@ import time from "../utils/time"
 import ptUtil from "../utils/pt-util"
 
 let local_id: string = ""
-const _env = import.meta.env
 
 /**
  * 返回公共入参

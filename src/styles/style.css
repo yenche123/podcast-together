@@ -70,7 +70,7 @@ a:hover {
   bottom: 50px;
   left: 0;
   right: 0;
-  width: 100%;
+  width: 100vw;
   display: flex;
   justify-content: center;
 }

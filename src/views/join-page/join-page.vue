@@ -88,6 +88,7 @@ onMounted(() => {
     border: 0;
     outline: none;
     text-align: center;
+    width: 100%;
   }
 
   input::-webkit-input-placeholder {

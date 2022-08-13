@@ -3,10 +3,16 @@ import 'shikwasa2/dist/shikwasa.min.css'
 import PtButton from "../../components/pt-button.vue"
 import { useRoomPage, enterRoom } from "./tools/useRoomPage"
 import ListeningLoader from '../../components/listening-loader.vue'
-import { toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
-const { pageData, router, playerEl } = useRoomPage()
+const { pageData, playerEl, toHome } = useRoomPage()
 const state = toRef(pageData, "state")
+const btnText = computed(() => {
+  const v = state.value
+  if(v === 11 || v === 12 || v === 14 || v === 15) return "回首页"
+  else if(v === 13) return "刷新"
+  return "联系开发者"
+})
 
 // 点击异常情况下的按钮
 const onTapBtn = () => {
@@ -15,8 +21,8 @@ const onTapBtn = () => {
   if(s === 13) {
     enterRoom()
   }
-  else if(s === 11 || s === 12 || s === 14) {
-    router.replace({ name: "index" })
+  else if(s === 11 || s === 12 || s === 14 || s === 15) {
+    toHome()
   }
   else {
     console.log("去联系开发者.............")
@@ -75,13 +81,14 @@ const onTapBtn = () => {
         <h1 v-else-if="state === 12">查无该房间</h1>
         <h1 v-else-if="state === 13">网络不佳</h1>
         <h1 v-else-if="state === 14">拒绝访问</h1>
+        <h1 v-else-if="state === 15">房间人数已满</h1>
         <h1 v-else>未知的错误</h1>
 
       </div>
       <div class="pf-no-data-btns">
         <pt-button type="other" 
           @click="onTapBtn"
-          :text="state === 11 || state === 12 || state === 14 ? '回首页' : state === 13 ? '刷新' : '联系开发者'" 
+          :text="btnText" 
         />
       </div>
     </div>

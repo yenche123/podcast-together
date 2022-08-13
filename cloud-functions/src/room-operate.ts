@@ -160,6 +160,13 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
     if(v.nonce === clientId) v = me as Participant
     return v
   })
+
+  // 踢掉心跳一分钟内没有连线的
+  participants = participants.filter(v => {
+    const diff = now - v.heartbeatStamp
+    if(diff < (60 * 1000)) return true
+    return false
+  })
   
   await _updateRoom(roomId, { participants })
   let pClients: ParticipantClient[] = participants.map(v => {
@@ -229,6 +236,13 @@ async function handle_enter(body: CommonBody, ua?: string): Promise<ResType> {
     }
     participants.push(me)
   }
+
+  // 踢掉心跳一分钟内没有连线的
+  participants = participants.filter(v => {
+    const diff = now - v.heartbeatStamp
+    if(diff < (60 * 1000)) return true
+    return false
+  })
 
   // 修改房间
   await _updateRoom(roomId, { participants })
