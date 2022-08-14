@@ -7,7 +7,8 @@
     "dev": "vite",
     "dev-force": "vite --force",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tcb-deploy": "cd dist & tcb hosting deploy . -e pt-8gd0s9d94b2f9d68"
   },
   "dependencies": {
     "nanoid": "^4.0.0",
