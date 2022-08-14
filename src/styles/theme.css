@@ -30,9 +30,9 @@
   --desc-color: #c0c0c0;
 
   /** 主按钮 */
-  --main-btn-bg: #eee;
+  --main-btn-bg: #ddd;
   --main-btn-text: #181818;
-  --hover-btn-bg: #ccc;
+  --hover-btn-bg: #bbb;
 
   /** 副按钮 */
   --other-btn-bg: #404040;

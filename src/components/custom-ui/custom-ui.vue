@@ -96,7 +96,7 @@ const {
     max-width: var(--standard-max-px);
     background-color: var(--bg-color);
     box-sizing: border-box;
-    padding: 28px 6%;
+    padding: 28px 6% 18px;
     border-radius: 25px;
     text-align: center;
     display: flex;
@@ -141,9 +141,10 @@ const {
         max-width: 45%;
         min-width: 30%;
         text-align: center;
+        margin-bottom: 10px;
         cursor: pointer;
 
-        &:hover {
+        &:hover, &:active {
           background-color: var(--other-btn-hover);
         }
       }
@@ -152,7 +153,7 @@ const {
         color: var(--main-btn-text);
         background-color: var(--main-btn-bg);
 
-        &:hover {
+        &:hover, &:active {
           background-color: var(--hover-btn-bg);
         }
       }
