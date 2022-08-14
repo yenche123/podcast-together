@@ -48,6 +48,7 @@ interface RoRes {
   speedRate: SpeedRate
   operator: string
   contentStamp: number
+  operateStamp: number
   participants: ParticipantClient[]
   guestId?: string
 }
@@ -185,6 +186,7 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
     speedRate: room.speedRate,
     operator: room.operator,
     contentStamp: room.contentStamp,
+    operateStamp: room.operateStamp,
     participants: pClients,
   }
   return { code: "0000", data: roRes }
@@ -262,6 +264,7 @@ async function handle_enter(body: CommonBody, ua?: string): Promise<ResType> {
     speedRate: room.speedRate,
     operator: room.operator,
     contentStamp: room.contentStamp,
+    operateStamp: room.operateStamp,
     participants: pClients,
     guestId,
   }
@@ -368,6 +371,7 @@ async function _createRoom(clientId: string, roomData: ContentData): Promise<RoR
     speedRate: "1",
     operator: "",
     contentStamp: 0,
+    operateStamp: now,
     participants: []
   }
   return roRes
