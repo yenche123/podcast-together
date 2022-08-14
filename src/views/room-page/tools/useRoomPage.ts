@@ -53,6 +53,10 @@ let isRemoteSetPlaying = false
 let isRemoteSetPaused = false
 let isRemoteSetSpeedRate = false
 
+// 播放器准备好的回调
+type SimpleFunc = (param1: boolean) => void
+let playerAlready: SimpleFunc
+
 
 const toHome = () => {
   goHome(router)
@@ -142,8 +146,6 @@ function afterEnter(roRes: RoRes) {
 function createPlayer() {
   let content = pageData.content as ContentData
 
-  type SimpleFunc = (param1: boolean) => void
-  let playerAlready: SimpleFunc
   waitPlayer = new Promise((a: SimpleFunc) => {
     playerAlready = a
   })
@@ -156,12 +158,18 @@ function createPlayer() {
     artist: content.seriesName,
   }
 
+  console.log("去创建 player.....................")
+
   player = new Shikwasa({
     container: () => playerEl.value,
     audio,
     themeColor: "var(--text-color)",
     speedOptions: playerTool.initSpeedOptions(),
   })
+
+  console.log("创建结果...................")
+  console.log(player)
+  console.log(" ")
 
   // 去监听 播放器的各个事件回调
   player.on("abort", (e: Event) => {
@@ -177,11 +185,19 @@ function createPlayer() {
   })
 
   player.on("durationchange", (e: any) => {
-    let myAudio = e?.path?.[0]
-    let duration = myAudio?.duration
+
     console.log("player durationchange................")
+    console.log("e:")
+    console.log(e)
+    let myAudio = e?.path?.[0]
+    if(!myAudio) {
+      myAudio = e?.srcElement
+    }
+    let duration = myAudio?.duration
+
     console.log("看一下时长: ", duration)
     console.log(" ")
+    
     if(duration) {
       srcDuration = duration
     }
@@ -207,9 +223,6 @@ function createPlayer() {
 
   player.on("canplay", (e: Event) => {
     if(!playerTool.checkThrottle("canplay")) return
-    console.log("player canplay.............")
-    console.log(e)
-    console.log(" ")
     if(pageData.state <= 2) {
       pageData.state = 3
       playerAlready(true)
@@ -255,7 +268,6 @@ function createPlayer() {
       return
     }
 
-    
     collectLatestStauts()
   })
 
@@ -291,8 +303,20 @@ function createPlayer() {
     console.log(e)
     console.log(" ")
   })
+
+  checkPlayerReady()
 }
 
+// 3s 后开始检测 player 是否已经 ready
+async function checkPlayerReady() {
+  // await util.waitMilli(3000)
+  // console.log("等了 3s 了！！！！")
+  // console.log(" ")
+  // if(pageData.state <= 2) {
+  //   pageData.state = 3
+  //   playerAlready(true)
+  // }
+}
 
 
 // 收集最新状态，再用 ws 上报
@@ -502,15 +526,8 @@ async function receiveNewStatus(fromType: string = "ws") {
     if(rPlayStatus === "PLAYING") {
       console.log("远端请求播放......")
       isRemoteSetPlaying = true
-      try {
-        player.play()
-        checkIsPlaying()
-      }
-      catch(err) {
-        console.log("出现了播放失败.......")
-        console.log(err)
-        handleAutoPlayPolicy()
-      }
+      player.play()
+      checkIsPlaying()
     }
     else {
       console.log("远端请求暂停......")
@@ -521,9 +538,7 @@ async function receiveNewStatus(fromType: string = "ws") {
 }
 
 async function checkIsPlaying() {
-  console.log("等待 1.5s 查看结果.......")
   await util.waitMilli(1500)
-  console.log("等了 1.5s 啦！！")
   const rPlayStatus = latestStatus.playStatus
   if(rPlayStatus === "PLAYING" && playStatus === "PAUSED") {
     handleAutoPlayPolicy()
