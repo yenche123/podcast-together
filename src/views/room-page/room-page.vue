@@ -4,6 +4,7 @@ import PtButton from "../../components/pt-button.vue"
 import { useRoomPage, enterRoom } from "./tools/useRoomPage"
 import ListeningLoader from '../../components/listening-loader.vue'
 import { computed, toRef } from 'vue';
+import images from '../../images';
 
 const { pageData, playerEl, toHome } = useRoomPage()
 const state = toRef(pageData, "state")
@@ -74,7 +75,7 @@ const onTapBtn = () => {
 
     <!-- 出现异常 -->
     <div v-show="state >= 11" class="page-full">
-      <img src="../../assets/face_with_raised_eyebrow_3d.png" class="pf-no-data-img" />
+      <img :src="images.IMG_PLACEHOLDER" class="pf-no-data-img" />
       <div class="pf-no-data-box">
 
         <h1 v-if="state === 11">链接已过期</h1>
@@ -105,9 +106,10 @@ const onTapBtn = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   width: 92%;
-  max-width: var(--standard-max-px);
+  max-width: 400px;
   position: relative;
 
   .pf-text {

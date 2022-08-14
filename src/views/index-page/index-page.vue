@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PtButton from "../../components/pt-button.vue"
 import { useRouter } from "../../routes/pt-router"
+import images from "../../images"
 
 const router = useRouter()
 
@@ -25,7 +26,7 @@ const onTapCreateBtn = (e: Event) => {
 
       <a href="https://github.com/yenche123/podcast-together" target="_blank">
         <div class="index-other-btn">
-          <img src="../../assets/github.svg" class="index-github"/>
+          <img :src="images.GITHUB" class="index-github"/>
           <span>开源地址</span>
         </div>
       </a>
@@ -48,7 +49,7 @@ const onTapCreateBtn = (e: Event) => {
     .index-icon-img {
       width: 60px;
       height: 60px;
-      background-image: url(/radio_3d.png);
+      background-image: v-bind("'url(' + images.APP_IOGO + ')'");
       background-size: 100% 100%;
       background-repeat: no-repeat;
       margin-bottom: 50px;

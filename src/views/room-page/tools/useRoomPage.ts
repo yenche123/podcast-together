@@ -12,6 +12,7 @@ import time from "../../../utils/time"
 import playerTool from "./player-tool"
 import { showParticipants } from "./show-participants"
 import cui from "../../../components/custom-ui"
+import images from "../../../images"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
@@ -156,8 +157,7 @@ function createPlayer() {
   const audio = {
     src: content.audioUrl,
     title: content.title,
-    cover: content.imageUrl,
-    album: content.imageUrl,
+    cover: content.imageUrl ?? images.APP_IOGO,
     artist: content.seriesName,
   }
 
