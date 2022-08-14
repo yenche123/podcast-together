@@ -16,13 +16,13 @@ interface RoomStatus {
 }
 
 interface ResToFe {
-  responseType: "CONNECTED" | "NEW_STATUS"
+  responseType: "CONNECTED" | "NEW_STATUS" | "HEARTBEAT"
   roomStatus?: RoomStatus
 }
 
 
 interface ReqBase {
-  operateType: "FIRST_SEND" | "SET_PLAYER"
+  operateType: "FIRST_SEND" | "SET_PLAYER" | "HEARTBEAT"
   roomId: string
   "x-pt-local-id": string
   "x-pt-stamp": number
@@ -71,6 +71,9 @@ exports.main = async function (ctx: FunctionContext) {
     else if(operateType === "SET_PLAYER") {
       await handle_set_player(ctx, req as ReqOperatePlayer)
     }
+    else if(operateType === "HEARTBEAT") {
+      handle_heartbeat(ctx, req as ReqBase)
+    }
     return
   }
 
@@ -81,6 +84,22 @@ exports.main = async function (ctx: FunctionContext) {
     return
   }
 
+}
+
+function handle_heartbeat(ctx: FunctionContext, req: ReqBase): void {
+  const r1 = req.roomId
+  //@ts-ignore
+  const r2 = ctx.socket.roomId
+  
+  if(!r2 || r1 !== r2) {
+    console.log("接收到前端传来心跳，然而 socket 上没有标注 roomId!!!")
+    ctx.socket.close()
+    return
+  }
+
+  let send: ResToFe = { responseType: "HEARTBEAT" }
+  let msg: string = JSON.stringify(send)
+  ctx.socket.send(msg)
 }
 
 async function handle_first_send(ctx: FunctionContext, req: ReqBase): Promise<void> {
