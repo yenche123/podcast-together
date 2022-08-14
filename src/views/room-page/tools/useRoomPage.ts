@@ -15,6 +15,7 @@ import cui from "../../../components/custom-ui"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
+const MAX_HB_NUM = 960    // 心跳最多轮询次数；如果每 15s 一次，相当于 4hr
 
 // 播放器
 let player: any;
@@ -46,6 +47,7 @@ let waitPlayer: Promise<boolean>
 let isIniting: boolean = true   // 从 enterRoom 到第一次 receiveNewStatus 的过程；可能需要删掉！！！
 let latestStatus: RoomStatus    // 最新的播放器状态
 let isShowingAutoPlayPolicy: boolean = false  // 当前是否已在展示 autoplay policy 的弹窗
+let heartbeatNum = 0
 
 // 是否为远端调整播放器状态，如果是，则在监听 player 各回调时不往下执行
 let isRemoteSetSeek = false
@@ -90,6 +92,7 @@ export async function enterRoom() {
   pageData.roomId = roomId
   pageData.state = 1
   isIniting = true
+  heartbeatNum = 0
 
   let userData = ptUtil.getUserData()
   nickName = userData.nickName as string
@@ -170,6 +173,19 @@ function createPlayer() {
   console.log("创建结果...................")
   console.log(player)
   console.log(" ")
+
+  player.on("audioupdate", (e: Event) => {
+    console.log("player audioupdate.............")
+    console.log(e)
+    console.log(" ")
+  })
+
+  player.on("audioparse", (e: Event) => {
+    console.log("player audioparse.............")
+    console.log(e)
+    console.log(" ")
+  })
+
 
   // 去监听 播放器的各个事件回调
   player.on("abort", (e: Event) => {
@@ -258,9 +274,6 @@ function createPlayer() {
 
   player.on("playing", (e: Event) => {
     if(!playerTool.checkThrottle("play")) return
-    console.log("player playing.............")
-    console.log(e)
-    console.log(" ")
 
     playStatus = "PLAYING"
     if(isRemoteSetPlaying) {
@@ -273,10 +286,6 @@ function createPlayer() {
 
   player.on("ratechange", (e: Event) => {
     if(!playerTool.checkThrottle("speed")) return
-    console.log("player ratechange.............")
-    console.log(e)
-    console.log(Date.now())
-    console.log(" ")
     if(isRemoteSetSpeedRate) {
       isRemoteSetSpeedRate = false
       return
@@ -286,9 +295,6 @@ function createPlayer() {
 
   player.on("seeked", (e: Event) => {
     if(!playerTool.checkThrottle("seek")) return
-    console.log("player seeked.............")
-    console.log(e)
-    console.log(" ")
 
     if(isRemoteSetSeek) {
       isRemoteSetSeek = false
@@ -393,11 +399,16 @@ function heartbeat() {
       "x-pt-stamp": time.getTime()
     }
     const msg = JSON.stringify(send)
-    console.log("前端去发送心跳......")
     ws?.send(msg)
   }
 
   intervalHb = setInterval(async () => {
+    heartbeatNum++
+    if(heartbeatNum > MAX_HB_NUM) {
+      _closeRoom(16)
+      return
+    }
+
     const param = {
       operateType: "HEARTBEAT",
       roomId: pageData.roomId,
@@ -405,9 +416,6 @@ function heartbeat() {
     }
     const url = api.ROOM_OPERATE
     const res = await rq.request<RoRes>(url, param)
-    console.log("看一下心跳结果.....")
-    console.log(res)
-    console.log(" ")
     if(!res) return
     const { code, data } = res
     if(code === "0000") {
@@ -442,9 +450,9 @@ function connectWebSocket() {
   ws.onmessage = (res) => {
     const message = res.data
     const msgRes = util.strToObj<WsMsgRes>(message)
-    console.log("web-socket 收到新的的消息.......")
-    console.log(msgRes)
-    console.log(" ")
+    // console.log("web-socket 收到新的的消息.......")
+    // console.log(msgRes)
+    // console.log(" ")
 
     if(!msgRes) return
     const { responseType: rT, roomStatus } = msgRes
@@ -469,10 +477,6 @@ function firstSend() {
     "x-pt-stamp": time.getTime()
   }
 
-  console.log("发送 首次发送啦！！！")
-  console.log(send)
-  console.log(" ")
-
   const msg = JSON.stringify(send)
   ws?.send(msg)
 }
@@ -493,10 +497,6 @@ async function receiveNewStatus(fromType: string = "ws") {
   let diff1 = Math.abs(rCurrentTimeMs - currentTimeMs)
   const T = fromType === "ws" ? 1100 : 2900
 
-  console.log("远程播放器时间 (ms): ", rCurrentTimeMs)
-  console.log("当前播放器时间 (ms): ", currentTimeMs)
-  console.log(" ")
-
   if(diff1 > T) {
     isRemoteSetSeek = true
     let newCurrentTime = Math.round(rCurrentTimeMs / 1000)
@@ -506,9 +506,6 @@ async function receiveNewStatus(fromType: string = "ws") {
   // 判断倍速
   let rSpeedRate = latestStatus.speedRate
   let speedRate = String(player.playbackRate)
-  console.log("远程播放器的倍速: ", rSpeedRate)
-  console.log("当前播放器的倍速: ", speedRate)
-  console.log(" ")
 
   if(rSpeedRate !== speedRate) {
     console.log("播放器倍速不一致，请求调整......")
@@ -523,7 +520,7 @@ async function receiveNewStatus(fromType: string = "ws") {
   if(rPlayStatus !== playStatus) {
     // 如果剩下 1s 就结束了 还要播放，进行阻挡
     if(rPlayStatus === "PLAYING" && diff2 < 1000) return
-    if(rPlayStatus === "PLAYING") {
+    if(rPlayStatus === "PLAYING" && !isShowingAutoPlayPolicy) {
       console.log("远端请求播放......")
       isRemoteSetPlaying = true
       player.play()
@@ -556,10 +553,6 @@ async function handleAutoPlayPolicy() {
     confirmText: "开声音"
   })
   isShowingAutoPlayPolicy = false
-
-  console.log("看一下是否静音......")
-  console.log(res1)
-  console.log(" ")
 
   // 如果是静音
   if(res1.cancel) {

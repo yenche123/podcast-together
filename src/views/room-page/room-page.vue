@@ -10,7 +10,7 @@ const state = toRef(pageData, "state")
 const btnText = computed(() => {
   const v = state.value
   if(v === 11 || v === 12 || v === 14 || v === 15) return "回首页"
-  else if(v === 13) return "刷新"
+  else if(v === 13 || v === 16) return "刷新"
   return "联系开发者"
 })
 
@@ -18,7 +18,7 @@ const btnText = computed(() => {
 const onTapBtn = () => {
   const s = state.value
   // 网络不佳，去刷新
-  if(s === 13) {
+  if(s === 13 || s === 16) {
     enterRoom()
   }
   else if(s === 11 || s === 12 || s === 14 || s === 15) {
@@ -82,6 +82,7 @@ const onTapBtn = () => {
         <h1 v-else-if="state === 13">网络不佳</h1>
         <h1 v-else-if="state === 14">拒绝访问</h1>
         <h1 v-else-if="state === 15">房间人数已满</h1>
+        <h1 v-else-if="state === 16">长时间未操作</h1>
         <h1 v-else>未知的错误</h1>
 
       </div>

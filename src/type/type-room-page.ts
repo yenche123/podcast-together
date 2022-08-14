@@ -11,10 +11,11 @@ import { ContentData } from "./index"
  * 13: 网络不佳（请检查网络状态）: 刷新 或 联系开发者
  * 14: 拒绝访问
  * 15：房间人数已满
+ * 16: 停留过久
  * 
  * 20: 未知的异常 （请检查网络状态）: 刷新 或 联系开发者
  */
-export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 15 | 20
+export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 15 | 16 | 20
 
 export interface PageParticipant {
   guestId: string
