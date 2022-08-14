@@ -45,6 +45,7 @@ export interface RoRes {
   speedRate: "1"
   operator: string
   contentStamp: number
+  operateStamp: number
   participants: Participant[]
   guestId?: string
 }

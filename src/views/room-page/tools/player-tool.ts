@@ -1,6 +1,26 @@
 import { RoomStatus } from "../../../type/type-room-page";
 import time from "../../../utils/time";
 
+// 监听到 player.on 的时间戳
+let throttleData = {
+  "canplay": 0,
+  "play": 0,
+  "pause": 0,
+  "speed": 0,
+  "seek": 0
+}
+
+type ThrottleType = keyof typeof throttleData
+
+// 60ms 内仅触发一次
+function checkThrottle(t: ThrottleType): boolean {
+  let now = time.getLocalTime()
+  let stamp = throttleData[t]
+  if(now - stamp < 60) return false
+  throttleData[t] = now
+  return true
+}
+
 // 获取远端播放器当前播放到哪儿的 ms 
 function getRemoteCurrentTime(newStatus: RoomStatus, srcDuration: number): number {
   let { playStatus, contentStamp, operateStamp, speedRate } = newStatus
@@ -21,6 +41,7 @@ function initSpeedOptions(): number[] {
 }
 
 export default {
+  checkThrottle,
   getRemoteCurrentTime,
   initSpeedOptions
 }

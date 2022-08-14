@@ -11,6 +11,7 @@ import util from "../../../utils/util"
 import time from "../../../utils/time"
 import playerTool from "./player-tool"
 import { showParticipants } from "./show-participants"
+import cui from "../../../components/custom-ui"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
@@ -42,13 +43,16 @@ let intervalHb: number = 0      // 维持心跳的 interval 的返回值
 let timeoutCollect: number = 0  // 上报最新播放状态的 timeout 的返回值
 let srcDuration: number = 0     // 资源总时长（秒），如果为 0 代表还没解析出来
 let waitPlayer: Promise<boolean>
-let isIniting: boolean = true   // 从 enterRoom 到第一次 receiveNewStatusFromWs 的过程
+let isIniting: boolean = true   // 从 enterRoom 到第一次 receiveNewStatus 的过程；可能需要删掉！！！
+let latestStatus: RoomStatus    // 最新的播放器状态
+let isShowingAutoPlayPolicy: boolean = false  // 当前是否已在展示 autoplay policy 的弹窗
 
 // 是否为远端调整播放器状态，如果是，则在监听 player 各回调时不往下执行
 let isRemoteSetSeek = false
 let isRemoteSetPlaying = false
 let isRemoteSetPaused = false
 let isRemoteSetSpeedRate = false
+
 
 const toHome = () => {
   goHome(router)
@@ -166,12 +170,6 @@ function createPlayer() {
     console.log(" ")
   })
 
-  player.on("canplay", (e: Event) => {
-    console.log("player canplay.............")
-    console.log(e)
-    console.log(" ")
-  })
-
   player.on("complete", (e: Event) => {
     console.log("player complete.............")
     console.log(e)
@@ -208,9 +206,14 @@ function createPlayer() {
   })
 
   player.on("canplay", (e: Event) => {
+    if(!playerTool.checkThrottle("canplay")) return
     console.log("player canplay.............")
     console.log(e)
     console.log(" ")
+    if(pageData.state <= 2) {
+      pageData.state = 3
+      playerAlready(true)
+    }
   })
 
   player.on("loadeddata", (e: Event) => {
@@ -219,63 +222,68 @@ function createPlayer() {
     console.log(" ")
     if(pageData.state <= 2) {
       pageData.state = 3
+      playerAlready(true)
     }
-    console.log("回调 playerAlready..........")
-    playerAlready(true)
+
   })
 
   player.on("pause", (e: Event) => {
+    if(!playerTool.checkThrottle("pause")) return
+    
+    console.log("player pause.............")
+    console.log(e)
+    console.log(" ")
+    
     playStatus = "PAUSED"
     if(isRemoteSetPaused) {
       isRemoteSetPaused = false
       return
     }
 
-    console.log("player pause.............")
-    console.log(e)
-    console.log(" ")
     collectLatestStauts()
   })
 
   player.on("playing", (e: Event) => {
+    if(!playerTool.checkThrottle("play")) return
+    console.log("player playing.............")
+    console.log(e)
+    console.log(" ")
+
     playStatus = "PLAYING"
     if(isRemoteSetPlaying) {
       isRemoteSetPlaying = false
       return
     }
 
-    console.log("player playing.............")
-    console.log(e)
-    console.log(" ")
+    
     collectLatestStauts()
   })
 
   player.on("ratechange", (e: Event) => {
+    if(!playerTool.checkThrottle("speed")) return
+    console.log("player ratechange.............")
+    console.log(e)
+    console.log(Date.now())
+    console.log(" ")
     if(isRemoteSetSpeedRate) {
       isRemoteSetSpeedRate = false
       return
     }
-    console.log("player ratechange.............")
-    console.log(e)
-    console.log(" ")
     collectLatestStauts()
   })
 
   player.on("seeked", (e: Event) => {
+    if(!playerTool.checkThrottle("seek")) return
+    console.log("player seeked.............")
+    console.log(e)
+    console.log(" ")
+
     if(isRemoteSetSeek) {
       isRemoteSetSeek = false
       return
     }
-    console.log("player seeked.............")
-    console.log(e)
-    console.log(" ")
+    
     collectLatestStauts()
-  })
-
-  player.on("timeupdate", (e: Event) => {
-    // console.log("player timeupdate.............")
-    // console.log(e)
-    // console.log(" ")
   })
 
   player.on("waiting", (e: Event) => {
@@ -284,6 +292,8 @@ function createPlayer() {
     console.log(" ")
   })
 }
+
+
 
 // 收集最新状态，再用 ws 上报
 function collectLatestStauts() {
@@ -315,13 +325,9 @@ function collectLatestStauts() {
   }, COLLECT_TIMEOUT)
 }
 
-
 // 每若干秒的心跳
 function heartbeat() {
   const _env = util.getEnv()
-  console.log("_env: ")
-  console.log(_env)
-  console.log(" ")
 
   const _closeRoom = (val: PageState) => {
     pageData.state = val
@@ -344,6 +350,27 @@ function heartbeat() {
   const _newRoomStatus = (roRes: RoRes) => {
     pageData.content = roRes.content
     pageData.participants = showParticipants(roRes.participants)
+    latestStatus = {
+      roomId: roRes.roomId,
+      playStatus: roRes.playStatus,
+      speedRate: roRes.speedRate,
+      operator: roRes.operator,
+      contentStamp: roRes.contentStamp,
+      operateStamp: roRes.operateStamp
+    }
+    receiveNewStatus("http")
+  }
+
+  const _webSocketHb = () => {
+    const send = {
+      operateType: "FIRST_SEND",
+      roomId: pageData.roomId,
+      "x-pt-local-id": localId,
+      "x-pt-stamp": time.getTime()
+    }
+    const msg = JSON.stringify(send)
+    console.log("前端去发送心跳......")
+    ws?.send(msg)
   }
 
   intervalHb = setInterval(async () => {
@@ -361,6 +388,7 @@ function heartbeat() {
     const { code, data } = res
     if(code === "0000") {
       _newRoomStatus(data as RoRes)
+      _webSocketHb()
     }
     else if(code === "E4004") {
       _closeRoom(12)
@@ -402,7 +430,8 @@ function connectWebSocket() {
       firstSend()
     }
     else if(rT === "NEW_STATUS" && roomStatus) {
-      receiveNewStatusFromWs(roomStatus)
+      latestStatus = roomStatus
+      receiveNewStatus()
     }
   }
 }
@@ -424,51 +453,48 @@ function firstSend() {
   ws?.send(msg)
 }
 
-async function receiveNewStatusFromWs(newStatus: RoomStatus) {
-  if(newStatus.roomId !== pageData.roomId) return
+async function receiveNewStatus(fromType: string = "ws") {
+  if(latestStatus.roomId !== pageData.roomId) return
   if(isIniting) {
     isIniting = false
   }
-  else if(newStatus.operator === guestId) {
-    return
-  }
 
-  console.log("等待 player 初始化成功..........")
   await waitPlayer
-  console.log("player 已初始化完成..........")
   
-  let { contentStamp } = newStatus
+  let { contentStamp, operator } = latestStatus
 
   // 判断时间
-  let rCurrentTimeMs = playerTool.getRemoteCurrentTime(newStatus, srcDuration)
+  let rCurrentTimeMs = playerTool.getRemoteCurrentTime(latestStatus, srcDuration)
   let currentTimeMs = player.currentTime * 1000
   let diff1 = Math.abs(rCurrentTimeMs - currentTimeMs)
+  const T = fromType === "ws" ? 1100 : 2900
 
   console.log("远程播放器时间 (ms): ", rCurrentTimeMs)
   console.log("当前播放器时间 (ms): ", currentTimeMs)
   console.log(" ")
 
-  if(diff1 > 1100) {
+  if(diff1 > T) {
     isRemoteSetSeek = true
     let newCurrentTime = Math.round(rCurrentTimeMs / 1000)
     player.seek(newCurrentTime)
   }
 
   // 判断倍速
-  let rSpeedRate = newStatus.speedRate
+  let rSpeedRate = latestStatus.speedRate
   let speedRate = String(player.playbackRate)
   console.log("远程播放器的倍速: ", rSpeedRate)
   console.log("当前播放器的倍速: ", speedRate)
+  console.log(" ")
+
   if(rSpeedRate !== speedRate) {
     console.log("播放器倍速不一致，请求调整......")
     isRemoteSetSpeedRate = true
     let speedRateNum = Number(rSpeedRate)
-    console.log(speedRateNum)
     player.playbackRate = speedRateNum
   }
 
   // 判断播放状态
-  let rPlayStatus = newStatus.playStatus
+  let rPlayStatus = latestStatus.playStatus
   let diff2 = (srcDuration * 1000) - contentStamp
   if(rPlayStatus !== playStatus) {
     // 如果剩下 1s 就结束了 还要播放，进行阻挡
@@ -476,7 +502,15 @@ async function receiveNewStatusFromWs(newStatus: RoomStatus) {
     if(rPlayStatus === "PLAYING") {
       console.log("远端请求播放......")
       isRemoteSetPlaying = true
-      player.play()
+      try {
+        player.play()
+        checkIsPlaying()
+      }
+      catch(err) {
+        console.log("出现了播放失败.......")
+        console.log(err)
+        handleAutoPlayPolicy()
+      }
     }
     else {
       console.log("远端请求暂停......")
@@ -484,7 +518,50 @@ async function receiveNewStatusFromWs(newStatus: RoomStatus) {
       player.pause()
     }
   }
-  
+}
+
+async function checkIsPlaying() {
+  console.log("等待 1.5s 查看结果.......")
+  await util.waitMilli(1500)
+  console.log("等了 1.5s 啦！！")
+  const rPlayStatus = latestStatus.playStatus
+  if(rPlayStatus === "PLAYING" && playStatus === "PAUSED") {
+    handleAutoPlayPolicy()
+  }
+}
+
+async function handleAutoPlayPolicy() {
+  if(isShowingAutoPlayPolicy) return
+
+  isShowingAutoPlayPolicy = true
+  let res1 = await cui.showModal({
+    title: "当前房间正在播放",
+    content: "🔇还是🔊？",
+    cancelText: "静音",
+    confirmText: "开声音"
+  })
+  isShowingAutoPlayPolicy = false
+
+  console.log("看一下是否静音......")
+  console.log(res1)
+  console.log(" ")
+
+  // 如果是静音
+  if(res1.cancel) {
+    player.muted = true
+  }
+
+  // 调整进度条
+  let rCurrentTimeMs = playerTool.getRemoteCurrentTime(latestStatus, srcDuration)
+  isRemoteSetSeek = true
+  let newCurrentTime = Math.round(rCurrentTimeMs / 1000)
+  player.seek(newCurrentTime)
+
+  // 开始播放
+  if(latestStatus.playStatus === "PLAYING") {
+    isRemoteSetPlaying = true
+    player.play()
+  }
 }
 
 

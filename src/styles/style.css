@@ -63,6 +63,7 @@ a:hover {
   align-items: center;
   text-align: center;
   position: relative;
+  overflow: hidden;
 }
 
 .page-btns-container {

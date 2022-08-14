@@ -43,7 +43,7 @@ export interface RoomStatus {
 }
 
 export interface WsMsgRes {
-  responseType: "CONNECTED" | "NEW_STATUS"
+  responseType: "CONNECTED" | "NEW_STATUS" | "HEARTBEAT"
   roomStatus?: RoomStatus
 }
 
