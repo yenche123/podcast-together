@@ -1,7 +1,7 @@
 {
   "name": "podcast-together",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,7 @@
     "nanoid": "^4.0.0",
     "pinia": "^2.0.17",
     "shikwasa2": "^2.1.7",
+    "vconsole": "^3.14.6",
     "vue": "^3.2.37",
     "vue-router": "4"
   },

@@ -3,6 +3,9 @@ import CustomUi from "./components/custom-ui/custom-ui.vue"
 import { useTheme } from './hooks/useTheme'
 import time from "./utils/time"
 import { initPtRouter } from './routes/pt-router'
+import VConsole from 'vconsole';
+
+const vConsole = new VConsole();
 
 const { theme } = useTheme()
 let a1 = time.getTime()
