@@ -32,12 +32,12 @@
   /** 主按钮 */
   --main-btn-bg: #eee;
   --main-btn-text: #181818;
-  --hover-btn-bg: #e1e1e1;
+  --hover-btn-bg: #ccc;
 
   /** 副按钮 */
   --other-btn-bg: #404040;
   --other-btn-text: #c0c0c0;
-  --other-btn-hover: #505050;
+  --other-btn-hover: #606060;
 }
 
 p::selection {

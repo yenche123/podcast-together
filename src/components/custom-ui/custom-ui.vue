@@ -192,8 +192,8 @@ const {
     align-items: center;
     justify-content: center;
     border-radius: 20px;
-    background-color: var(--main-btn-bg);
-    color: var(--main-btn-text);
+    background-color: #2e2e2e;
+    color: #eee;
     position: relative;
 
     /** 来自 https://uiball.com/loaders/ */
@@ -214,7 +214,7 @@ const {
       height: 100%;
       width: 100%;
       border-radius: 50%;
-      background-color: var(--main-btn-text);
+      background-color: #eee;
       animation: pulse var(--uib-speed) ease-in-out infinite;
       transform: scale(0);
     }
