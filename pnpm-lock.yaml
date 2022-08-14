@@ -6,7 +6,7 @@ specifiers:
   nanoid: ^4.0.0
   pinia: ^2.0.17
   sass: ^1.54.0
-  shikwasa2: ^2.1.7
+  shikwasa2: ^2.2.1
   typescript: ^4.6.4
   user-agent-data-types: ^0.3.0
   vconsole: ^3.14.6
@@ -18,7 +18,7 @@ specifiers:
 dependencies:
   nanoid: 4.0.0
   pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
-  shikwasa2: 2.1.7
+  shikwasa2: 2.2.1
   vconsole: 3.14.6
   vue: 3.2.37
   vue-router: 4.1.3_vue@3.2.37
@@ -608,8 +608,8 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
-  /shikwasa2/2.1.7:
-    resolution: {integrity: sha512-rie+9tvH57reXE+NQIhIE8em2Liqx2syvKWpGpxYyVXTPxyo5EoZpXFzIaavhiVDZdQqHdzgR5dqqlkts9RfoA==}
+  /shikwasa2/2.2.1:
+    resolution: {integrity: sha512-p8y8WeHXcuhTV7yHqEmZ7BQHZqrcEpDTqN9kcS54E4woEM3fHVdU1s/mg2BCoMCcQ4rvWJ3kJqe0miRFMPzsJQ==}
     dev: false
 
   /source-map-js/1.0.2:

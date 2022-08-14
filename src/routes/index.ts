@@ -11,6 +11,7 @@ import ErrPage from "../views/err-page/err-page.vue"
 import IndexPage from "../views/index-page/index-page.vue"
 import JoinPage from "../views/join-page/join-page.vue"
 import RoomPage from "../views/room-page/room-page.vue"
+import TestSafari from "../views/test-safari/test-safari.vue"
 import ptUtil from "../utils/pt-util"
 
 
@@ -40,6 +41,14 @@ const routes: Array<RouteRecordRaw> = [
     component: IndexPage,
     name: "index",
     alias: ["/home"],
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/test",
+    component: TestSafari,
+    name: "test",
     meta: {
       keepAlive: true,
     }
