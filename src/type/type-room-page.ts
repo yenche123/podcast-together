@@ -8,14 +8,16 @@ import { ContentData } from "./index"
  * 
  * 11: 链接已过期: 回首页
  * 12: 查无该房间: 回首页
- * 13: 网络不佳（请检查网络状态）: 刷新 或 联系开发者
+ * 13: 网络不佳（请检查网络状态）: 重新进入 或 联系开发者
  * 14: 拒绝访问
  * 15：房间人数已满
  * 16: 停留过久
+ * 17: 房门外（超过 5 分钟闲置，你似乎游走到门外啦！）: 重新进入
+ * 18：连接异常（你的连接似乎已断开）: 重新进入 或 联系开发者 （用于 WebSocket 的问题）
  * 
- * 20: 未知的异常 （请检查网络状态）: 刷新 或 联系开发者
+ * 20: 未知的异常 （请检查网络状态）: 重新进入 或 联系开发者
  */
-export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 15 | 16 | 20
+export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20
 
 export interface PageParticipant {
   guestId: string
@@ -25,9 +27,9 @@ export interface PageParticipant {
 
 export interface PageData {
   state: PageState
-  roomId: string
+  roomId: string,
   content?: ContentData,
-  participants?: PageParticipant[]
+  participants?: PageParticipant[],
 }
 
 type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"

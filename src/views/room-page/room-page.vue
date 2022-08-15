@@ -1,35 +1,15 @@
 <script setup lang="ts">
 import 'shikwasa2/dist/shikwasa.min.css'
 import PtButton from "../../components/pt-button.vue"
-import { useRoomPage, enterRoom } from "./tools/useRoomPage"
+import { useRoomPage } from "./tools/useRoomPage"
 import ListeningLoader from '../../components/listening-loader.vue'
-import { computed, toRef } from 'vue';
 import images from '../../images';
+import { initBtns } from "./tools/handle-btns"
+import { toRef } from 'vue';
 
 const { pageData, playerEl, toHome } = useRoomPage()
 const state = toRef(pageData, "state")
-const btnText = computed(() => {
-  const v = state.value
-  if(v === 11 || v === 12 || v === 14 || v === 15) return "回首页"
-  else if(v === 13 || v === 16) return "刷新"
-  return "联系开发者"
-})
-
-// 点击异常情况下的按钮
-const onTapBtn = () => {
-  const s = state.value
-  // 网络不佳，去刷新
-  if(s === 13 || s === 16) {
-    enterRoom()
-  }
-  else if(s === 11 || s === 12 || s === 14 || s === 15) {
-    toHome()
-  }
-  else {
-    console.log("去联系开发者.............")
-  }
-
-}
+const { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 } = initBtns(state, toHome)
 
 </script>
 
@@ -75,22 +55,23 @@ const onTapBtn = () => {
 
     <!-- 出现异常 -->
     <div v-show="state >= 11" class="page-full">
-      <img :src="images.IMG_PLACEHOLDER" class="pf-no-data-img" />
+      <img :src="state === 17 ? images.IMG_DOOR : images.IMG_PLACEHOLDER" class="pf-no-data-img" />
       <div class="pf-no-data-box">
-
-        <h1 v-if="state === 11">链接已过期</h1>
-        <h1 v-else-if="state === 12">查无该房间</h1>
-        <h1 v-else-if="state === 13">网络不佳</h1>
-        <h1 v-else-if="state === 14">拒绝访问</h1>
-        <h1 v-else-if="state === 15">房间人数已满</h1>
-        <h1 v-else-if="state === 16">长时间未操作</h1>
-        <h1 v-else>未知的错误</h1>
-
+        <h1>{{ h1 }}</h1>
+        <p v-if="pText">{{ pText }}</p>
       </div>
       <div class="pf-no-data-btns">
-        <pt-button type="other" 
+        <pt-button
+          :type="btnText2 ? 'main' : 'other'"
           @click="onTapBtn"
           :text="btnText" 
+        />
+        <pt-button
+          v-if="btnText2"
+          type="other"
+          class="pf-ndb-other"
+          @click="onTapBtn2"
+          :text="btnText2" 
         />
       </div>
     </div>
@@ -133,7 +114,7 @@ const onTapBtn = () => {
 
   .pf-no-data-box {
     width: 100%;
-    height: 100px;
+    height: 150px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -141,19 +122,36 @@ const onTapBtn = () => {
     justify-content: center;
 
     h1 {
-      font-size: var(--title-font);
+      margin-block-start: auto;
+      margin-block-end: auto;
+      font-size: var(--big-word-style);
       color: var(--text-color);
+      line-height: 1.2;
+    }
+
+    p {
+      margin-block-start: 20px;
+      margin-block-end: auto;
+      font-size: var(--desc-color);
+      color: var(--desc-color);
       line-height: 1.5;
+      text-align: center;
+      white-space: pre-wrap;
+      user-select: text;
     }
   }
 
   .pf-no-data-btns {
     width: 100%;
-    height: 100px;
+    height: 130px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    .pf-ndb-other {
+      margin-top: 15px;
+    }
   }
 
 }

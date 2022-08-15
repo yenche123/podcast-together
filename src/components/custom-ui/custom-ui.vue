@@ -122,6 +122,8 @@ const {
       margin-block-start: 0;
       margin-block-end: 20px;
       white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .cui-modal-btns {
