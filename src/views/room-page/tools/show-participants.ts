@@ -23,7 +23,7 @@ export const showParticipants = (participants: Participant[]) => {
     const hr = min / 60
     
     if(sec <= 60) obj.enterStr = `刚刚`
-    else if(min >= 1 && min < 60) obj.enterStr = `` + Math.floor(min) + `分钟前`
+    else if(min >= 1 && min < 60) obj.enterStr = `` + Math.floor(min) + ` 分钟前`
     else if(hr < 2) obj.enterStr = `一小时前`
     else obj.enterStr = `两小时前`
 

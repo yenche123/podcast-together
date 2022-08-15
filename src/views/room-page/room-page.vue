@@ -199,7 +199,7 @@ const onTapBtn = () => {
     }
 
     .rp-nickName {
-      width: 60%;
+      width: 66%;
       font-size: var(--desc-font);
       color: var(--desc-color);
       padding-right: 10px;
