@@ -5,6 +5,11 @@ import time from "../../../utils/time"
 export const showParticipants = (participants: Participant[]) => {
   let list: PageParticipant[] = []
   if(participants.length < 1) return list
+
+  participants = participants.sort((a, b) => {
+    return a.enterStamp - b.enterStamp
+  })
+
   const now = time.getTime()
   list = participants.map(v => {
     let obj: PageParticipant = {
