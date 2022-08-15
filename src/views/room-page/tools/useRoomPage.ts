@@ -6,7 +6,6 @@ import { useRouteAndPtRouter, PtRouter, goHome } from "../../../routes/pt-router
 import ptUtil from "../../../utils/pt-util"
 import api from "../../../request/api"
 import rq from "../../../request"
-import Shikwasa from "shikwasa2"
 import util from "../../../utils/util"
 import time from "../../../utils/time"
 import playerTool from "./player-tool"
@@ -14,6 +13,7 @@ import { showParticipants } from "./show-participants"
 import cui from "../../../components/custom-ui"
 import images from "../../../images"
 import ptApi from "../../../utils/pt-api"
+import { initPlayer } from "./init-player"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
@@ -166,159 +166,56 @@ function createPlayer() {
     artist: content.seriesName,
   }
 
-  console.log("去创建 player.....................")
-
-  player = new Shikwasa({
-    container: () => playerEl.value,
-    audio,
-    themeColor: "var(--text-color)",
-    speedOptions: playerTool.initSpeedOptions(),
-  })
-
-  console.log("创建结果...................")
-  console.log(player)
-  console.log(" ")
-
-  player.on("audioupdate", (e: Event) => {
-    console.log("player audioupdate.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("audioparse", (e: Event) => {
-    console.log("player audioparse.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-
-  // 去监听 播放器的各个事件回调
-  player.on("abort", (e: Event) => {
-    console.log("player abort.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("complete", (e: Event) => {
-    console.log("player complete.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("durationchange", (e: any) => {
-
-    console.log("player durationchange................")
-    console.log("e:")
-    console.log(e)
-    let myAudio = e?.path?.[0]
-    if(!myAudio) {
-      myAudio = e?.srcElement
-    }
-    let duration = myAudio?.duration
-
-    console.log("看一下时长: ", duration)
-    console.log(" ")
-    
-    if(duration) {
-      srcDuration = duration
-    }
+  const durationchange = (duration?: number) => {
+    if(duration) srcDuration = duration
     showPage()
-  })
-
-  player.on("emptied", (e: Event) => {
-    console.log("player emptied.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("ended", (e: Event) => {
-    console.log("player ended.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("error", (e: Event) => {
-    console.log("player error.............")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("canplay", (e: Event) => {
-    if(!playerTool.checkThrottle("canplay")) return
+  }
+  const canplay = (e: Event) => {
     showPage()
-  })
-
-  player.on("loadeddata", (e: Event) => {
-    console.log("player loadeddata.............")
-    console.log(e)
-    console.log(" ")
+  }
+  const loadeddata = (e: Event) => {
     showPage()
-  })
-
-  player.on("pause", (e: Event) => {
-    if(!playerTool.checkThrottle("pause")) return
-    
-    console.log("player pause.............")
-    console.log(e)
-    console.log(" ")
-    
+  }
+  const pause = (e: Event) => {
     playStatus = "PAUSED"
     if(isRemoteSetPaused) {
       isRemoteSetPaused = false
       return
     }
-
     collectLatestStauts()
-  })
-
-  player.on("playing", (e: Event) => {
-    if(!playerTool.checkThrottle("play")) return
-
+  }
+  const playing = (e: Event) => {
     playStatus = "PLAYING"
     if(isRemoteSetPlaying) {
       isRemoteSetPlaying = false
       return
     }
-
     collectLatestStauts()
-  })
-
-  player.on("ratechange", (e: Event) => {
-    if(!playerTool.checkThrottle("speed")) return
+  }
+  const ratechange = (e: Event) => {
     if(isRemoteSetSpeedRate) {
       isRemoteSetSpeedRate = false
       return
     }
     collectLatestStauts()
-  })
-
-  player.on("seeking", (e: Event) => {
-    console.log("seeking..................")
-    console.log(e)
-    console.log(" ")
-  })
-
-  player.on("seeked", (e: Event) => {
-    if(!playerTool.checkThrottle("seek")) return
-
-    console.log("seeked..................")
-    console.log(e)
-    console.log(" ")
-
+  }
+  const seeked = (e: Event) => {
     if(isRemoteSetSeek) {
       isRemoteSetSeek = false
       return
     }
-    
     collectLatestStauts()
-  })
-
-  player.on("waiting", (e: Event) => {
-    console.log("player waiting.............")
-    console.log(e)
-    console.log(" ")
-  })
-
+  }
+  let callbacks = {
+    durationchange,
+    canplay,
+    loadeddata,
+    pause,
+    playing,
+    ratechange,
+    seeked
+  }
+  player = initPlayer(playerEl, audio, callbacks)
   checkPlayerReady()
 }
 
@@ -345,7 +242,6 @@ function showPage(): void {
     playerAlready(true)
   }
 }
-
 
 // 收集最新状态，再用 ws 上报
 function collectLatestStauts() {
@@ -492,7 +388,6 @@ function connectWebSocket() {
     const message = res.data
     const msgRes = util.strToObj<WsMsgRes>(message)
     
-
     if(!msgRes) return
     const { responseType: rT, roomStatus } = msgRes
 
@@ -513,6 +408,18 @@ function connectWebSocket() {
       console.log(msgRes)
       console.log(" ")
     }
+  }
+
+  ws.onclose = (res) => {
+    console.log("ws.onclose.......")
+    console.log(`res: `, res)
+    console.log(` `)
+  }
+
+  ws.onerror = (res) => {
+    console.log("ws.onerror.......")
+    console.log(res)
+    console.log(" ")
   }
 }
 
