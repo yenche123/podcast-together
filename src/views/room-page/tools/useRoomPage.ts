@@ -218,6 +218,7 @@ function createPlayer() {
     if(duration) {
       srcDuration = duration
     }
+    showPage()
   })
 
   player.on("emptied", (e: Event) => {
@@ -240,21 +241,14 @@ function createPlayer() {
 
   player.on("canplay", (e: Event) => {
     if(!playerTool.checkThrottle("canplay")) return
-    if(pageData.state <= 2) {
-      pageData.state = 3
-      playerAlready(true)
-    }
+    showPage()
   })
 
   player.on("loadeddata", (e: Event) => {
     console.log("player loadeddata.............")
     console.log(e)
     console.log(" ")
-    if(pageData.state <= 2) {
-      pageData.state = 3
-      playerAlready(true)
-    }
-
+    showPage()
   })
 
   player.on("pause", (e: Event) => {
@@ -339,6 +333,13 @@ async function checkPlayerReady() {
     return
   }
   player.preloadForIOS()
+}
+
+function showPage(): void {
+  if(pageData.state <= 2) {
+    pageData.state = 3
+    playerAlready(true)
+  }
 }
 
 
