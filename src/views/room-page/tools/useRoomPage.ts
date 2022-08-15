@@ -13,6 +13,7 @@ import playerTool from "./player-tool"
 import { showParticipants } from "./show-participants"
 import cui from "../../../components/custom-ui"
 import images from "../../../images"
+import ptApi from "../../../utils/pt-api"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
@@ -313,15 +314,21 @@ function createPlayer() {
   checkPlayerReady()
 }
 
-// 3s 后开始检测 player 是否已经 ready
+// 开始检测 player 是否已经 ready
 async function checkPlayerReady() {
-  // await util.waitMilli(3000)
-  // console.log("等了 3s 了！！！！")
-  // console.log(" ")
-  // if(pageData.state <= 2) {
-  //   pageData.state = 3
-  //   playerAlready(true)
-  // }
+  const cha = ptApi.getCharacteristic()
+  if(!cha.isIOS && !cha.isIPadOS) return
+  let res1 = await cui.showModal({
+    title: "即将进入房间",
+    content: "当前房间内可能正在播放中，是否进入？",
+    cancelText: "离开",
+    confirmText: "进入",
+  })
+  if(res1.cancel) {
+    toHome()
+    return
+  }
+  player.preloadForIOS()
 }
 
 
