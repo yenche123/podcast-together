@@ -52,6 +52,11 @@ const getEnv = (): EnvType => {
   }
 }
 
+const numToFix = (num: number, fix: number): number => {
+  const str = num.toFixed(fix)
+  return Number(str)
+}
+
 export default {
   waitMilli,
   copyObj,
@@ -59,5 +64,6 @@ export default {
   strToObj,
   getPromise,
   getEnv,
+  numToFix,
 }
 

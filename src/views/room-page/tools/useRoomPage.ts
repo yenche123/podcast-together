@@ -1,5 +1,5 @@
 import { ref, reactive, onActivated, onDeactivated, nextTick } from "vue"
-import { PageData, PageState, WsMsgRes, RoomStatus, PlayStatus } from "../../../type/type-room-page"
+import { PageData, PageState, WsMsgRes, RoomStatus, PlayStatus, RevokeType } from "../../../type/type-room-page"
 import { ContentData, RoRes } from "../../../type"
 import { RouteLocationNormalizedLoaded } from "vue-router"
 import { useRouteAndPtRouter, PtRouter, goHome } from "../../../routes/pt-router"
@@ -294,8 +294,18 @@ function createPlayer() {
     collectLatestStauts()
   })
 
+  player.on("seeking", (e: Event) => {
+    console.log("seeking..................")
+    console.log(e)
+    console.log(" ")
+  })
+
   player.on("seeked", (e: Event) => {
     if(!playerTool.checkThrottle("seek")) return
+
+    console.log("seeked..................")
+    console.log(e)
+    console.log(" ")
 
     if(isRemoteSetSeek) {
       isRemoteSetSeek = false
@@ -339,7 +349,8 @@ function collectLatestStauts() {
   const _collect = () => {
     if(!player) return
     const currentTime = player.currentTime ?? 0
-    const contentStamp = currentTime * 1000
+    let contentStamp = currentTime * 1000
+    contentStamp = util.numToFix(contentStamp, 0)
     const param = {
       operateType: "SET_PLAYER",
       roomId: pageData.roomId,
@@ -350,9 +361,9 @@ function collectLatestStauts() {
       contentStamp,
     }
 
-    console.log("看一下使用 ws 的上报数据: ")
-    console.log(param)
-    console.log(" ")
+    // console.log("看一下使用 ws 的上报数据: ")
+    // console.log(param)
+    // console.log(" ")
     const msg = JSON.stringify(param)
     ws?.send(msg)
   }
@@ -457,9 +468,7 @@ function connectWebSocket() {
   ws.onmessage = (res) => {
     const message = res.data
     const msgRes = util.strToObj<WsMsgRes>(message)
-    // console.log("web-socket 收到新的的消息.......")
-    // console.log(msgRes)
-    // console.log(" ")
+    
 
     if(!msgRes) return
     const { responseType: rT, roomStatus } = msgRes
@@ -469,6 +478,9 @@ function connectWebSocket() {
       firstSend()
     }
     else if(rT === "NEW_STATUS" && roomStatus) {
+      console.log("web-socket 收到新的的状态.......")
+      console.log(msgRes)
+      console.log(" ")
       latestStatus = roomStatus
       receiveNewStatus()
     }
@@ -488,26 +500,21 @@ function firstSend() {
   ws?.send(msg)
 }
 
-async function receiveNewStatus(fromType: string = "ws") {
+async function receiveNewStatus(fromType: RevokeType = "ws") {
   if(latestStatus.roomId !== pageData.roomId) return
   if(isIniting) {
     isIniting = false
   }
 
   await waitPlayer
-  
   let { contentStamp, operator } = latestStatus
 
   // 判断时间
-  let rCurrentTimeMs = playerTool.getRemoteCurrentTime(latestStatus, srcDuration)
-  let currentTimeMs = player.currentTime * 1000
-  let diff1 = Math.abs(rCurrentTimeMs - currentTimeMs)
-  const T = fromType === "ws" ? 1100 : 2900
-
-  if(diff1 > T) {
+  let reSeekSec = playerTool.getReSeek(latestStatus, srcDuration, player.currentTime, fromType)
+  if(reSeekSec >= 0) {
     isRemoteSetSeek = true
-    let newCurrentTime = Math.round(rCurrentTimeMs / 1000)
-    player.seek(newCurrentTime)
+    player.seek(reSeekSec)
+    checkSeek()
   }
 
   // 判断倍速
@@ -530,14 +537,32 @@ async function receiveNewStatus(fromType: string = "ws") {
     if(rPlayStatus === "PLAYING" && !isShowingAutoPlayPolicy) {
       console.log("远端请求播放......")
       isRemoteSetPlaying = true
-      player.play()
+      try {
+        player.play()
+      }
+      catch(err) {
+        console.log("播放失败.....")
+        console.log(err)
+      }
       checkIsPlaying()
     }
-    else {
+    else if(rPlayStatus === "PAUSED") {
       console.log("远端请求暂停......")
       isRemoteSetPaused = true
       player.pause()
     }
+  }
+}
+
+// 由于 iOS 初始化时设置时间点 会不起作用
+// 所以重新做检查
+async function checkSeek() {
+  await util.waitMilli(600)
+  console.log("checkSeek................")
+  let reSeekSec = playerTool.getReSeek(latestStatus, srcDuration, player.currentTime, "check")
+  if(reSeekSec >= 0) {
+    isRemoteSetSeek = true
+    player.seek(reSeekSec)
   }
 }
 
@@ -567,10 +592,11 @@ async function handleAutoPlayPolicy() {
   }
 
   // 调整进度条
-  let rCurrentTimeMs = playerTool.getRemoteCurrentTime(latestStatus, srcDuration)
-  isRemoteSetSeek = true
-  let newCurrentTime = Math.round(rCurrentTimeMs / 1000)
-  player.seek(newCurrentTime)
+  let reSeekSec = playerTool.getReSeek(latestStatus, srcDuration, player.currentTime, "check")
+  if(reSeekSec >= 0) {
+    isRemoteSetSeek = true
+    player.seek(reSeekSec)
+  }
 
   // 开始播放
   if(latestStatus.playStatus === "PLAYING") {

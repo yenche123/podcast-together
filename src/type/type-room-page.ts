@@ -48,4 +48,6 @@ export interface WsMsgRes {
   roomStatus?: RoomStatus
 }
 
+export type RevokeType = "ws" | "http" | "check"
+
 
