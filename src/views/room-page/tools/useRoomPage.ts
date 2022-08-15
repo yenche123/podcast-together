@@ -51,6 +51,10 @@ let latestStatus: RoomStatus    // 最新的播放器状态
 let isShowingAutoPlayPolicy: boolean = false  // 当前是否已在展示 autoplay policy 的弹窗
 let heartbeatNum = 0
 
+// 时间戳
+let lastOperateLocalStamp = 0        // 上一个本地设置远端服务器的时间戳
+let lastNewStatusFromWsStamp = 0    // 上一次收到 web-socket NEW_STATUS 的时间戳
+
 // 是否为远端调整播放器状态，如果是，则在监听 player 各回调时不往下执行
 let isRemoteSetSeek = false
 let isRemoteSetPlaying = false
@@ -345,6 +349,7 @@ function showPage(): void {
 
 // 收集最新状态，再用 ws 上报
 function collectLatestStauts() {
+  lastOperateLocalStamp = time.getLocalTime()
   if(timeoutCollect) clearTimeout(timeoutCollect)
 
   const _collect = () => {
@@ -399,6 +404,23 @@ function heartbeat() {
   const _newRoomStatus = (roRes: RoRes) => {
     pageData.content = roRes.content
     pageData.participants = showParticipants(roRes.participants)
+
+    const now = time.getLocalTime()
+    const diff1 = now - lastOperateLocalStamp
+    const diff2 = now - lastNewStatusFromWsStamp
+    if(diff1 < 900) {
+      console.log("刚刚 900ms 内本地有操作播放器")
+      console.log("故不采纳心跳的 info")
+      console.log(" ")
+      return
+    }
+    if(diff2 < 900) {
+      console.log("刚刚 900ms 内 web-socket 发来了最新状态")
+      console.log("故不采纳心跳的 info")
+      console.log(" ")
+      return
+    }
+
     latestStatus = {
       roomId: roRes.roomId,
       playStatus: roRes.playStatus,
@@ -412,7 +434,7 @@ function heartbeat() {
 
   const _webSocketHb = () => {
     const send = {
-      operateType: "FIRST_SEND",
+      operateType: "HEARTBEAT",
       roomId: pageData.roomId,
       "x-pt-local-id": localId,
       "x-pt-stamp": time.getTime()
@@ -482,8 +504,14 @@ function connectWebSocket() {
       console.log("web-socket 收到新的的状态.......")
       console.log(msgRes)
       console.log(" ")
+      lastNewStatusFromWsStamp = time.getLocalTime()
       latestStatus = roomStatus
       receiveNewStatus()
+    }
+    else if(rT === "HEARTBEAT") {
+      console.log("收到 ws 的HEARTBEAT.......")
+      console.log(msgRes)
+      console.log(" ")
     }
   }
 }
@@ -522,6 +550,10 @@ async function receiveNewStatus(fromType: RevokeType = "ws") {
   let rSpeedRate = latestStatus.speedRate
   let speedRate = String(player.playbackRate)
 
+  console.log("远端倍速: ", rSpeedRate)
+  console.log("当前倍速: ", speedRate)
+  console.log(" ")
+
   if(rSpeedRate !== speedRate) {
     console.log("播放器倍速不一致，请求调整......")
     isRemoteSetSpeedRate = true
@@ -559,7 +591,6 @@ async function receiveNewStatus(fromType: RevokeType = "ws") {
 // 所以重新做检查
 async function checkSeek() {
   await util.waitMilli(600)
-  console.log("checkSeek................")
   let reSeekSec = playerTool.getReSeek(latestStatus, srcDuration, player.currentTime, "check")
   if(reSeekSec >= 0) {
     isRemoteSetSeek = true
@@ -632,8 +663,5 @@ async function leaveRoom() {
     nickName,
   }
   const url = api.ROOM_OPERATE
-  const res = await rq.request<RoRes>(url, param)
-  console.log("看一下离开的结果......")
-  console.log(res)
-  console.log(" ")
+  await rq.request<RoRes>(url, param)
 }

@@ -47,7 +47,7 @@ function getReSeek(
   revokeType: RevokeType,
 ): number {
   let rPlayStatus = latestStatus.playStatus
-  let threshold = rPlayStatus === "PAUSED" ? 600 : revokeType === "http" ? 2200 : 1100
+  let threshold = rPlayStatus === "PAUSED" ? 1001 : revokeType === "http" ? 2200 : 1100
 
   const remoteMs = getRemoteCurrentTime(latestStatus, srcDuration)
   const localMs = currentTime * 1000
