@@ -5,6 +5,7 @@ let isMobile: boolean;   // 此字段表示是否为移动装置，包含是否�
 let isWeChat: boolean;
 let isIOS: boolean = false;
 let isIPadOS: boolean = false;
+let isFeishu: boolean = false;
 
 interface GetChaRes {
   isPC: boolean
@@ -12,11 +13,12 @@ interface GetChaRes {
   isWeChat: boolean
   isIOS: boolean         // 是否为 iphone
   isIPadOS: boolean      // 是否为 iPad
+  isFeishu: boolean
 }
 
 const getCharacteristic = (): GetChaRes => {
   if(isPC !== undefined) {
-    return { isPC, isMobile, isWeChat, isIOS, isIPadOS }
+    return _returnData()
   }
 
   const { userAgent = "", userAgentData } = navigator
@@ -52,8 +54,13 @@ const getCharacteristic = (): GetChaRes => {
 
   if(ua.includes("iphone") || ua.includes("ios")) isIOS = true
   if(ua.includes("ipad")) isIPadOS = true
+  if(ua.includes("feishu")) isFeishu = true
 
-  return { isPC, isMobile, isWeChat, isIOS, isIPadOS }
+  return _returnData()
+}
+
+function _returnData(): GetChaRes {
+  return { isPC, isMobile, isWeChat, isIOS, isIPadOS, isFeishu }
 }
 
 
