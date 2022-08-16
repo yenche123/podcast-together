@@ -295,6 +295,7 @@ async function checkOperated() {
 function heartbeat() {
   const _env = util.getEnv()
   heartbeatNum = 0
+  lastHeartbeatStamp = 0
 
   const _closeRoom = (val: PageState, sendLeave: boolean = false) => {
     pageData.state = val
