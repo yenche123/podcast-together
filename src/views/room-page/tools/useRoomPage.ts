@@ -175,12 +175,9 @@ function createPlayer() {
     if(duration) srcDuration = duration
     showPage()
   }
-  const canplay = (e: Event) => {
-    showPage()
-  }
-  const loadeddata = (e: Event) => {
-    showPage()
-  }
+  const canplay = (e: Event) => {}
+  const loadeddata = (e: Event) => {}
+
   const pause = (e: Event) => {
     playStatus = "PAUSED"
     if(isRemoteSetPaused) {
@@ -229,6 +226,9 @@ function createPlayer() {
 async function checkPlayerReady() {
   const cha = ptApi.getCharacteristic()
   if(!cha.isIOS && !cha.isIPadOS) return
+  await util.waitMilli(1500)
+  if(srcDuration) return
+
   let res1 = await cui.showModal({
     title: "即将进入房间",
     content: "当前房间内可能正在播放中，是否进入？",
@@ -337,7 +337,6 @@ function heartbeat() {
     // 检查是否已暂停 5 分钟
     if(playStatus === "PAUSED") {
       pausedSec += _env.HEARTBEAT_PERIOD
-      console.log("看一下当前停留的秒数: ", pausedSec)
       if(pausedSec >= (5 * 60)) {
         _closeRoom(17, true)
         return
@@ -351,7 +350,12 @@ function heartbeat() {
       nickName,
     }
     const url = api.ROOM_OPERATE
+
+    console.log(time.getLocalTimeStr() + " 去发送心跳 --------->")
     const res = await rq.request<RoRes>(url, param)
+    console.log("-------> 发送心跳返回")
+    console.log(res)
+    console.log(" ")
     if(!res) return
     const { code, data } = res
     if(code === "0000") {
@@ -398,7 +402,7 @@ function connectWebSocket() {
 
 // 等待 6s 查看 web-socket 是否连接
 async function checkWebSocket() {
-  await util.waitMilli(6000)
+  await util.waitMilli(5000)
   console.log("当前收到的 web-socket 数量: ", receiveWsNum)
   console.log(` `)
   if(receiveWsNum < 2) {
