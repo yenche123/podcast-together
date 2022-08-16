@@ -16,7 +16,8 @@
     "shikwasa2": "^2.2.1",
     "vconsole": "^3.14.6",
     "vue": "^3.2.37",
-    "vue-router": "4"
+    "vue-router": "4",
+    "weixin-js-sdk-ts": "^1.6.1"
   },
   "devDependencies": {
     "@types/node": "^18.6.2",

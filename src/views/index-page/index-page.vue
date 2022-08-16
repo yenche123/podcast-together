@@ -2,8 +2,15 @@
 import PtButton from "../../components/pt-button.vue"
 import { useRouter } from "../../routes/pt-router"
 import images from "../../images"
+import { onActivated } from "vue";
+import share from "../../utils/share";
 
 const router = useRouter()
+
+onActivated(() => {
+  console.log("打开首页，去设置分享...........")
+  share.configShare()
+})
 
 const onTapCreateBtn = (e: Event) => {
   router.push({ name: "join" })
@@ -49,7 +56,7 @@ const onTapCreateBtn = (e: Event) => {
     .index-icon-img {
       width: 60px;
       height: 60px;
-      background-image: v-bind("'url(' + images.APP_IOGO + ')'");
+      background-image: v-bind("'url(' + images.APP_LOGO + ')'");
       background-size: 100% 100%;
       background-repeat: no-repeat;
       margin-bottom: 50px;

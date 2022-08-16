@@ -165,7 +165,7 @@ function createPlayer() {
   const audio = {
     src: content.audioUrl,
     title: content.title,
-    cover: content.imageUrl ?? images.APP_IOGO,
+    cover: content.imageUrl ?? images.APP_LOGO,
     artist: content.seriesName,
   }
 

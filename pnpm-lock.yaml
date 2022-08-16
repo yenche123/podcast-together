@@ -14,6 +14,7 @@ specifiers:
   vue: ^3.2.37
   vue-router: '4'
   vue-tsc: ^0.38.4
+  weixin-js-sdk-ts: ^1.6.1
 
 dependencies:
   nanoid: 4.0.0
@@ -22,6 +23,7 @@ dependencies:
   vconsole: 3.14.6
   vue: 3.2.37
   vue-router: 4.1.3_vue@3.2.37
+  weixin-js-sdk-ts: 1.6.1
 
 devDependencies:
   '@types/node': 18.6.2
@@ -727,3 +729,13 @@ packages:
       '@vue/runtime-dom': 3.2.37
       '@vue/server-renderer': 3.2.37_vue@3.2.37
       '@vue/shared': 3.2.37
+
+  /weixin-js-sdk-ts/1.6.1:
+    resolution: {integrity: sha512-nnW5zjmg3JG3d+LsNA9ZK3aEKJ1JUR8UU5le84iXEcgfkjVtW0DAucrv/RPD3VHGDUM/5OD43a3bWoGWxIID0A==}
+    dependencies:
+      weixin-js-sdk: 1.6.0
+    dev: false
+
+  /weixin-js-sdk/1.6.0:
+    resolution: {integrity: sha512-3IYQH7aalJGFJrwdT3epvTdR1MboMiH7vIZ5BRL2eYOJ12BNah7csoMkmSZzkq1+l92sSq29XdTCVjCJoK2sBQ==}
+    dev: false

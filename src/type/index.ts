@@ -61,4 +61,5 @@ export interface EnvType {
   WEBSOCKET_URL: string
   API_URL: string
   HEARTBEAT_PERIOD: number
+  THIRD_PARTY_SETTING_URL?: string
 }
