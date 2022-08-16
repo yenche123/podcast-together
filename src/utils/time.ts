@@ -1,5 +1,6 @@
 import api from "../request/api"
 import { RequestRes } from "../type"
+import util from "./util"
 
 let diff = 0
 
@@ -38,8 +39,21 @@ const getLocalTime = (): number => {
   return Date.now()
 }
 
+// 返回当前时间的字符串
+const getLocalTimeStr = (): string => {
+  let t = getTime()
+  const d = new Date(t)
+  const mon = util.format0(d.getMonth()+1)
+  const date = util.format0(d.getDate())
+  const hr = util.format0(d.getHours())
+  const min = util.format0(d.getMinutes())
+  const sec = util.format0(d.getSeconds())
+  return `${mon}-${date} ${hr}:${min}:${sec}`
+}
+
 
 export default {
   getTime,
-  getLocalTime
+  getLocalTime,
+  getLocalTimeStr
 }

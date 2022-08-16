@@ -59,6 +59,18 @@ const numToFix = (num: number, fix: number): number => {
   return Number(str)
 }
 
+/**
+ * 返回小于 2 位时，前面补0
+ */
+const format0 = (val: string | number): string => {
+  if(typeof val === "number") {
+    if(val < 10) return "0" + val
+    return "" + val  
+  }
+  if(val.length < 2) return "0" + val
+  return val
+}
+
 export default {
   waitMilli,
   copyObj,
@@ -67,5 +79,6 @@ export default {
   getPromise,
   getEnv,
   numToFix,
+  format0,
 }
 
