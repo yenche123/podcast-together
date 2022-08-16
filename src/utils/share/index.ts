@@ -2,6 +2,7 @@ import util from "../util"
 import wx from "weixin-js-sdk-ts"
 import rq from "../../request"
 import images from "../../images"
+import { WxConfig, WxShare, ShareCfgData } from "../../type/type-share"
 
 let hasConfigWxJsSDK = false
 
@@ -14,7 +15,7 @@ const _configWxJsSDK = (): Promise<boolean> => {
 
   const body1 = {
     operateType: "WX_JS_SDK_CONFIG",
-    webUrl: location.origin
+    webUrl: location.href
   }
 
   console.log("body1: ")

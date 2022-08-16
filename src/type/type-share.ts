@@ -1,14 +1,14 @@
 
 
 
-interface WxConfig {
+export interface WxConfig {
   appId: string
   timestamp: number
   nonceStr: string
   signature: string
 }
 
-interface WxShare {
+export interface WxShare {
   frdTitle: string
   frdDesc?: string
   frdImgUrl?: string
@@ -17,7 +17,7 @@ interface WxShare {
   link?: string
 }
 
-interface ShareCfgData {
+export interface ShareCfgData {
   title?: string
   desc?: string
   imageUrl?: string
