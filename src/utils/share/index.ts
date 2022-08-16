@@ -2,7 +2,7 @@ import util from "../util"
 import wx from "weixin-js-sdk-ts"
 import rq from "../../request"
 import images from "../../images"
-import { WxConfig, WxShare, ShareCfgData } from "../../type/type-share"
+import { WxConfig, WxShare, ShareCfgData, ShareWay } from "../../type/type-share"
 import ptApi from "../pt-api"
 
 let hasConfigWxJsSDK = false
@@ -68,29 +68,35 @@ const _configWxJsSDK = (): Promise<boolean> => {
 }
 
 
-const _setBasic = (title?: string, desc?: string, iconUrl?: string) => {
+const _setBasic = (title?: string, desc?: string, iconUrl?: string, shareWay?: ShareWay) => {
   if(title) {
-    document.title = title
-    const twitter_title = document.querySelector(`head > meta[name="twitter:title"]`)
-    const og_title = document.querySelector(`head > meta[property="og:title"]`)
-    twitter_title?.setAttribute("content", title)
-    og_title?.setAttribute("content", title)
+    if(shareWay === "all" || shareWay === "inner") document.title = title
+    if(shareWay === "all" || shareWay === "outside") {
+      const twitter_title = document.querySelector(`head > meta[name="twitter:title"]`)
+      const og_title = document.querySelector(`head > meta[property="og:title"]`)
+      twitter_title?.setAttribute("content", title)
+      og_title?.setAttribute("content", title)
+    }
   }
   if(desc !== undefined) {
     const descEl = document.querySelector(`head > meta[name="description"]`)
     const twitter_desc = document.querySelector(`head > meta[name="twitter:description"]`)
     const og_desc = document.querySelector(`head > meta[property="og:description"]`)
-    descEl?.setAttribute("content", desc)
-    twitter_desc?.setAttribute("content", desc)
-    og_desc?.setAttribute("content", desc)
+    if(shareWay === "all" || shareWay === "inner") descEl?.setAttribute("content", desc)
+    if(shareWay === "all" || shareWay === "outside") {
+      twitter_desc?.setAttribute("content", desc)
+      og_desc?.setAttribute("content", desc)
+    }
   }
   if(iconUrl) {
     const iconEl = document.querySelector(`head > link[rel="icon"]`)
     const twitter_image = document.querySelector(`head > meta[name="twitter:image"]`)
     const og_image = document.querySelector(`head > meta[property="og:image"]`)
-    iconEl?.setAttribute("href", iconUrl)
-    twitter_image?.setAttribute("content", iconUrl)
-    og_image?.setAttribute("content", iconUrl)
+    if(shareWay === "all" || shareWay === "inner") iconEl?.setAttribute("href", iconUrl)
+    if(shareWay === "all" || shareWay === "outside") {
+      twitter_image?.setAttribute("content", iconUrl)
+      og_image?.setAttribute("content", iconUrl)
+    }
   }
 }
 
@@ -133,7 +139,7 @@ const _reset = () => {
   let title = "一起听播客"
   let desc = "跟你的好友一起实时听播客！"
   let iconUrl = images.FAVI_ICON
-  _setBasic(title, desc, iconUrl)
+  _setBasic(title, desc, iconUrl, "all")
   _setWeChat({ frdTitle: title, pyqTitle: title })
 }
 
@@ -145,8 +151,8 @@ const configShare = async (opt?: ShareCfgData): Promise<void> => {
     _reset()
     return
   }
-  let { title, desc, imageUrl } = opt
-  _setBasic(title, desc, imageUrl)
+  let { title, desc, imageUrl, shareWay = "all" } = opt
+  _setBasic(title, desc, imageUrl, shareWay)
   if(opt.wxShare) _setWeChat(opt.wxShare)
 }
 

@@ -4,26 +4,19 @@ import { ShareCfgData } from "../../../type/type-share"
 import share from "../../../utils/share"
 
 export const shareData = (c: ContentData, playStatus: string, nickName: string) => {
-  let isPlaying = playStatus === "PLAYING" ? true : false
-  let title = c.title ? c.title : "一起听播客"
-  let frdTitle = title
+  let frdTitle = c.seriesName ? `${nickName} 邀请你一起听《${c.seriesName}》` : `${nickName} 邀请你一起听播客`
   let pyqTitle = c.title ? `${nickName} 邀请你一起听 ${c.title}` : `${nickName} 邀请你一起听播客`
-  if(isPlaying && title === c.title) title = "正在听 " + title
-
-  let desc = c.seriesName ? `${nickName} 邀请你一起听《${c.seriesName}》` : `${nickName} 邀请你一起听播客`
-  let imageUrl = c.imageUrl ? c.imageUrl : images.FAVI_ICON
-  let frdImgUrl = c.imageUrl ? c.imageUrl : images.APP_LOGO_COS
+  let desc = c.title ? c.title : "一起听播客"
 
   let opt: ShareCfgData = {
-    title,
+    title: pyqTitle,
     desc,
-    imageUrl,
+    imageUrl: images.APP_LOGO_COS,
+    shareWay: "outside",
     wxShare: {
       frdTitle,
       frdDesc: desc,
-      frdImgUrl,
       pyqTitle,
-      pyqImgUrl: frdImgUrl,
       link: location.href,
     }
   }
