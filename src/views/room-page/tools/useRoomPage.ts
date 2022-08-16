@@ -1,11 +1,9 @@
 import { ref, reactive, onActivated, onDeactivated, nextTick } from "vue"
 import { PageData, PageState, WsMsgRes, RoomStatus, PlayStatus, RevokeType } from "../../../type/type-room-page"
-import { ContentData, RoRes } from "../../../type"
+import { ContentData, RequestRes, RoRes } from "../../../type"
 import { RouteLocationNormalizedLoaded } from "vue-router"
 import { useRouteAndPtRouter, PtRouter, goHome } from "../../../routes/pt-router"
 import ptUtil from "../../../utils/pt-util"
-import api from "../../../request/api"
-import rq from "../../../request"
 import util from "../../../utils/util"
 import time from "../../../utils/time"
 import playerTool from "./player-tool"
@@ -16,6 +14,7 @@ import ptApi from "../../../utils/pt-api"
 import { initPlayer } from "./init-player"
 import { initWebSocket, sendToWebSocket } from "./init-websocket"
 import { shareData } from "./init-share"
+import { request_enter, request_heartbeat, request_leave } from "./room-request"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
@@ -57,6 +56,7 @@ let pausedSec = 0               // 已经暂停的秒数
 // 时间戳
 let lastOperateLocalStamp = 0        // 上一个本地设置远端服务器的时间戳
 let lastNewStatusFromWsStamp = 0    // 上一次收到 web-socket NEW_STATUS 的时间戳
+let lastHeartbeatStamp = 0          // 上一次心跳的时间戳
 
 // 是否为远端调整播放器状态，如果是，则在监听 player 各回调时不往下执行
 let isRemoteSetSeek = false
@@ -100,31 +100,31 @@ export async function enterRoom() {
   let roomId: string = route.params.roomId as string
   pageData.roomId = roomId
   pageData.state = 1
-  heartbeatNum = 0
   pausedSec = 0
-  receiveWsNum = 0
 
   let userData = ptUtil.getUserData()
   nickName = userData.nickName as string
   localId = userData.nonce as string
   
-  let param = {
-    operateType: "ENTER",
-    roomId,
-    nickName,
-  }
-  const url = api.ROOM_OPERATE
-  let res = await rq.request<RoRes>(url, param)
-  if(!res) {
-    pageData.state = 13
-    return
-  }
-
+  let res = await request_enter(roomId, nickName)
+  enterResToErrState(res)
+  if(!res) return
   let { code, data } = res
   if(code === "0000") {
     pageData.state = 2
     await nextTick()
     afterEnter(data as RoRes)
+  }
+}
+
+function enterResToErrState(res?: RequestRes) {
+  if(!res) {
+    pageData.state = 13
+    return
+  }
+  let { code } = res
+  if(code === "0000") {
+    return
   }
   else if(code === "E4004") {
     pageData.state = 12
@@ -269,6 +269,7 @@ function collectLatestStatus() {
       contentStamp,
     }
     sendToWebSocket(ws, param)
+    checkOperated()
   }
 
   timeoutCollect = setTimeout(() => {
@@ -276,9 +277,24 @@ function collectLatestStatus() {
   }, COLLECT_TIMEOUT)
 }
 
+// 检查操作播放器 远端是否有收到
+async function checkOperated() {
+  await util.waitMilli(2500)
+  const now = time.getLocalTime()
+  const diff = now - lastNewStatusFromWsStamp
+  console.log("检查操作播放器远端是否接收 时间差 (理想状态小于 2500):")
+  console.log(diff)
+  console.log(" ")
+  if(diff < 3000) return
+
+  // 去重新连接 web-socket
+  connectWebSocket()
+}
+
 // 每若干秒的心跳
 function heartbeat() {
   const _env = util.getEnv()
+  heartbeatNum = 0
 
   const _closeRoom = (val: PageState, sendLeave: boolean = false) => {
     pageData.state = val
@@ -327,12 +343,22 @@ function heartbeat() {
   }
 
   intervalHb = setInterval(async () => {
+
+    // 心跳数有没有超过最大值
     heartbeatNum++
-    
     if(heartbeatNum > MAX_HB_NUM) {
       _closeRoom(16, true)
       return
     }
+
+    // 检查上一次心跳的时间，如果超过 35s
+    // 就代表被浏览器限制定时了，执行 resume
+    const now = time.getLocalTime()
+    if(lastHeartbeatStamp > 0 && lastHeartbeatStamp + 35000 < now) {
+      resume()
+      return
+    }
+    lastHeartbeatStamp = now
 
     // 检查是否已暂停 5 分钟
     if(playStatus === "PAUSED") {
@@ -344,15 +370,8 @@ function heartbeat() {
     }
     else pausedSec = 0
 
-    const param = {
-      operateType: "HEARTBEAT",
-      roomId: pageData.roomId,
-      nickName,
-    }
-    const url = api.ROOM_OPERATE
-
     console.log(time.getLocalTimeStr() + " 去发送心跳 --------->")
-    const res = await rq.request<RoRes>(url, param)
+    const res = await request_heartbeat(pageData.roomId, nickName)
     console.log("-------> 发送心跳返回")
     console.log(res)
     console.log(" ")
@@ -369,8 +388,48 @@ function heartbeat() {
   }, _env.HEARTBEAT_PERIOD * 1000)
 }
 
+// 用户息屏后、再打开，可能在这之间的定时器被浏览器限制了
+// 没有了最新状态，所以进行恢复
+async function resume() {
+  console.log("执行 resume......................")
+  console.log(" ")
+  pausedSec = 0
+
+  // 销毁心跳
+  if(intervalHb) clearInterval(intervalHb)
+  intervalHb = 0
+
+  cui.showLoading({ title: "请稍等.." })
+
+  // 关闭 web-socket
+  if(ws) {
+    try {
+      ws.close()
+    }
+    catch(err) {}
+    await util.waitMilli(500)
+  }
+  let res = await request_enter(pageData.roomId, nickName)
+  console.log("重新进入房间的结果..........")
+  console.log(res)
+  console.log(" ")
+  cui.hideLoading()
+  enterResToErrState(res)
+  if(!res || res.code !== "0000") {
+    leaveRoom()
+    return
+  }
+  let roRes = res.data as RoRes
+  pageData.content = roRes.content
+  pageData.participants = showParticipants(roRes.participants)
+  heartbeat()
+  connectWebSocket()
+}
+
 // 使用 web-socket 去建立连接
 function connectWebSocket() {
+  receiveWsNum = 0
+
   const onmessage = (msgRes: WsMsgRes) => {
     receiveWsNum++
     const { responseType: rT, roomStatus } = msgRes
@@ -389,7 +448,6 @@ function connectWebSocket() {
     }
     else if(rT === "HEARTBEAT") {
       console.log("收到 ws 的HEARTBEAT.......")
-      console.log(msgRes)
       console.log(" ")
     }
   }
@@ -400,10 +458,10 @@ function connectWebSocket() {
   checkWebSocket()
 }
 
-// 等待 6s 查看 web-socket 是否连接
+// 等待 5s 查看 web-socket 是否连接
 async function checkWebSocket() {
   await util.waitMilli(5000)
-  console.log("当前收到的 web-socket 数量: ", receiveWsNum)
+  console.log("当前 web-socket 收到的消息数量: ", receiveWsNum)
   console.log(` `)
   if(receiveWsNum < 2) {
     pageData.state = 18
@@ -547,11 +605,5 @@ async function leaveRoom(sendLeave: boolean = true) {
 
   if(!sendLeave) return
   // 去发送离开房间的请求
-  let param = {
-    operateType: "LEAVE",
-    roomId: pageData.roomId,
-    nickName,
-  }
-  const url = api.ROOM_OPERATE
-  await rq.request<RoRes>(url, param)
+  await request_leave(pageData.roomId, nickName)
 }

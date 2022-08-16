@@ -123,9 +123,9 @@ export function initPlayer(
   })
 
   player.on("seeking", (e: Event) => {
-    console.log("seeking..................")
-    console.log(e)
-    console.log(" ")
+    // console.log("seeking..................")
+    // console.log(e)
+    // console.log(" ")
   })
 
   player.on("seeked", (e: Event) => {

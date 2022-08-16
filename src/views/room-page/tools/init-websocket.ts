@@ -41,20 +41,37 @@ export function initWebSocket(callbacks: WsCallbacks) {
 }
 
 
-export function sendToWebSocket(ws: WebSocket | null, obj: Record<string, any>): void {
+export function sendToWebSocket(ws: WebSocket | null, obj: Record<string, any>): boolean {
   let msg: string
   try {
     msg = JSON.stringify(obj)
   }
   catch(err) {
     console.log("解析失败")
-    return
+    console.log(err)
+    return false
   }
-  if(ws) {
-    ws.send(msg)
-  }
-  else {
+  if(!ws) {
     console.log("ws 不存在，无法发送...........")
     console.log(" ")
+    return false
   }
+  
+  if(obj.operateType === "SET_PLAYER") {
+    console.log("使用 web-socket 操作播放器消息: ")
+    console.log(obj)
+    console.log(" ")
+  }
+  
+
+  try {
+    ws.send(msg)
+  }
+  catch(err) {
+    console.log("使用 web-socket 发送消息失败.......")
+    console.log(err)
+    console.log(" ")
+    return false
+  }
+  return true
 }
