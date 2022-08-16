@@ -2,7 +2,7 @@
 
 let isPC: boolean;
 let isMobile: boolean;   // 此字段表示是否为移动装置，包含是否为手机或pad
-let isWeChat: boolean;
+let isWeChat: boolean = false;
 let isIOS: boolean = false;
 let isIPadOS: boolean = false;
 let isFeishu: boolean = false;
@@ -23,27 +23,21 @@ const getCharacteristic = (): GetChaRes => {
 
   const { userAgent = "", userAgentData } = navigator
   const ua = userAgent.toLowerCase()
+  const mobileMatch = userAgent.match(/AppleWebKit.*Mobile.*/)
 
   console.log("userAgentData: ", userAgentData)
-  console.log("navigator: ", navigator)
   console.log("ua: ", ua)
-
-  const res = ua.match(/MicroMessenger/i)
+  console.log("mobileMatch: ", mobileMatch)
 
   // 判断是否为微信环境
-  if(typeof res === "string" && res == "micromessenger") {
-    isWeChat = true
-  }
-  else {
-    isWeChat = false
-  }
+  if(ua.includes("micromessenger")) isWeChat = true
 
   // 判断是否为移动装置
   if(userAgentData?.mobile) {
     isMobile = true
     isPC = false
   }
-  else if(!!userAgent.match(/AppleWebKit.*Mobile.*/)) {
+  else if(!!mobileMatch) {
     isMobile = true
     isPC = false
   }
@@ -56,7 +50,11 @@ const getCharacteristic = (): GetChaRes => {
   if(ua.includes("ipad")) isIPadOS = true
   if(ua.includes("feishu")) isFeishu = true
 
-  return _returnData()
+  let res = _returnData()
+  console.log("看一下特征值判断结果...........")
+  console.log(res)
+  console.log(" ")
+  return res
 }
 
 function _returnData(): GetChaRes {
