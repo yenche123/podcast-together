@@ -15,6 +15,7 @@ import images from "../../../images"
 import ptApi from "../../../utils/pt-api"
 import { initPlayer } from "./init-player"
 import { initWebSocket, sendToWebSocket } from "./init-websocket"
+import { shareData } from "./init-share"
 
 // 一些常量
 const COLLECT_TIMEOUT = 300    // 收集最新状态的最小间隔
@@ -152,6 +153,7 @@ function afterEnter(roRes: RoRes) {
   createPlayer()
   heartbeat()
   connectWebSocket()
+  shareData(roRes.content, roRes.playStatus, nickName)
 }
 
 // 创建播放器

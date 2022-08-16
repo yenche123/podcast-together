@@ -3,11 +3,18 @@ import wx from "weixin-js-sdk-ts"
 import rq from "../../request"
 import images from "../../images"
 import { WxConfig, WxShare, ShareCfgData } from "../../type/type-share"
+import ptApi from "../pt-api"
 
 let hasConfigWxJsSDK = false
 
 const _configWxJsSDK = (): Promise<boolean> => {
   if(hasConfigWxJsSDK) return util.getPromise(true)
+  let { isWeChat } = ptApi.getCharacteristic()
+  if(!isWeChat) {
+    console.log("当前不在微信环境内........")
+    console.log(" ")
+    return util.getPromise(true)
+  }
 
   const _env = util.getEnv()
   const url = _env.THIRD_PARTY_SETTING_URL
@@ -54,12 +61,11 @@ const _configWxJsSDK = (): Promise<boolean> => {
     })
     setTimeout(() => {
       a(false)
-    }, 3000)
+    }, 2000)
   }
 
   return new Promise(_handle)
 }
-
 
 
 const _setBasic = (title?: string, desc?: string, iconUrl?: string) => {
