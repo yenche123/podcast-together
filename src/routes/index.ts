@@ -7,7 +7,6 @@ import {
 } from "vue-router"
 
 import CreatePage from "../views/create-page/create-page.vue"
-import ErrPage from "../views/err-page/err-page.vue"
 import IndexPage from "../views/index-page/index-page.vue"
 import JoinPage from "../views/join-page/join-page.vue"
 import RoomPage from "../views/room-page/room-page.vue"
@@ -70,13 +69,10 @@ const routes: Array<RouteRecordRaw> = [
     },
     beforeEnter: [_checkNickName]
   },
+  // 其他路由，全部重定向到首页
   {
-    path: "/error",
-    component: ErrPage,
-    name: "error",
-    meta: {
-      keepAlive: true,
-    },
+    path: "/:pathMatch(.*)*",
+    redirect: "/",
   }
 ]
 
