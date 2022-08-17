@@ -58,6 +58,7 @@ export interface StorageUserData {
 }
 
 export interface EnvType {
+  DEV: boolean
   WEBSOCKET_URL: string
   API_URL: string
   HEARTBEAT_PERIOD: number

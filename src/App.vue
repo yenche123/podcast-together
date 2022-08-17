@@ -3,16 +3,15 @@ import CustomUi from "./components/custom-ui/custom-ui.vue"
 import { useTheme } from './hooks/useTheme'
 import time from "./utils/time"
 import { initPtRouter } from './routes/pt-router'
-import VConsole from 'vconsole';
+import { useApp } from "./hooks/useApp"
 
-const vConsole = new VConsole();
-
+useApp()
 const { theme } = useTheme()
 let a1 = time.getTime()
 const { route } = initPtRouter()
 
 // 打印当前版本号
-console.log(`###### 欢迎使用 Podcast-Together ######`)
+console.log(`### 欢迎使用 Podcast-Together ###`)
 console.log(`当前版本号: ${PT_ENV.version}`)
 console.log(` `)
 
@@ -40,7 +39,10 @@ console.log(` `)
 <style scoped>
 
 .app-global {
+  height: max-content;
+  min-height: 100%;
   background-color: var(--bg-color);
+  min-width: 250px;
 }
 
 </style>

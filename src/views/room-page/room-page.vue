@@ -92,6 +92,10 @@ const alwaysFalse = ref(false)
 
 <style scoped lang="scss">
 
+.page {
+  min-height: 100vh;
+}
+
 .page-full {
   height: 100vh;
   min-height: 480px;
@@ -200,15 +204,16 @@ const alwaysFalse = ref(false)
     position: relative;
 
     .room-participant {
+      flex: 1;
       display: flex;
       align-items: center;
-      width: 100%;
       height: 80px;
       position: relative;
     }
 
     .rp-nickName {
-      width: 66%;
+      display: flex;
+      max-width: 60%;
       font-size: var(--desc-font);
       color: var(--desc-color);
       padding-right: 10px;

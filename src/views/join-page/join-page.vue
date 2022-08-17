@@ -83,13 +83,19 @@ onMounted(() => {
   }
 
   input {
-    font-size: 38px;
+    font-size: 36px;
     line-height: 50px;
     color: var(--desc-color);
     border: 0;
     outline: none;
     text-align: center;
     width: 100%;
+  }
+
+  @media screen and (max-width: 300px) {
+    input {
+      font-size: 30px;
+    }
   }
 
   input::-webkit-input-placeholder {

@@ -42,11 +42,13 @@ const getPromise = <T = any>(val: T): Promise<T> => {
 }
 
 const getEnv = (): EnvType => {
+  const DEV = import.meta.env.DEV
   const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL
   const API_URL = import.meta.env.VITE_API_URL
   const HEARTBEAT_PERIOD = import.meta.env.VITE_HEARTBEAT_PERIOD ?? "15"
   const THIRD_PARTY_SETTING_URL = import.meta.env.VITE_THIRD_PARTY_SETTING_URL
   return {
+    DEV,
     WEBSOCKET_URL,
     API_URL,
     HEARTBEAT_PERIOD: Number(HEARTBEAT_PERIOD),
