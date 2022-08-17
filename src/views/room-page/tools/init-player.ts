@@ -109,6 +109,9 @@ export function initPlayer(
 
   player.on("pause", (e: Event) => {
     if(!playerTool.checkThrottle("pause")) return
+    console.log("player pause...........")
+    console.log(e)
+    console.log(" ")
     callbacks.pause && callbacks.pause(e)
   })
 
