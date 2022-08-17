@@ -73,6 +73,10 @@ const toHome = () => {
   goHome(router)
 }
 
+const toContact = () => {
+  router.push({ name: "contact" })
+}
+
 export const useRoomPage = () => {
   const rr = useRouteAndPtRouter()
   router = rr.router
@@ -80,7 +84,7 @@ export const useRoomPage = () => {
   
   init()
 
-  return { pageData, playerEl, route, router, toHome }
+  return { pageData, playerEl, route, router, toHome, toContact }
 }
 
 // 初始化一些东西，比如 onActivated / onDeactivated 

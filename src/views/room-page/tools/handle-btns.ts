@@ -2,7 +2,11 @@ import { computed, Ref } from "vue"
 import { PageState } from "../../../type/type-room-page"
 import { enterRoom } from "./useRoomPage"
 
-export function initBtns(state: Ref<PageState>, toHome: () => void) {
+export function initBtns(
+  state: Ref<PageState>, 
+  toHome: () => void, 
+  toContact: () => void
+) {
   const btnText = computed(() => {
     const v = state.value
     if(v < 11) return ""
@@ -57,7 +61,7 @@ export function initBtns(state: Ref<PageState>, toHome: () => void) {
   }
 
   const onTapBtn2 = () => {
-    console.log("去联系开发者........")
+    toContact()
   }
 
   return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 }

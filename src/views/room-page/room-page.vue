@@ -7,9 +7,9 @@ import images from '../../images';
 import { initBtns } from "./tools/handle-btns"
 import { ref, toRef } from 'vue';
 
-const { pageData, playerEl, toHome } = useRoomPage()
+const { pageData, playerEl, toHome, toContact } = useRoomPage()
 const state = toRef(pageData, "state")
-const { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 } = initBtns(state, toHome)
+const { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 } = initBtns(state, toHome, toContact)
 
 const alwaysFalse = ref(false)
 
