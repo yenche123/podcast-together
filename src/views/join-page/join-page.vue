@@ -3,6 +3,9 @@ import { computed, onMounted, ref } from 'vue';
 import { hasPreviousRouteInApp, goHome, useRouteAndPtRouter } from "../../routes/pt-router";
 import PtButton from "../../components/pt-button.vue"
 import jh from "./jp-helper"
+import { useTheme } from '../../hooks/useTheme';
+
+useTheme()
 
 const { router, route } = useRouteAndPtRouter()
 const hasPrev = hasPreviousRouteInApp()

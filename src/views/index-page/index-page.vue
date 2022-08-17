@@ -4,6 +4,9 @@ import { useRouter } from "../../routes/pt-router"
 import images from "../../images"
 import { onActivated } from "vue";
 import share from "../../utils/share";
+import { useTheme } from "../../hooks/useTheme";
+
+let { theme } = useTheme()
 
 const router = useRouter()
 
@@ -33,7 +36,7 @@ const onTapCreateBtn = (e: Event) => {
 
       <a href="https://github.com/yenche123/podcast-together" target="_blank">
         <div class="index-other-btn">
-          <img :src="images.GITHUB" class="index-github"/>
+          <img :src="theme === 'light' ? images.GITHUB : images.GITHUB_DM" class="index-github"/>
           <span>开源地址</span>
         </div>
       </a>

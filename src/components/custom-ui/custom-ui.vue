@@ -124,6 +124,7 @@ const {
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
+      user-select: text;
     }
 
     .cui-modal-btns {

@@ -63,4 +63,6 @@ export interface EnvType {
   API_URL: string
   HEARTBEAT_PERIOD: number
   THIRD_PARTY_SETTING_URL?: string
+  CONTACT_EMAIL?: string
+  CONTACT_FEISHU?: string
 }

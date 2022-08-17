@@ -10,6 +10,7 @@ import CreatePage from "../views/create-page/create-page.vue"
 import IndexPage from "../views/index-page/index-page.vue"
 import JoinPage from "../views/join-page/join-page.vue"
 import RoomPage from "../views/room-page/room-page.vue"
+import ContactPage from "../views/contact-page/contact-page.vue"
 import ptUtil from "../utils/pt-util"
 
 
@@ -68,6 +69,14 @@ const routes: Array<RouteRecordRaw> = [
       keepAlive: true,
     },
     beforeEnter: [_checkNickName]
+  },
+  {
+    path: "/contact",
+    component: ContactPage,
+    name: "contact",
+    meta: {
+      keeyAlive: true,
+    },
   },
   // 其他路由，全部重定向到首页
   {

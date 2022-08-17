@@ -122,7 +122,6 @@ const _popStacks = (num: number) => {
 }
 
 const _changeLastHasPrev = (val: boolean) => {
-  console.log("_changeLastHasPrev: ", val)
   lastHasPrev.value = val
   const len = hasPrevList.length
   if(len > 0) {
@@ -153,10 +152,6 @@ const _judgeInitiativeJump = (to: RouteLocationNormalized, from: RouteLocationNo
 
     routeChangeTmpData.stamp = 0
     availableDuration = DEFAULT_DURATION
-
-    console.log("Initiative 触发，看一下当前 stack:")
-    console.log(stack)
-    console.log(" ")
   }
   else {
     // 保存状态以等待 window.addEventListener("popstate") 触发
@@ -173,19 +168,9 @@ const _judgeBrowserJump = (): void => {
   const now = time.getLocalTime()
   const diff = now - stamp
   const diff2 = now - lastSetPopStateStamp
-  console.log("看一下时间差1: ", diff)
-  console.log("看一下时间差2: ", diff2)
   if(diff > availableDuration || diff2 > availableDuration) return
   
   const { current, forward, back } = stateFromPopState
-
-  console.log("stateFromPopState: ")
-  console.log(stateFromPopState)
-  console.log("to: ")
-  console.log(to)
-  console.log("from:")
-  console.log(from)
-  console.log(" ")
 
   if(!back) {
     // 当前为第一页时
@@ -202,7 +187,6 @@ const _judgeBrowserJump = (): void => {
     for(let i=oldStackLen-1; i>=0; i--) {
       const v = stack[i]
       const isSame = isSameRoute(current, v)
-      console.log("在由后往前查找 current 时，检测 current 是否等同 v: ", isSame)
       if(!isSame) continue
       hasFindCurrent = true
 
@@ -224,17 +208,10 @@ const _judgeBrowserJump = (): void => {
     // 再并且浏览器的前一页跟 from 不一致
     //   则在最后的前一个索引插入 from
     if(from.name && !forward && !isSameRoute(back, from)) {
-      console.log("当前 from 存在 & 浏览器后一页不存在........")
       const isSame2 = isSameRoute(back, from)
-      console.log("浏览器的前一页 vs from:", isSame2)
       if(!isSame2) stack.splice(stack.length - 1, 0, from)
     }
   }
-
-
-  console.log("Browser 触发，看一下当前 stack:")
-  console.log(stack)
-  console.log(" ")
 
   stateFromPopState = null
   toAndFrom.to = undefined
@@ -267,9 +244,6 @@ const initPtRouter = (): RouteAndRouter => {
   const _listenPopState = (e: PopStateEvent) => {
     stateFromPopState = e.state
     lastSetPopStateStamp = time.getLocalTime()
-    console.log("_listenPopState stateFromPopState: ")
-    console.log(stateFromPopState)
-    console.log(" ")
     _judgeBrowserJump()
   }
 
@@ -286,13 +260,7 @@ const initPtRouter = (): RouteAndRouter => {
 // 借由 router.afterEach 来判断的
 // 如果 from.name 不存在，就代表没有更多以前的 route
 const hasPreviousRouteInApp = (): Ref<boolean> => {
-  console.log("生成新的 hasPreviousRouteInApp.........")
-  console.log("lastHasPrev: ", lastHasPrev.value)
-  console.log(" ")
-
   const prev = ref(lastHasPrev.value)
-  
-
   hasPrevList.push(prev)
   return prev
 }
