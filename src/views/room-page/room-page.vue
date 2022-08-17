@@ -5,16 +5,27 @@ import { useRoomPage } from "./tools/useRoomPage"
 import ListeningLoader from '../../components/listening-loader.vue'
 import images from '../../images';
 import { initBtns } from "./tools/handle-btns"
-import { toRef } from 'vue';
+import { ref, toRef } from 'vue';
 
 const { pageData, playerEl, toHome } = useRoomPage()
 const state = toRef(pageData, "state")
 const { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 } = initBtns(state, toHome)
 
+const alwaysFalse = ref(false)
+
 </script>
 
 <template>
   <div class="page">
+
+    <!-- 给浏览器爬 -->
+    <div v-show="alwaysFalse">
+      <img :src="images.APP_LOGO_COS" height="132" width="132" />
+      <p>{{ pageData.content?.title ? pageData.content.title 
+        : pageData.content?.seriesName ? '邀请你一起听《' + pageData.content?.seriesName + '》' 
+        : '邀请你一起听播客！' }}</p>
+    </div>
+
 
     <!-- 加载中 -->
     <div v-if="state <= 2" class="page-full">

@@ -58,6 +58,7 @@ onMounted(() => {
       />
       <p>提示: 目前支持 xiaoyuzhoufm.com、podcasts.apple.com/cn/ 或者后缀为 .mp3 的链接</p>
     </div>
+    <div class="page-btns-virtual"></div>
   </div>
   <div class="page-btns-container">
     <div class="page-btns">
@@ -73,6 +74,10 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+
+.page-btns-virtual {
+  height: 50px;
+}
 
 .page-container {
 

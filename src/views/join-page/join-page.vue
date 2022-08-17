@@ -53,6 +53,7 @@ onMounted(() => {
         maxlength="20"
         ref="inputEl"
       />
+      <div class="page-btns-virtual"></div>
     </div>
   </div>
   <div class="page-btns-container">
