@@ -27,12 +27,15 @@ const enable = ref(false)
 const show = ref(false)
 const TRANSITION_DURATION = 120 // 200
 
+const DEFAULT_CANCEL = "取消"
+const DEFAULT_CONFIRM = "确定"
+
 const modalData = reactive({
   title: "",
   content: "",
   showCancel: true,
-  cancelText: "取消",
-  confirmText: "确定",
+  cancelText: DEFAULT_CANCEL,
+  confirmText: DEFAULT_CONFIRM,
 })
 
 const _openModal = async (): Promise<void> => {
@@ -75,14 +78,35 @@ const initModal = () => {
 
 const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   if(opt.title) modalData.title = opt.title
+  else modalData.title = ""
+
   if(opt.content) modalData.content = opt.content
+  else modalData.content = ""
+
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel
   }
-  else modalData.showCancel = true
-  if(opt.cancelText) modalData.cancelText = opt.cancelText
-  if(opt.confirmText) modalData.confirmText = opt.confirmText
-  if(opt.success) _success = opt.success
+  else {
+    modalData.showCancel = true
+  }
+  if(opt.cancelText) {
+    modalData.cancelText = opt.cancelText
+  }
+  else {
+    modalData.cancelText = DEFAULT_CANCEL
+  }
+  if(opt.confirmText) {
+    modalData.confirmText = opt.confirmText
+  }
+  else {
+    modalData.confirmText = DEFAULT_CONFIRM
+  }
+  if(opt.success) {
+    _success = opt.success
+  }
+  else {
+    _success = undefined
+  }
 
   await _openModal()
 
