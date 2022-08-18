@@ -76,7 +76,10 @@ const initModal = () => {
 const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   if(opt.title) modalData.title = opt.title
   if(opt.content) modalData.content = opt.content
-  if(typeof opt.showCancel === "boolean") modalData.showCancel = opt.showCancel
+  if(typeof opt.showCancel === "boolean") {
+    modalData.showCancel = opt.showCancel
+  }
+  else modalData.showCancel = true
   if(opt.cancelText) modalData.cancelText = opt.cancelText
   if(opt.confirmText) modalData.confirmText = opt.confirmText
   if(opt.success) _success = opt.success
