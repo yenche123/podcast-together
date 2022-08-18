@@ -77,6 +77,18 @@ interface Room {
 
 type OperateType = "CREATE" | "ENTER" | "HEARTBEAT" | "LEAVE"
 
+interface Visitor {
+  _id: string
+  nickName: string
+  enterRoomStamp: number
+  enterNum: number
+  createNum: number
+  createRoomStamp: number
+  createStamp: number
+  userAgent?: string
+  nonce: string
+}
+
 exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   let err = checkEntry(ctx)
   if(err) return err
@@ -87,7 +99,7 @@ exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   const ua = headers?.['user-agent']
 
   if(t === "CREATE") {
-    res = await handle_create(ctx.body)
+    res = await handle_create(ctx.body, ua)
   }
   else if(t === "ENTER") {
     res = await handle_enter(ctx.body, ua)
@@ -246,6 +258,9 @@ async function handle_enter(body: CommonBody, ua?: string): Promise<ResType> {
     return false
   })
 
+  // 记录访客进入房间
+  recordVisitor(body, ua)
+
   // 修改房间
   await _updateRoom(roomId, { participants })
   let pClients: ParticipantClient[] = participants.map(v => {
@@ -318,7 +333,7 @@ async function _getRoom(roomId: string): Promise<Room | undefined> {
 async function _updateRoom(roomId: string, data: Record<string, any>) {
   const col = db.collection("Room")
   const res = await col.doc(roomId).update(data)
-  console.log("查看一下修改的结果........")
+  console.log("查看一下修改房间的结果........")
   console.log(res)
   console.log(" ")
   return res
@@ -333,13 +348,16 @@ interface CreateBody extends RequestParam {
 /**
  * 处理去创建房间的流程
  */
-async function handle_create(body: CreateBody): Promise<ResType> {
+async function handle_create(body: CreateBody, ua?: string): Promise<ResType> {
   const clientId = body["x-pt-local-id"]
   const roomData = body.roomData
 
   // 先去查询是否已创建房间，如果是，就去删除该房间
   await _checkMyRoomAndDelete(clientId)
   
+  // 记录访客创建房间
+  recordVisitor(body, ua)
+
   // 创建新的房间
   let roRes = await _createRoom(clientId, roomData)
   return { code: "0000", data: roRes }
@@ -474,4 +492,67 @@ function checkEntry(ctx: FunctionContext): ResType | null {
   }
   
   return null
+}
+
+/**
+ * 统计访客记录
+ */
+async function recordVisitor(body: CommonBody | CreateBody, ua?: string): Promise<boolean | void> {
+  const operateType = body.operateType
+  const nonce = body["x-pt-local-id"]
+  const nickName = body.nickName
+  const now = Date.now()
+
+  // 去查找访客是否已存在
+  const col = db.collection("Visitor")
+  const res = await col.where({ nonce }).get()
+
+  // 用户已存在，去更新
+  if(res.data?.length) {
+    const row = res.data[0] as Visitor
+    row.nickName = nickName
+    if(operateType === "CREATE") {
+      row.createRoomStamp = now
+      row.createNum += 1
+    }
+    else {
+      row.enterRoomStamp = now
+      row.enterNum += 1
+    }
+    const id = row._id
+    let newData: Partial<Visitor> = { ...row }
+    delete newData._id
+    await _updateVisitor(id, newData)
+    return true
+  }
+
+  // 用户未存在，去创建
+  const newData2: Partial<Visitor> = {
+    nickName,
+    enterRoomStamp: operateType === "ENTER" ? now : -1,
+    enterNum: operateType === "ENTER" ? 1 : 0,
+    createNum: operateType === "CREATE" ? 1 : 0,
+    createRoomStamp: operateType === "CREATE" ? now : -1,
+    createStamp: now,
+    userAgent: ua,
+    nonce,
+  }
+  const col2 = db.collection("Visitor")
+  const res2 = await col2.add(newData2)
+  console.log("看一下 Visitor 被创建的结果........")
+  console.log(res2)
+  console.log(" ")
+  return true
+}
+
+/**
+ * 修改房间
+ */
+ async function _updateVisitor(id: string, data: Record<string, any>) {
+  const col = db.collection("Visitor")
+  const res = await col.doc(id).update(data)
+  console.log("查看一下修改 visitor 的结果........")
+  console.log(res)
+  console.log(" ")
+  return res
 }
