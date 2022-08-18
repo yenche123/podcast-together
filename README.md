@@ -28,7 +28,7 @@
 
 ### 3 支持深色模式
 
-<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm.png" width="700" />
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm2.png" width="700" />
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_listening_dm.png" width="700" />
 
