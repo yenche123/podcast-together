@@ -2,6 +2,8 @@
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index.png" width="700" />
 
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_listening.png" width="700" />
+
 > 跟你的好友一起实时连线听播客！
 
 ## 😎 如何使用
@@ -27,6 +29,8 @@
 ### 3 支持深色模式
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm.png" width="700" />
+
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_listening_dm.png" width="700" />
 
 从一开始就支持深色模式！晚上一起听，再也不亮瞎眼🙈
 
