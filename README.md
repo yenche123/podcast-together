@@ -88,7 +88,11 @@
 
 感谢小宇宙的单集链接支持 Open-Graph 协议，能获取到 og:audio
 
-7. 你
+7. [fluentui-emoji](https://github.com/microsoft/fluentui-emoji)
+
+感谢微软开源的表情包，很 Nice!!!
+
+8. 你
 
 ~~谢谢你玩我~~
 
