@@ -1,5 +1,7 @@
 import { computed, Ref } from "vue"
+import cui from "../../../components/custom-ui"
 import { PageState } from "../../../type/type-room-page"
+import ptApi from "../../../utils/pt-api"
 import { enterRoom } from "./useRoomPage"
 
 export function initBtns(
@@ -64,5 +66,36 @@ export function initBtns(
     toContact()
   }
 
-  return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 }
+  // 主动点击离开
+  const onTapLeave = async () => {
+    const res = await cui.showModal({
+      title: "离开",
+      content: "确定要离开吗？"
+    })
+    if(res.confirm) {
+      toHome()
+    }
+  }
+
+  // 点击分享
+  const onTapShare = () => {
+    const cha = ptApi.getCharacteristic()
+    if(cha.isPC) {
+      const url = location.href
+      ptApi.copyToClipboard(url)
+      cui.showModal({
+        title: "已复制链接到剪贴板",
+        content: "快去跟好友们分享吧！",
+        showCancel: false
+      })
+      return
+    }
+    cui.showModal({
+      title: "分享",
+      content: "请使用 APP 自带的分享功能，通常存在于「...」更多按钮或者带箭头↗️的分享按钮中。",
+      showCancel: false
+    })
+  }
+
+  return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2, onTapLeave, onTapShare }
 }

@@ -6,10 +6,21 @@ import ListeningLoader from '../../components/listening-loader.vue'
 import images from '../../images';
 import { initBtns } from "./tools/handle-btns"
 import { ref, toRef } from 'vue';
+import { useTheme } from '../../hooks/useTheme';
 
+const { theme } = useTheme()
 const { pageData, playerEl, toHome, toContact } = useRoomPage()
 const state = toRef(pageData, "state")
-const { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2 } = initBtns(state, toHome, toContact)
+const { 
+  btnText, 
+  btnText2, 
+  h1, 
+  pText, 
+  onTapBtn, 
+  onTapBtn2,
+  onTapLeave,
+  onTapShare
+} = initBtns(state, toHome, toContact)
 
 const alwaysFalse = ref(false)
 
@@ -58,6 +69,16 @@ const alwaysFalse = ref(false)
             </div>
           </div>
         </template>
+      </div>
+      <div class="room-btns">
+        <div class="room-btn" @click="onTapLeave">
+          <div class="room-btn-icon room-btn-icon_leave"></div>
+          <span>离开</span>
+        </div>
+        <div class="room-btn room-btn-main" @click="onTapShare">
+          <div class="room-btn-icon room-btn-icon_share"></div>
+          <span>分享</span>
+        </div>
       </div>
 
       <div class="room-virtual-two"></div>
@@ -233,7 +254,7 @@ const alwaysFalse = ref(false)
 
   .room-virtual-two {
     width: 100%;
-    height: 100px;
+    height: 150px;
   }
 
   @media screen and (max-width: 640px) {
@@ -244,6 +265,64 @@ const alwaysFalse = ref(false)
     .room-virtual-two {
       height: 200px;
     }
+  }
+
+  .room-btns {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    justify-content: space-evenly;
+    position: relative;
+    margin-top: 50px;
+    cursor: pointer;
+
+    .room-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 25px;
+      height: 50px;
+      width: 30%;
+      min-width: 120px;
+      transition: .15s;
+      background-color: var(--other-btn-bg);
+      color: var(--other-btn-text);
+      font-size: var(--btn-font);
+
+      .room-btn-icon {
+        width: 20px;
+        height: 20px;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        margin-right: 16px;
+        opacity: v-bind("theme === 'light' ? .56 : .98");
+
+        &.room-btn-icon_leave {
+          background-image: v-bind("'url(' + (theme === 'light' ? images.IC_CLOSE : images.IC_CLOSE_DM) + ')'");
+        }
+
+        &.room-btn-icon_share {
+          opacity: v-bind("theme === 'light' ? .98 : .66");
+          background-image: v-bind("'url(' + (theme === 'light' ? images.IC_SHARE : images.IC_SHARE_DM) + ')'");
+        }
+      }
+
+      &:hover {
+        background-color: var(--other-btn-hover);
+      }
+
+      &.room-btn-main {
+        background-color: var(--main-btn-bg);
+        color: var(--main-btn-text);
+
+        &:hover {
+          background-color: var(--hover-btn-bg);
+        }
+      }
+    }
+
   }
 
 }

@@ -15,4 +15,8 @@ export default {
   OUTLOOK: "/outlook.svg",
   WECOM_GROUP_QR: "/wecom_qrcode.png",
   FEISHU_QR: "/feishu_qrcode.png",
+  IC_CLOSE: "/ic_close.svg",
+  IC_CLOSE_DM: "/ic_close_dm.svg",
+  IC_SHARE: "/ic_share.svg",
+  IC_SHARE_DM: "/ic_share_dm.svg",
 }
