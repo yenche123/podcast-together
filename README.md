@@ -1,6 +1,6 @@
 # 一起听播客
 
-<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index.png" width="500" />
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index.png" width="700" />
 
 > 跟你的好友一起实时连线听播客！
 
@@ -26,7 +26,7 @@
 
 3. 支持深色模式
 
-<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm.png" width="500" />
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm.png" width="700" />
 
 从一开始就支持深色模式！晚上一起听，再也不亮瞎眼🙈
 
@@ -42,10 +42,12 @@
 
 1. 微信群
 
-<img src="./public/wecom_qrcode.png" width="200" />
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/wecom_qrcode.png" width="200" />
 
 2. Github [讨论区](https://github.com/yenche123/podcast-together/discussions)
 
 3. [我的飞书](https://www.feishu.cn/invitation/page/add_contact/?token=affgb85a-37d6-470f-8e50-42dc6de3f57c)
+
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/feishu_qrcode.png" width="200" />
 
 4. [Email](mailto:tsuiyenche@outlook.com)
