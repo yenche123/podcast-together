@@ -1,7 +1,7 @@
 {
   "name": "podcast-together",
-  "private": true,
   "version": "0.0.19",
+  "description": "一个基于 vite + vue + vue-router + TS + Laf 的全栈项目，让你跟好友一起实时在线听播客！",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -27,5 +27,20 @@
     "user-agent-data-types": "^0.3.0",
     "vite": "^3.0.0",
     "vue-tsc": "^0.38.4"
-  }
+  },
+  "author": "yenche123 <tsuiyenche@outlook.com> (https://github.com/yenche123)",
+  "contributors": [],
+  "keywords": [
+    "podcast",
+    "播客",
+    "vue",
+    "web-socket",
+    "shikwasa",
+    "typescript",
+    "laf",
+    "一起听播客",
+    "实时连线"
+  ],
+  "license": "MIT",
+  "repository": "github:yenche123/podcast-together"
 }

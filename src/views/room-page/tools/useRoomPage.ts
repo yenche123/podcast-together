@@ -1,3 +1,8 @@
+/**
+ * @file 房间处理主逻辑
+ * @author yenche123 <tsuiyenche@outlook.com>
+ * @copyright TSUI YEN-CHE 2022
+ */
 import { ref, reactive, onActivated, onDeactivated, nextTick } from "vue"
 import { PageData, PageState, WsMsgRes, RoomStatus, PlayStatus, RevokeType } from "../../../type/type-room-page"
 import { ContentData, RequestRes, RoRes } from "../../../type"

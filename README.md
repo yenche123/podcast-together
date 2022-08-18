@@ -14,23 +14,23 @@
 
 百度了一下，没有人提供这项服务，我就只好自己开发了🥲
 
-1. 无需登录，直接听
+### 1 无需登录，直接听
 
 输入昵称，就可以进入房间，跟好友一起听啦！目前最多支持 15 人同时一起听。
 
-2. 支持小宇宙 / Apple Podcast 中国区
+### 2 支持小宇宙 / Apple Podcast 中国区
 
 目前已知支持 `xiaoyuzhoufm.com/episode/` 或者 `podcasts.apple.com/cn/` 的链接（不支持短链），后者解析稍慢是正常的，如果解析失败不妨稍后再尝试。
 
 另外，还支持 https 协议的 CDN 链接，也就是你上传 `.mp3` 文件至任意可公网访问的云上，获得 https 链接后即可黏贴到 [https://fm.lemonsjtu.cn/create](https://fm.lemonsjtu.cn/create) 中一起听！
 
-3. 支持深色模式
+### 3 支持深色模式
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm.png" width="700" />
 
 从一开始就支持深色模式！晚上一起听，再也不亮瞎眼🙈
 
-4. 没了
+### 4 没了
 
 功能这么少？一起听，应该如此简单！
 
@@ -38,7 +38,7 @@
 
 非常欢迎自己兜一套减轻我的云服务资源，详情参见[语雀文档](https://www.yuque.com/cuiyanzhe/sx698m/etgegl)
 
-## 联系我
+## ✉️ 联系我
 
 1. 微信群
 
@@ -50,4 +50,42 @@
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/feishu_qrcode.png" width="200" />
 
+请备注 "一起听播客 + 说明来意"
+
 4. [Email](mailto:tsuiyenche@outlook.com)
+
+---
+
+## 特别鸣谢
+
+以下名单不区分先后顺序。
+
+1. [Vite](https://cn.vitejs.dev/) + [Vue 3](https://staging-cn.vuejs.org/) + [Vue-Router](https://router.vuejs.org/zh/guide/) + [Pinia](https://pinia.vuejs.org/)
+
+你值得拥有的前端工具链
+
+2. [TypeScript](https://github.com/microsoft/TypeScript)
+
+让前端开发具备类型检查的能力。我常阅读[这份指南](https://ts.xcatliu.com/)
+
+3. [Laf](https://www.lafyun.com/)
+
+完全开源的一站式后端开发平台，像写博客一样写代码！
+
+4. [Shikwasa](https://github.com/jessuni/shikwasa)
+
+一个开源、专为播客设计的前端网页播放器。本项目对其做了[定制](https://github.com/yenche123/shikwasa)。
+
+5. [pnpm](https://www.pnpm.cn/)
+
+对 npm 软件包管理器做了一系列改进。
+
+6. 你
+
+~~谢谢你玩我~~
+
+谢谢你看到这里！
+
+## 开源协议
+
+MIT
