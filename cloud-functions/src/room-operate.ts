@@ -435,6 +435,7 @@ function _pausePlayer(room: Room, operator: string = ""): Room {
 
   let { operateStamp, speedRate, contentStamp } = room
   let speedRateNum: number = Number(speedRate)
+  if(isNaN(speedRateNum) || speedRateNum >= 1.71) speedRateNum = 1
 
   // 如果房间里有人
   if(participants.length > 0) {
