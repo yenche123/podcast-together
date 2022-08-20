@@ -30,6 +30,7 @@ export function initWebSocket(callbacks: WsCallbacks) {
     console.log("ws.onclose.......")
     console.log(`res: `, res)
     console.log(` `)
+    callbacks.onclose && callbacks.onclose(res)
   }
 
   ws.onerror = (res) => {

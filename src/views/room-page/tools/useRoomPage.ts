@@ -62,6 +62,7 @@ let pausedSec = 0               // 已经暂停的秒数
 let lastOperateLocalStamp = 0        // 上一个本地设置远端服务器的时间戳
 let lastNewStatusFromWsStamp = 0    // 上一次收到 web-socket NEW_STATUS 的时间戳
 let lastHeartbeatStamp = 0          // 上一次心跳的时间戳
+let lastReConnectWs = 0
 
 // 是否为远端调整播放器状态，如果是，则在监听 player 各回调时不往下执行
 let isRemoteSetSeek = false
@@ -461,8 +462,24 @@ function connectWebSocket() {
       console.log(" ")
     }
   }
+
+  const onclose = (closeEvent: CloseEvent) => {
+    const { code } = closeEvent
+    const now = time.getLocalTime()
+
+    // 监听关闭的状态码，1006 为非预期的情况
+    // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
+    if(code === 1006) {
+      // 做一个防抖节流
+      if(lastReConnectWs + 5000 > now) return
+      lastHeartbeatStamp = now
+      connectWebSocket()
+    }
+  }
+
   const callbacks = {
-    onmessage
+    onmessage,
+    onclose
   }
   ws = initWebSocket(callbacks)
   checkWebSocket()
