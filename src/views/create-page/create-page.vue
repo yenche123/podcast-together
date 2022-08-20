@@ -3,7 +3,10 @@ import { computed, ref, onMounted } from 'vue';
 import { hasPreviousRouteInApp, goHome, useRouteAndPtRouter } from "../../routes/pt-router";
 import PtButton from "../../components/pt-button.vue"
 import cp from "./cp-helper"
+import { useTheme } from '../../hooks/useTheme';
+import images from '../../images';
 
+const { theme } = useTheme()
 const { router, route } = useRouteAndPtRouter()
 const hasPrev = hasPreviousRouteInApp()
 const inputValue = ref<string>("")
@@ -57,6 +60,12 @@ onMounted(() => {
         ref="inputEl"
       />
       <p>提示: 目前支持 xiaoyuzhoufm.com、podcasts.apple.com/cn/ 或者后缀为 .mp3 的链接</p>
+      <p class="check-detail">
+        <a href="https://yenche.zhubai.love/posts/2172097942360440832" target="_blank">
+          <div class="div-bg-img check-detail-question"></div>
+          <span>查看详情</span>
+        </a>
+      </p>
     </div>
     <div class="page-btns-virtual"></div>
   </div>
@@ -105,12 +114,31 @@ onMounted(() => {
 
   p {
     margin-block-start: 30px;
-    margin-block-end: 30px;
+    margin-block-end: 10px;
     font-size: 14px;
     color: var(--note-color);
     text-align: center;
     max-width: 320px;
     user-select: text;
+  }
+
+  .check-detail {
+    margin-top: 0;
+    
+    a {
+      // color: rgb(66, 133, 244);
+      color: var(--tap-color);
+      display: flex;
+      align-items: center;
+
+      .check-detail-question {
+        width: 16px;
+        height: 16px;
+        opacity: .5;
+        margin-right: 5px;
+        background-image: v-bind("'url(' + (theme === 'light' ? images.IC_QUESTION : images.IC_QUESTION_DM) + ')'");
+      }
+    }
   }
 
 }

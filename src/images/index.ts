@@ -19,4 +19,6 @@ export default {
   IC_CLOSE_DM: "/ic_close_dm.svg",
   IC_SHARE: "/ic_share.svg",
   IC_SHARE_DM: "/ic_share_dm.svg",
+  IC_QUESTION: "/ic_question_mark.svg",
+  IC_QUESTION_DM: "/ic_question_mark_dm.svg",
 }
