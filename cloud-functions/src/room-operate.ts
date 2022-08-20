@@ -343,7 +343,7 @@ async function _updateRoom(roomId: string, data: Record<string, any>) {
 interface CreateBody extends RequestParam {
   operateType: "CREATE"
   roomData: ContentData
-  nickName: string
+  nickName?: string
 }
 /**
  * 处理去创建房间的流程
@@ -478,7 +478,7 @@ function checkEntry(ctx: FunctionContext): ResType | null {
   let { operateType = "", nickName, roomId } = body
   let roomData: ContentData = body.roomData
   let oTypes = ["CREATE", "ENTER", "HEARTBEAT", "LEAVE"]
-  if(!nickName) return errData
+  if(!nickName && operateType !== "CREATE") return errData
   if(!oTypes.includes(operateType)) return errData
 
   let oTypes2 = ["ENTER", "HEARTBEAT", "LEAVE"]
@@ -501,7 +501,7 @@ function checkEntry(ctx: FunctionContext): ResType | null {
 async function recordVisitor(body: CommonBody | CreateBody, ua?: string): Promise<boolean | void> {
   const operateType = body.operateType
   const nonce = body["x-pt-local-id"]
-  const nickName = body.nickName
+  const nickName = body.nickName ?? ""
   const now = Date.now()
 
   // 去查找访客是否已存在
@@ -511,7 +511,7 @@ async function recordVisitor(body: CommonBody | CreateBody, ua?: string): Promis
   // 用户已存在，去更新
   if(res.data?.length) {
     const row = res.data[0] as Visitor
-    row.nickName = nickName
+    if(nickName) row.nickName = nickName
     if(operateType === "CREATE") {
       row.createRoomStamp = now
       row.createNum += 1
