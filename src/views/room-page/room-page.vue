@@ -76,7 +76,7 @@ const alwaysFalse = ref(false)
           <span>离开</span>
         </div>
         <div class="room-btn room-btn-main" @click="onTapShare">
-          <div class="room-btn-icon room-btn-icon_share"></div>
+          <div class="div-bg-img room-btn-icon room-btn-icon_share"></div>
           <span>分享</span>
         </div>
       </div>
@@ -293,9 +293,6 @@ const alwaysFalse = ref(false)
       .room-btn-icon {
         width: 20px;
         height: 20px;
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-position: center;
         margin-right: 16px;
         opacity: v-bind("theme === 'light' ? .56 : .98");
 

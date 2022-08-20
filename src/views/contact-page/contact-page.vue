@@ -25,7 +25,7 @@ const doNothing = (e: Event) => {
 
     <!-- 微信群 -->
     <div class="contact-item" @click="onTapWeChat">
-      <div class="ci-img ci-img_wechat"></div>
+      <div class="div-bg-img ci-img ci-img_wechat"></div>
       <div class="ci-text">
         <span>微信群</span>
       </div>
@@ -33,7 +33,7 @@ const doNothing = (e: Event) => {
 
     <!-- Github Discussions -->
     <a class="contact-item" href="https://github.com/yenche123/podcast-together/discussions" target="_blank">
-      <div class="ci-img ci-img_github"></div>
+      <div class="div-bg-img ci-img ci-img_github"></div>
       <div class="ci-text">
         <span>Github 讨论区</span>
       </div>
@@ -41,7 +41,7 @@ const doNothing = (e: Event) => {
     
     <!-- Feishu -->
     <div class="contact-item" @click="onTapFeishu">
-      <div class="ci-img ci-img_feishu"></div>
+      <div class="div-bg-img ci-img ci-img_feishu"></div>
       <div class="ci-text">
         <span>我的飞书</span>
       </div>
@@ -49,7 +49,7 @@ const doNothing = (e: Event) => {
 
     <!-- Email -->
     <div class="contact-item" @click="onTapEmail">
-      <div class="ci-img ci-img_email"></div>
+      <div class="div-bg-img ci-img ci-img_email"></div>
       <div class="ci-text">
         <span>我的邮箱</span>
       </div>
@@ -116,9 +116,6 @@ const doNothing = (e: Event) => {
   .ci-img {
     width: 50px;
     height: 50px;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
     margin-right: 10%;
 
     &.ci-img_wechat {

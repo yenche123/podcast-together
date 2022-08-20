@@ -25,7 +25,7 @@ const onTapCreateBtn = (e: Event) => {
 
   <div class="page">
     <div class="page-container">
-      <div class="index-icon-img"></div>
+      <div class="div-bg-img index-icon-img"></div>
       <h1>一起听播客</h1>
     </div>
   </div>
@@ -60,10 +60,7 @@ const onTapCreateBtn = (e: Event) => {
       width: 60px;
       height: 60px;
       background-image: v-bind("'url(' + images.APP_LOGO + ')'");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
       margin-bottom: 50px;
-
     }
 
     h1 {
