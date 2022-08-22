@@ -324,8 +324,11 @@ const alwaysFalse = ref(false)
 
 }
 
+</style>
 
-
-
-
+<!-- 全局 -->
+<style>
+.shk-cover {
+  background-position: center;
+}
 </style>
