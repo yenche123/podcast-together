@@ -177,7 +177,7 @@ function createPlayer() {
   const audio = {
     src: content.audioUrl,
     title: content.title,
-    cover: content.imageUrl ?? images.APP_LOGO,
+    cover: content.imageUrl || images.APP_LOGO,
     artist: content.seriesName,
   }
 
