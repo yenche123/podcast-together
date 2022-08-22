@@ -240,7 +240,7 @@ function parseHtml(html: string, originLink: string): ResType {
       catch(err) {
         console.log("解析 schema:podcast-episode 失败......")
       }
-      if(sptJson.title) title = sptJson.title
+      if(sptJson.name) title = sptJson.name
       if(sptJson.description) description = sptJson.description
       if(sptJson.isPartOf) seriesName = sptJson.isPartOf
     }
