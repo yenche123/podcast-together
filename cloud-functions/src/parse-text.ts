@@ -182,6 +182,9 @@ function parseHtml(html: string, originLink: string): ResType {
     else if(meta_property === "og:url") {
       linkUrl = meta_content ?? ""
     }
+    else if(meta_property === "og:site_name" && !appName) {
+      appName = meta_content ?? ""
+    }
   })
 
   if(!audioUrl) {
@@ -207,7 +210,7 @@ function parseHtml(html: string, originLink: string): ResType {
   // 查找 seriesName / seriesUrl
   $("head script").each((i, el) => {
     let spt = $(el)
-    let spt_name = spt.attr("name")
+    const spt_name = spt.attr("name")
     if(spt_name === "schema:podcast-show") {
       const sptText = spt.text()
       let sptJson: any = {}
@@ -227,11 +230,50 @@ function parseHtml(html: string, originLink: string): ResType {
       seriesName = partOfSeries.name ?? ""
       seriesUrl = partOfSeries.url ?? ""
     }
+    else if(spt_name === "schema:podcast-episode") {
+      // 适配 apple podcast
+      const sptText = spt.text()
+      let sptJson: any = {}
+      try {
+        sptJson = JSON.parse(sptText)
+      }
+      catch(err) {
+        console.log("解析 schema:podcast-episode 失败......")
+      }
+      if(sptJson.title) title = sptJson.title
+      if(sptJson.description) description = sptJson.description
+      if(sptJson.isPartOf) seriesName = sptJson.isPartOf
+    }
   })
 
+  // 适配 youzhiyouxing.cn 的图片
+  let isYZYX = originLink.includes("youzhiyouxing.cn")
+  if(!imageUrl && isYZYX) {
+    $(".lazy-image-container img").each((i, el) => {
+      const theEl = $(el)
+      const src = theEl.attr("data-src")
+      if(src) imageUrl = src
+    })
+  }
+  // 适配 youzhiyouxing.cn 的播客名称
+  if(!seriesName && isYZYX) {
+    $("body .tw-text-14.tw-leading-none").each((i, el) => {
+      const theEl = $(el)
+      const elText = theEl.text()
+      if(elText) seriesName = elText.trim()
+    })
+  }
   
   if(!linkUrl) linkUrl = originLink
+
   if(appName === "小宇宙") sourceType = "xiaoyuzhou"
+  else if(appName === "一派·Podcast") {
+    sourceType = "sspai"
+    if(!seriesName) seriesName = "一派·Podcast"
+    if(!seriesUrl) seriesUrl = "https://sspai.typlog.io/"
+  }
+  else if(isYZYX) sourceType = "youzhiyouxing"
+  else if(linkUrl.includes("podcasts.apple.com")) sourceType = "apple_podcast"
 
   let rData: ResType = {
     code: "0000",
