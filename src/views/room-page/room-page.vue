@@ -72,7 +72,7 @@ const alwaysFalse = ref(false)
       </div>
       <div class="room-btns">
         <div class="room-btn" @click="onTapLeave">
-          <div class="room-btn-icon room-btn-icon_leave"></div>
+          <div class="div-bg-img room-btn-icon room-btn-icon_leave"></div>
           <span>离开</span>
         </div>
         <div class="room-btn room-btn-main" @click="onTapShare">
