@@ -176,10 +176,10 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
     return v
   })
 
-  // 踢掉心跳一分钟内没有连线的
+  // 踢掉心跳 50s 内没有连线的
   participants = participants.filter(v => {
     const diff = now - v.heartbeatStamp
-    if(diff < (60 * 1000)) return true
+    if(diff < (50 * 1000)) return true
     return false
   })
   
