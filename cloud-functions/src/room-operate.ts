@@ -159,7 +159,7 @@ async function handle_leave(body: CommonBody): Promise<ResType> {
  */
 async function handle_heartbeat(body: CommonBody): Promise<ResType> {
   const clientId = body["x-pt-local-id"]
-  const { roomId } = body
+  const { roomId, nickName } = body
 
   let room = await _getRoom(roomId)
   if(!room || !room._id) return { code: "E4004" }
@@ -171,6 +171,7 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
   let me = participants.find(v => v.nonce === clientId)
   if(!me) return { code: "E4003" }
   me.heartbeatStamp = now
+  me.nickName = nickName
   participants = participants.map(v => {
     if(v.nonce === clientId) v = me as Participant
     return v
