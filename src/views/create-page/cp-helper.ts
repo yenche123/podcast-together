@@ -1,11 +1,8 @@
-import api from "../../request/api"
 import { PtRouter, VueRoute } from "../../routes/pt-router"
-import ptApi from "../../utils/pt-api"
 import time from "../../utils/time"
 import { ContentData, RoRes } from "../../type"
-import req from "../../request"
 import cui from "../../components/custom-ui"
-import ptUtil from "../../utils/pt-util"
+import { request_create, request_parse } from "./cp-request"
 
 let lastIntoFinishInput: number = 0
 
@@ -18,33 +15,34 @@ const _showErr = () => {
   })
 }
 
-const _createRoom = async (roomData: ContentData, router: PtRouter, route: VueRoute): Promise<void> => {
-  console.log("准备去创建房间...........")
-  console.log(roomData)
-  console.log(" ")
+const _showQueryErr = async (router: PtRouter) => {
+  await cui.showModal({
+    title: "创建房间失败",
+    content: "不妨手动黏贴单集链接以创建房间",
+  })
+  router.replace({ name: "create" })
+}
 
-  let userData = ptUtil.getUserData()
-  const param = {
-    operateType: "CREATE",
-    roomData,
-    nickName: userData.nickName,
-  }
-  const url = api.ROOM_OPERATE
-  const res = await req.request<RoRes>(url, param)
+const _createRoom = async (
+  roomData: ContentData, 
+  router: PtRouter, 
+  route: VueRoute,
+  fromQuery: boolean = false,
+): Promise<void> => {
+  const res = await request_create(roomData)
   cui.hideLoading()
-  console.log("看一下创建房间的结果......")
-  console.log(res)
-  console.log(" ")
 
   if(res?.code !== "0000") {
-    _showErr()
+    if(fromQuery) _showQueryErr(router)
+    else _showErr()
     return
   }
 
   const roRes = res.data as RoRes
   const roomId = roRes.roomId
   if(!roomId) {
-    _showErr()
+    if(fromQuery) _showQueryErr(router)
+    else _showErr()
     return
   }
 
@@ -56,13 +54,8 @@ const finishInput = async (link: string, router: PtRouter, route: VueRoute): Pro
   if(lastIntoFinishInput + 500 > now) return
   lastIntoFinishInput = now
 
-  const url = api.PARSE_TEXT
   cui.showLoading({ title: "解析中.." })
-  const res = await req.request<ContentData>(url, { link })
-
-  console.log("在 finishInput 看一下请求结果 res:")
-  console.log(res)
-  console.log(" ")
+  const res = await request_parse(link)
   if(res?.code !== "0000") {
     _showErr()
     return
@@ -72,6 +65,21 @@ const finishInput = async (link: string, router: PtRouter, route: VueRoute): Pro
   _createRoom(contentData, router, route)
 }
 
+const useLinkFromQuery = async (router: PtRouter, route: VueRoute) => {
+  const link = route.query.link
+  if(!link || typeof link !== "string") return
+  const deLink = decodeURIComponent(link)
+  const res = await request_parse(deLink)
+  if(res?.code !== "0000") {
+    _showQueryErr(router)
+    return
+  }
+
+  let contentData = res.data as ContentData
+  _createRoom(contentData, router, route, true)
+}
+
 export default {
-  finishInput
+  finishInput,
+  useLinkFromQuery,
 }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onActivated } from 'vue';
 import { hasPreviousRouteInApp, goHome, useRouteAndPtRouter } from "../../routes/pt-router";
 import PtButton from "../../components/pt-button.vue"
 import cp from "./cp-helper"
 import { useTheme } from '../../hooks/useTheme';
 import images from '../../images';
+import ListeningLoader from '../../components/listening-loader.vue'
 
 const { theme } = useTheme()
 const { router, route } = useRouteAndPtRouter()
@@ -25,7 +26,6 @@ const onInputConfirm = () => {
   inputEl?.value?.blur()
   if(!canSubmit.value) return
   cp.finishInput(inputValue.value, router, route)
-  
 }
 
 const onTapConfirm = () => {
@@ -39,10 +39,12 @@ const onTapBack = () => {
   else goHome(router)
 }
 
-// 让输入框在页面打开时聚焦
-onMounted(() => {
-  if(canSubmit.value) return
-  inputEl.value?.focus()
+onActivated(() => {
+  if(route.query.link) cp.useLinkFromQuery(router, route)
+  else {
+    if(canSubmit.value) return
+    inputEl.value?.focus()
+  }
 })
 
 </script>
@@ -78,6 +80,14 @@ onMounted(() => {
         :disabled="!canSubmit"
       />
       <pt-button :text="hasPrev ? '返回' : '回首页'" type="other" @click="onTapBack"></pt-button>
+    </div>
+  </div>
+
+  <!-- 从参数创建房间 -->
+  <div v-if="route.query.link" class="page-full">
+    <ListeningLoader />
+    <div class="pf-text">
+      <span>正在创建房间..</span>
     </div>
   </div>
 </template>
@@ -145,6 +155,27 @@ onMounted(() => {
 
 .join-main-btn {
   margin-bottom: 20px;
+}
+
+.page-full {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1500;
+  background-color: var(--bg-color);
+
+  .pf-text {
+    font-size: var(--desc-font);
+    color: var(--desc-color);
+    line-height: 1.5;
+  }
 }
 
 </style>
