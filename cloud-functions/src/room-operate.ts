@@ -86,6 +86,7 @@ interface Visitor {
   createRoomStamp: number
   createStamp: number
   userAgent?: string
+  ip?: string | string[]
   nonce: string
 }
 
@@ -97,12 +98,13 @@ exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   const t = ctx.body.operateType as OperateType
   const { headers } = ctx
   const ua = headers?.['user-agent']
+  const ip = headers?.['x-real-ip']
 
   if(t === "CREATE") {
-    res = await handle_create(ctx.body, ua)
+    res = await handle_create(ctx.body, ua, ip)
   }
   else if(t === "ENTER") {
-    res = await handle_enter(ctx.body, ua)
+    res = await handle_enter(ctx.body, ua, ip)
   }
   else if(t === "HEARTBEAT") {
     res = await handle_heartbeat(ctx.body)
@@ -209,7 +211,7 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
 /**
  * 进入房间
  */
-async function handle_enter(body: CommonBody, ua?: string): Promise<ResType> {
+async function handle_enter(body: CommonBody, ua?: string, ip?: string | string[]): Promise<ResType> {
   const clientId = body["x-pt-local-id"]
   const { roomId, nickName } = body
   
@@ -259,7 +261,7 @@ async function handle_enter(body: CommonBody, ua?: string): Promise<ResType> {
   })
 
   // 记录访客进入房间
-  recordVisitor(body, ua)
+  recordVisitor(body, ua, ip)
 
   // 修改房间
   await _updateRoom(roomId, { participants })
@@ -348,7 +350,7 @@ interface CreateBody extends RequestParam {
 /**
  * 处理去创建房间的流程
  */
-async function handle_create(body: CreateBody, ua?: string): Promise<ResType> {
+async function handle_create(body: CreateBody, ua?: string, ip?: string | string[]): Promise<ResType> {
   const clientId = body["x-pt-local-id"]
   const roomData = body.roomData
 
@@ -356,7 +358,7 @@ async function handle_create(body: CreateBody, ua?: string): Promise<ResType> {
   await _checkMyRoomAndDelete(clientId)
   
   // 记录访客创建房间
-  recordVisitor(body, ua)
+  recordVisitor(body, ua, ip)
 
   // 创建新的房间
   let roRes = await _createRoom(clientId, roomData)
@@ -498,7 +500,11 @@ function checkEntry(ctx: FunctionContext): ResType | null {
 /**
  * 统计访客记录
  */
-async function recordVisitor(body: CommonBody | CreateBody, ua?: string): Promise<boolean | void> {
+async function recordVisitor(
+  body: CommonBody | CreateBody, 
+  ua?: string,
+  ip?: string | string[]
+): Promise<boolean | void> {
   const operateType = body.operateType
   const nonce = body["x-pt-local-id"]
   const nickName = body.nickName ?? ""
@@ -512,6 +518,7 @@ async function recordVisitor(body: CommonBody | CreateBody, ua?: string): Promis
   if(res.data?.length) {
     const row = res.data[0] as Visitor
     if(nickName) row.nickName = nickName
+    if(ip) row.ip = ip
     if(operateType === "CREATE") {
       row.createRoomStamp = now
       row.createNum += 1
@@ -536,6 +543,7 @@ async function recordVisitor(body: CommonBody | CreateBody, ua?: string): Promis
     createRoomStamp: operateType === "CREATE" ? now : -1,
     createStamp: now,
     userAgent: ua,
+    ip,
     nonce,
   }
   const col2 = db.collection("Visitor")
