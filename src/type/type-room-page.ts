@@ -23,6 +23,7 @@ export interface PageParticipant {
   guestId: string
   nickName: string
   enterStr: string      // xx 分钟前进入
+  isMe: boolean
 }
 
 export interface PageData {

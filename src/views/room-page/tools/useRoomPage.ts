@@ -156,9 +156,10 @@ function enterResToErrState(res?: RequestRes) {
 // 成功进入房间后: 
 //    赋值 / 创建播放器 / 开启 20s 轮询机制 / 建立 webSocket
 function afterEnter(roRes: RoRes) {
+  guestId = roRes?.guestId ?? ""
   pageData.content = roRes.content
-  pageData.participants = showParticipants(roRes.participants)
-  guestId = roRes?.guestId as string
+  pageData.participants = showParticipants(roRes.participants, guestId)
+  
 
   createPlayer()
   heartbeat()
@@ -314,7 +315,7 @@ function heartbeat() {
 
   const _newRoomStatus = (roRes: RoRes) => {
     pageData.content = roRes.content
-    pageData.participants = showParticipants(roRes.participants)
+    pageData.participants = showParticipants(roRes.participants, guestId)
 
     const now = time.getLocalTime()
     const diff1 = now - lastOperateLocalStamp
@@ -431,8 +432,9 @@ async function resume() {
     return
   }
   let roRes = res.data as RoRes
+  guestId = roRes.guestId ?? ""
   pageData.content = roRes.content
-  pageData.participants = showParticipants(roRes.participants)
+  pageData.participants = showParticipants(roRes.participants, guestId)
   heartbeat()
   connectWebSocket()
 }

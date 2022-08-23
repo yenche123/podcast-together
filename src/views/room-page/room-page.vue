@@ -19,7 +19,8 @@ const {
   onTapBtn, 
   onTapBtn2,
   onTapLeave,
-  onTapShare
+  onTapShare,
+  onTapEditMyName,
 } = initBtns(state, toHome, toContact)
 
 const alwaysFalse = ref(false)
@@ -61,8 +62,12 @@ const alwaysFalse = ref(false)
       >
         <template v-for="(item, index) in pageData.participants" :key="item.guestId">
           <div class="room-participant">
-            <div class="rp-nickName">
+            <div class="rp-nickName" 
+              :class="{ 'rp-nickName_pointer': item.isMe }" 
+              @click="onTapEditMyName(item)"
+            >
               <span>{{ item.nickName }}</span>
+              <div v-if="item.isMe" class="div-bg-img rp-nickName-icon"></div>
             </div>
             <div class="rp-enter-time">
               <span>{{ item.enterStr }}进入</span>
@@ -236,9 +241,22 @@ const alwaysFalse = ref(false)
       display: flex;
       max-width: 60%;
       font-size: var(--desc-font);
+      line-height: 22px;
       color: var(--desc-color);
       padding-right: 10px;
       user-select: text;
+
+      .rp-nickName-icon {
+        width: 22px;
+        height: 22px;
+        margin-left: 6px;
+        opacity: .56;
+        background-image: v-bind("'url(' + (theme === 'light' ? images.IC_EDIT : images.IC_EDIT_DM) + ')'");
+      }
+    }
+
+    .rp-nickName_pointer {
+      cursor: pointer;
     }
 
     .rp-enter-time {

@@ -1,6 +1,6 @@
 import { computed, Ref } from "vue"
 import cui from "../../../components/custom-ui"
-import { PageState } from "../../../type/type-room-page"
+import { PageParticipant, PageState } from "../../../type/type-room-page"
 import ptApi from "../../../utils/pt-api"
 import { enterRoom } from "./useRoomPage"
 
@@ -97,5 +97,10 @@ export function initBtns(
     })
   }
 
-  return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2, onTapLeave, onTapShare }
+  const onTapEditMyName = (e: PageParticipant) => {
+    if(!e.isMe) return
+    
+  }
+
+  return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2, onTapLeave, onTapShare, onTapEditMyName }
 }

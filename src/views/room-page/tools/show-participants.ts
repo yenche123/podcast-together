@@ -2,7 +2,7 @@ import { Participant } from "../../../type"
 import { PageParticipant } from "../../../type/type-room-page"
 import time from "../../../utils/time"
 
-export const showParticipants = (participants: Participant[]) => {
+export const showParticipants = (participants: Participant[], myGuestId: string) => {
   let list: PageParticipant[] = []
   if(participants.length < 1) return list
 
@@ -16,6 +16,7 @@ export const showParticipants = (participants: Participant[]) => {
       guestId: v.guestId,
       nickName: v.nickName,
       enterStr: "",
+      isMe: v.guestId === myGuestId,
     }
     const diff = now - v.enterStamp
     const sec = diff / 1000
