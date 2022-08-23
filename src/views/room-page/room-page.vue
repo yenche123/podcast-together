@@ -9,7 +9,7 @@ import { ref, toRef } from 'vue';
 import { useTheme } from '../../hooks/useTheme';
 
 const { theme } = useTheme()
-const { pageData, playerEl, toHome, toContact } = useRoomPage()
+const { pageData, playerEl, toHome, toContact, toEditMyName } = useRoomPage()
 const state = toRef(pageData, "state")
 const { 
   btnText, 
@@ -21,7 +21,7 @@ const {
   onTapLeave,
   onTapShare,
   onTapEditMyName,
-} = initBtns(state, toHome, toContact)
+} = initBtns(state, toHome, toContact, toEditMyName)
 
 const alwaysFalse = ref(false)
 

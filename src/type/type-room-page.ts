@@ -30,7 +30,7 @@ export interface PageData {
   state: PageState
   roomId: string,
   content?: ContentData,
-  participants?: PageParticipant[],
+  participants: PageParticipant[],
 }
 
 type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"

@@ -7,7 +7,8 @@ import { enterRoom } from "./useRoomPage"
 export function initBtns(
   state: Ref<PageState>, 
   toHome: () => void, 
-  toContact: () => void
+  toContact: () => void,
+  toEditMyName: (newName: string) => void,
 ) {
   const btnText = computed(() => {
     const v = state.value
@@ -97,9 +98,14 @@ export function initBtns(
     })
   }
 
-  const onTapEditMyName = (e: PageParticipant) => {
+  const onTapEditMyName = async (e: PageParticipant) => {
     if(!e.isMe) return
-    
+    const res = await cui.showTextEditor({
+      title: "修改昵称",
+      value: e.nickName,
+      placeholder: "请输入昵称"
+    })
+    if(res.confirm && res.value) toEditMyName(res.value)
   }
 
   return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2, onTapLeave, onTapShare, onTapEditMyName }

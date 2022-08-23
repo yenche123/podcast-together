@@ -83,6 +83,21 @@ const toContact = () => {
   router.push({ name: "contact" })
 }
 
+// 本地修改我的昵称，再上报远端
+const toEditMyName = async (newName: string) => {
+  if(pageData.state !== 3) return
+  const participants = pageData.participants
+  // 修改本地
+  for(let i=0; i<participants?.length; i++) {
+    const v = participants[i]
+    if(v.isMe) v.nickName = newName
+  }
+  nickName = newName
+  // 上报远端
+  // 销毁心跳、再用新的心跳上报
+  await request_heartbeat(pageData.roomId, nickName)
+}
+
 export const useRoomPage = () => {
   const rr = useRouteAndPtRouter()
   router = rr.router
@@ -90,7 +105,7 @@ export const useRoomPage = () => {
   
   init()
 
-  return { pageData, playerEl, route, router, toHome, toContact }
+  return { pageData, playerEl, route, router, toHome, toContact, toEditMyName }
 }
 
 // 初始化一些东西，比如 onActivated / onDeactivated 

@@ -1,4 +1,4 @@
-
+// 监听 Enter 回车键
 
 type SimpleFunc = () => void
 let funAfterEnter: SimpleFunc | undefined
@@ -18,7 +18,6 @@ const cancelListenEnterKeyUp = (): void => {
   window.removeEventListener("keyup", _onListenKepUp)
   funAfterEnter = undefined
 }
-
 
 export {
   toListenEnterKeyUp,

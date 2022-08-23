@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
+import { initTextEditor } from "./text-editor";
 
 const {
   enable: modalEnable,
@@ -17,6 +18,16 @@ const {
   show: loadingShow,
   TRANSITION_DURATION: loadingTranMs,
 } = initLoading()
+
+const {
+  enable: teEnable,
+  show: teShow,
+  teData,
+  onTapConfirm: onTapTeConfirm,
+  onTapCancel: onTapTeCancel,
+  inputEl: textEditorInputEl,
+  canSubmit: canTextEditorSubmit,
+} = initTextEditor()
 
 </script>
 <template>
@@ -41,6 +52,35 @@ const {
           class="cui-modal-btn cui-modal-confirm"
           @click="onTapModalConfirm"
         >{{ modalData.confirmText }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文字输入框 -->
+  <div 
+    v-if="teEnable" 
+    class="cui-modal-container" 
+    :class="{ 'cui-modal-container_show': teShow }"
+  >
+    <div class="cui-modal-bg"></div>
+    <div class="cui-modal-box">
+      <h1 v-if="teData.title">{{ teData.title }}</h1>
+      <input class="cui-text-editor-input" 
+        v-model="teData.value" 
+        ref="textEditorInputEl" 
+        :placeholder="teData.placeholder ? teData.placeholder: '请输入文字'"
+        :maxlength="teData.maxLength"
+      />
+      <div class="cui-modal-btns">
+        <div 
+          class="cui-modal-btn"
+          @click="onTapTeCancel"
+        >取消</div>
+        <div 
+          class="cui-modal-btn cui-modal-confirm"
+          :class="{ 'cui-btn_disabled': !canTextEditorSubmit }"
+          @click="onTapTeConfirm"
+        >确定</div>
       </div>
     </div>
   </div>
@@ -164,6 +204,29 @@ const {
   }
 
 }
+
+/** text-editor */
+.cui-text-editor-input {
+  font-size: var(--desc-font);
+  color: var(--text-color);
+  line-height: 1.5;
+  margin-block-start: 0;
+  margin-block-end: 20px;
+  width: 100%;
+  text-align: center;
+  border: 0;
+  outline: none;
+
+  &::-webkit-input-placeholder {
+    color: var(--note-color);
+  }
+}
+
+.cui-btn_disabled {
+  opacity: .6;
+  cursor: default;
+}
+
 
 /** 加载框 */
 .cui-loading-container {
