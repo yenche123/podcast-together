@@ -115,8 +115,13 @@ const showTextEditor = async (opt: TextEditorParam): Promise<TextEditorSuccessRe
   }
 
   await _openTextEditor()
-  inputEl?.value?.focus()
 
+  const _toFocus = async() => {
+    await util.waitMilli(200)
+    inputEl?.value?.focus()
+  }
+  _toFocus()
+  
   const _wait = (a: TextEditorResolver): void => {
     _resolve = a
   }

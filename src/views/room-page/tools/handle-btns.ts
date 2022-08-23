@@ -105,7 +105,9 @@ export function initBtns(
       value: e.nickName,
       placeholder: "请输入昵称"
     })
-    if(res.confirm && res.value) toEditMyName(res.value)
+    if(res.confirm && res.value) {
+      if(res.value !== e.nickName) toEditMyName(res.value)
+    }
   }
 
   return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2, onTapLeave, onTapShare, onTapEditMyName }
