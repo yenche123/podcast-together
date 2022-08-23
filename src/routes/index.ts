@@ -51,7 +51,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       keepAlive: true,
     },
-    beforeEnter: [_checkNickName]
   },
   {
     path: "/join",

@@ -16,7 +16,7 @@ onActivated(() => {
 })
 
 const onTapCreateBtn = (e: Event) => {
-  router.push({ name: "join" })
+  router.push({ name: "create" })
 }
 
 </script>
