@@ -100,7 +100,11 @@
 
 感谢微软开源的表情包，很 Nice!!!
 
-8. 你
+8. [uiball-loaders](https://uiball.com/loaders/)
+
+超好看且好用的加载图标/动画，没有之一。
+
+9. 你
 
 ~~谢谢你玩我~~
 
