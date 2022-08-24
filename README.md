@@ -12,9 +12,9 @@
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/xyz_share.jpg" width="500" />
 
-2. 访问 [https://fm.lemonsjtu.cn/](https://fm.lemonsjtu.cn/) 创建房间，依页面的提示给自己取一个昵称再黏贴上一步复制到的链接，即可创建能跟好友一起实时聆听播客的房间啦！
+2. 访问 [https://fm.lemonsjtu.cn/](https://fm.lemonsjtu.cn/) 创建房间，依页面的提示黏贴上一步复制到的链接，即可创建能跟好友一起实时聆听的播客房间啦！
 
-详情参见这篇[我写的竹白](https://yenche.zhubai.love/posts/2172097942360440832)
+详情参见[使用指南](https://yenche.zhubai.love/posts/2172097942360440832)
 
 ## 🎧 介绍
 
