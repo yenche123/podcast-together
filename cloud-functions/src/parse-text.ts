@@ -274,6 +274,7 @@ function parseHtml(html: string, originLink: string): ResType {
   }
   else if(isYZYX) sourceType = "youzhiyouxing"
   else if(linkUrl.includes("podcasts.apple.com")) sourceType = "apple_podcast"
+  else if(appName && !seriesName) seriesName = appName
 
   let rData: ResType = {
     code: "0000",
