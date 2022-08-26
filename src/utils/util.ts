@@ -77,6 +77,18 @@ const format0 = (val: string | number): string => {
   return val
 }
 
+/**
+ * 获取文本的中文字符数
+ */
+const getChineseCharNum = (val: string): number => {
+  if(!val) return 0
+  let num = 0
+  for(let i=0; i<val.length; i++) {
+    if(val.charCodeAt(i) >= 10000) num++
+  }
+  return num
+}
+
 export default {
   waitMilli,
   copyObj,
@@ -86,5 +98,6 @@ export default {
   getEnv,
   numToFix,
   format0,
+  getChineseCharNum,
 }
 

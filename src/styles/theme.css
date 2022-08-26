@@ -21,6 +21,9 @@
   --other-btn-bg: #f3f3f3;
   --other-btn-text: #565656;
   --other-btn-hover: #e6e6e6;
+
+  /** 一些比较少用的字段 */
+  --more-btn-bg: linear-gradient(0deg, rgba(249, 249, 249, 1) 60%, rgba(249, 249, 249, .2) 100%);
 }
 
 .dark-theme {
@@ -40,6 +43,9 @@
   --other-btn-bg: #404040;
   --other-btn-text: #c0c0c0;
   --other-btn-hover: #606060;
+
+  /** 一些比较少用的字段 */
+  --more-btn-bg: linear-gradient(0deg, rgba(40, 40, 40, 1) 30%, rgba(40, 40, 40, .5) 100%);
 }
 
 p::selection {

@@ -23,4 +23,6 @@ export default {
   IC_QUESTION_DM: "/ic_question_mark_dm.svg",
   IC_EDIT: "/ic_edit.svg",
   IC_EDIT_DM: "/ic_edit_dm.svg",
+  IC_EXPAND: "/ic_expand.svg",
+  IC_EXPAND_DM: "/ic_expand_dm.svg",
 }

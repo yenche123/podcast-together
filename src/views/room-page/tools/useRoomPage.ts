@@ -12,7 +12,7 @@ import ptUtil from "../../../utils/pt-util"
 import util from "../../../utils/util"
 import time from "../../../utils/time"
 import playerTool from "./player-tool"
-import { showParticipants } from "./show-participants"
+import { showParticipants, handleShowMoreBox } from "./show-room"
 import cui from "../../../components/custom-ui"
 import images from "../../../images"
 import ptApi from "../../../utils/pt-api"
@@ -41,7 +41,8 @@ let ws: WebSocket | null = null
 const pageData: PageData = reactive({
   state: 1,
   roomId: "",
-  participants: []
+  participants: [],
+  showMoreBox: false,   // 是否要展示 “展开更多” 的按钮
 })
 
 // 其他杂七杂八的数据
@@ -174,7 +175,7 @@ function afterEnter(roRes: RoRes) {
   guestId = roRes?.guestId ?? ""
   pageData.content = roRes.content
   pageData.participants = showParticipants(roRes.participants, guestId)
-  
+  pageData.showMoreBox = handleShowMoreBox(roRes.content)
 
   createPlayer()
   heartbeat()
@@ -251,6 +252,9 @@ function createPlayer() {
 // 开始检测 player 是否已经 ready
 async function checkPlayerReady() {
   const cha = ptApi.getCharacteristic()
+  console.log("checkPlayerReady.................")
+  console.log("cha: ", cha)
+  console.log(" ")
   if(!cha.isIOS && !cha.isIPadOS) return
   await util.waitMilli(1500)
   if(srcDuration) return

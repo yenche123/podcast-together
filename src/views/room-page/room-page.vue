@@ -5,9 +5,15 @@ import { useRoomPage } from "./tools/useRoomPage"
 import ListeningLoader from '../../components/listening-loader.vue'
 import images from '../../images';
 import { initBtns } from "./tools/handle-btns"
-import { ref, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { useTheme } from '../../hooks/useTheme';
+import ptApi from '../../utils/pt-api';
 
+const { isIOS, isIPadOS } = ptApi.getCharacteristic()
+console.log("room-page.................")
+console.log("isIOS: ", isIOS)
+console.log("isIPadOS： ", isIPadOS)
+console.log(" ")
 const { theme } = useTheme()
 const { pageData, playerEl, toHome, toContact, toEditMyName } = useRoomPage()
 const state = toRef(pageData, "state")
@@ -24,6 +30,19 @@ const {
 } = initBtns(state, toHome, toContact, toEditMyName)
 
 const alwaysFalse = ref(false)
+const hasLink = computed(() => {
+  const linkUrl = pageData.content?.linkUrl
+  if(linkUrl) return true
+  return false
+})
+
+const onTapShowMore = () => {
+  if(hasLink.value) {
+    window.open(pageData.content?.linkUrl as string, "_blank")
+    return
+  }
+  if(pageData.showMoreBox) pageData.showMoreBox = false
+}
 
 </script>
 
@@ -83,6 +102,35 @@ const alwaysFalse = ref(false)
         <div class="room-btn room-btn-main" @click="onTapShare">
           <div class="div-bg-img room-btn-icon room-btn-icon_share"></div>
           <span>分享</span>
+        </div>
+      </div>
+
+      <div v-if="pageData.content?.title && pageData.content?.description"
+        class="room-title-desc"
+      >
+        <div class="room-podcast-title">
+          <span>{{ pageData.content.title }}</span>
+        </div>
+        <div class="room-desc-box">
+          <div v-if="pageData.showMoreBox" 
+            class="room-description room-desc-limited"
+            :class="{ 'room-desc-limited_ios': isIOS || isIPadOS }"
+          >
+            <span>{{ pageData.content.description }}</span>
+          </div>
+          <div v-else class="room-description" :class="{ 'room-desc_pointer': hasLink }" @click="onTapShowMore">
+            <span>{{ pageData.content.description }}</span>
+          </div>
+
+          <!-- 展开更多 -->
+          <div v-if="pageData.showMoreBox" 
+            class="room-show-more"
+            @click="onTapShowMore"
+          >
+            <span class="room-show-more-text">{{ hasLink ? '查看原文' : '展开更多' }}</span>
+            <div class="div-bg-img room-show-more-icon" :class="{ 'rsmi-rotated': hasLink }" ></div>
+            <div class="room-show-more-bg"></div>
+          </div>
         </div>
       </div>
 
@@ -272,7 +320,7 @@ const alwaysFalse = ref(false)
 
   .room-virtual-two {
     width: 100%;
-    height: 150px;
+    height: 130px;
   }
 
   @media screen and (max-width: 640px) {
@@ -281,7 +329,7 @@ const alwaysFalse = ref(false)
     }
 
     .room-virtual-two {
-      height: 200px;
+      height: 180px;
     }
   }
 
@@ -336,6 +384,108 @@ const alwaysFalse = ref(false)
           background-color: var(--hover-btn-bg);
         }
       }
+    }
+
+  }
+
+  .room-title-desc {
+    margin-top: 50px;
+
+    .room-podcast-title {
+      width: 100%;
+      font-size: var(--title-font);
+      color: var(--text-color);
+      line-height: 1.5;
+      font-weight: 700;
+      margin-bottom: 10px;
+      user-select: text;
+    }
+
+    .room-desc-box {
+      width: 100%;
+      background-color: var(--card-color);
+      box-sizing: border-box;
+      padding: 20px 24px;
+      border-radius: 20px;
+      position: relative;
+
+      .room-description {
+        position: relative;
+        width: 100%;
+        font-size: var(--desc-font);
+        color: var(--desc-color);
+        line-height: 1.75;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow: hidden;
+        z-index: 10;
+        user-select: text;
+      }
+
+      .room-desc-limited {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        /** 18px * 1.75行倍距 * 3行 */
+        max-height: 95;
+      }
+
+      .room-desc-limited_ios {
+        display: inline-block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .room-desc_pointer {
+        cursor: pointer;
+      }
+
+      .room-show-more {
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        text-align: center;
+        width: 100%;
+        padding: 30px 0 5px;
+        /** 18px * 1.75 然后再减掉 5 */
+        margin-top: -27px;
+        cursor: pointer;
+
+        .room-show-more-text {
+          font-size: var(--btn-font);
+          color: var(--text-color);
+          font-weight: 700;
+          line-height: 1.5;
+          z-index: 17;
+        }
+
+        .room-show-more-icon {
+          width: 20px;
+          height: 20px;
+          margin-left: 4px;
+          opacity: .8;
+          z-index: 17;
+          background-image: v-bind("'url(' + (theme === 'light' ? images.IC_EXPAND : images.IC_EXPAND_DM) + ')'");
+        }
+
+        .rsmi-rotated {
+          transform: rotate(-90deg);
+        }
+
+        .room-show-more-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 16;
+          background: var(--more-btn-bg);
+        }
+      }
+
     }
 
   }

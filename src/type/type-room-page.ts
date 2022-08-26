@@ -31,6 +31,7 @@ export interface PageData {
   roomId: string,
   content?: ContentData,
   participants: PageParticipant[],
+  showMoreBox: boolean,
 }
 
 type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"
