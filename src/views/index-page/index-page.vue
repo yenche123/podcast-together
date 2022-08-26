@@ -41,6 +41,9 @@ const onTapCreateBtn = (e: Event) => {
         </div>
       </a>
       
+      <p class="page-btns-p">
+        本项目由开源 Serverless 平台 <a class="pbp-a" href="https://www.lafyun.com/" target="_blank">Laf</a> 全力驱动支持
+      </p>
     </div>
   </div>
 
@@ -48,6 +51,7 @@ const onTapCreateBtn = (e: Event) => {
 
 <style scoped lang="scss" >
 .page {
+  min-height: calc(100vh - 190px);
 
   .page-container {
 
@@ -73,6 +77,8 @@ const onTapCreateBtn = (e: Event) => {
 }
 
 .page-btns-container {
+  min-height: 170px;
+  padding-bottom: 20px;
 
   .page-btns {
 
@@ -91,6 +97,7 @@ const onTapCreateBtn = (e: Event) => {
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      margin-bottom: 20px;
 
       .index-github {
         width: 20px;
@@ -101,6 +108,17 @@ const onTapCreateBtn = (e: Event) => {
 
     .index-other-btn:hover {
       background-color: var(--other-btn-hover);
+    }
+
+    .page-btns-p {
+      font-size: 14px;
+      color: var(--note-color);
+      text-align: center;
+      margin-block-end: 0;
+
+      .pbp-a {
+        color: var(--tap-color);
+      }
     }
   }
 }
