@@ -59,10 +59,6 @@ function _getPotentialRow(text: string): number {
     rowNum++
     let rowText = list[i]
 
-    // 以realme RMX2083 机型为例 20个中文字符占一行
-    // 以模拟器 iphoneX 机型为例 19个中文字符占一行
-    // 以windows lenovo 小新Air-14 IIL 2020 为例 20个中文字符占一行
-    // 以iphone 12 pro 为例 20个中文字符占一行 20个中文字符占一行
     if(rowText.length <= 18) continue
     let chineseNum = util.getChineseCharNum(rowText)
     let otherNum = rowText.length - chineseNum
