@@ -45,7 +45,7 @@
   --other-btn-hover: #606060;
 
   /** 一些比较少用的字段 */
-  --more-btn-bg: linear-gradient(0deg, rgba(40, 40, 40, 1) 30%, rgba(40, 40, 40, .5) 100%);
+  --more-btn-bg: linear-gradient(0deg, rgba(40, 40, 40, 1) 50%, rgba(40, 40, 40, .2) 100%);
 }
 
 p::selection {
