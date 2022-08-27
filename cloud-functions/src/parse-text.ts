@@ -136,6 +136,11 @@ async function fetchLink(link: string): Promise<string | void> {
 
 
 function parseHtml(html: string, originLink: string): ResType {
+
+  console.log("查看一下 html...........")
+  console.log(html)
+  console.log(" ")
+
   const $ = cheerio.load(html)
 
   let appName = ""
