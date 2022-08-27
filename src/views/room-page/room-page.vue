@@ -114,7 +114,6 @@ const onTapShowMore = () => {
         <div class="room-desc-box">
           <div v-if="pageData.showMoreBox" 
             class="room-description room-desc-limited"
-            :class="{ 'room-desc-limited_ios': isIOS || isIPadOS }"
           >
             <span>{{ pageData.content.description }}</span>
           </div>
@@ -341,7 +340,6 @@ const onTapShowMore = () => {
     justify-content: space-evenly;
     position: relative;
     margin-top: 50px;
-    cursor: pointer;
 
     .room-btn {
       display: flex;
@@ -355,6 +353,7 @@ const onTapShowMore = () => {
       background-color: var(--other-btn-bg);
       color: var(--other-btn-text);
       font-size: var(--btn-font);
+      cursor: pointer;
 
       .room-btn-icon {
         width: 20px;
@@ -390,6 +389,8 @@ const onTapShowMore = () => {
 
   .room-title-desc {
     margin-top: 50px;
+    position: relative;
+    width: 100%;
 
     .room-podcast-title {
       width: 100%;
@@ -399,6 +400,10 @@ const onTapShowMore = () => {
       font-weight: 700;
       margin-bottom: 10px;
       user-select: text;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 100%;
     }
 
     .room-desc-box {
@@ -424,17 +429,11 @@ const onTapShowMore = () => {
       }
 
       .room-desc-limited {
+        /** 18px * 1.75行倍距 * 3行 */
+        max-height: 95px;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
-        /** 18px * 1.75行倍距 * 3行 */
-        max-height: 95;
-      }
-
-      .room-desc-limited_ios {
-        display: inline-block;
-        white-space: nowrap;
-        text-overflow: ellipsis;
       }
 
       .room-desc_pointer {
