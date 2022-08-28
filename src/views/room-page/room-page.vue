@@ -7,13 +7,7 @@ import images from '../../images';
 import { initBtns } from "./tools/handle-btns"
 import { computed, ref, toRef } from 'vue';
 import { useTheme } from '../../hooks/useTheme';
-import ptApi from '../../utils/pt-api';
 
-const { isIOS, isIPadOS } = ptApi.getCharacteristic()
-console.log("room-page.................")
-console.log("isIOS: ", isIOS)
-console.log("isIPadOS： ", isIPadOS)
-console.log(" ")
 const { theme } = useTheme()
 const { pageData, playerEl, toHome, toContact, toEditMyName } = useRoomPage()
 const state = toRef(pageData, "state")
