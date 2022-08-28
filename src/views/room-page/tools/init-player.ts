@@ -32,10 +32,6 @@ export function initPlayer(
     speedOptions: playerTool.initSpeedOptions(),
   })
 
-  console.log("player 创建结果...................")
-  console.log(player)
-  console.log(" ")
-
   player.on("audioupdate", (e: Event) => {
     console.log("player audioupdate.............")
     console.log(e)

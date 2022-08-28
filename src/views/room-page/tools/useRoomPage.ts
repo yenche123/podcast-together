@@ -252,9 +252,6 @@ function createPlayer() {
 // 开始检测 player 是否已经 ready
 async function checkPlayerReady() {
   const cha = ptApi.getCharacteristic()
-  console.log("checkPlayerReady.................")
-  console.log("cha: ", cha)
-  console.log(" ")
   if(!cha.isIOS && !cha.isIPadOS) return
   await util.waitMilli(1500)
   if(srcDuration) return
@@ -401,11 +398,7 @@ function heartbeat() {
     }
     else pausedSec = 0
 
-    console.log(time.getLocalTimeStr() + " 去发送心跳 --------->")
     const res = await request_heartbeat(pageData.roomId, nickName)
-    console.log("-------> 发送心跳返回")
-    console.log(res)
-    console.log(" ")
     if(!res) return
     const { code, data } = res
     if(code === "0000") {
@@ -509,8 +502,6 @@ function connectWebSocket() {
 // 等待 5s 查看 web-socket 是否连接
 async function checkWebSocket() {
   await util.waitMilli(5000)
-  console.log("当前 web-socket 收到的消息数量: ", receiveWsNum)
-  console.log(` `)
   if(receiveWsNum < 2) {
     pageData.state = 18
     leaveRoom()
@@ -545,10 +536,6 @@ async function receiveNewStatus(fromType: RevokeType = "ws") {
   // 判断倍速
   let rSpeedRate = latestStatus.speedRate
   let speedRate = String(player.playbackRate)
-
-  console.log("远端倍速: ", rSpeedRate)
-  console.log("当前倍速: ", speedRate)
-  console.log(" ")
 
   if(rSpeedRate !== speedRate) {
     console.log("播放器倍速不一致，请求调整......")
