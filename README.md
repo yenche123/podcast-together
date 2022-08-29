@@ -94,7 +94,7 @@
 
 6. [小宇宙](https://www.xiaoyuzhoufm.com/)
 
-感谢小宇宙的单集链接支持 Open-Graph 协议，能获取到 og:audio
+感谢小宇宙的单集链接支持 Open-Graph 协议，能获取到 og:audio 的 meta 标签
 
 7. [fluentui-emoji](https://github.com/microsoft/fluentui-emoji)
 
