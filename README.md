@@ -98,7 +98,7 @@
 
 7. [fluentui-emoji](https://github.com/microsoft/fluentui-emoji)
 
-感谢微软开源的表情包，很 Nice!!!
+感谢微软开源的 emoji，非常 Nice!!!
 
 8. [uiball-loaders](https://uiball.com/loaders/)
 
