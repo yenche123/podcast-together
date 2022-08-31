@@ -234,6 +234,9 @@ function parseHtml(html: string, originLink: string): ResType {
       let partOfSeries: Record<string, string> = sptJson?.partOfSeries ?? {}
       seriesName = partOfSeries.name ?? ""
       seriesUrl = partOfSeries.url ?? ""
+
+      // 详情部分
+      if(sptJson?.description) description = sptJson.description
     }
     else if(spt_name === "schema:podcast-episode") {
       // 适配 apple podcast
