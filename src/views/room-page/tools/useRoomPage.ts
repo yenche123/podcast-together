@@ -88,7 +88,7 @@ const toContact = () => {
 const toEditMyName = async (newName: string) => {
   if(pageData.state !== 3) return
   const participants = pageData.participants
-  // 修改本地
+  // 修改视图
   for(let i=0; i<participants?.length; i++) {
     const v = participants[i]
     if(v.isMe) v.nickName = newName
@@ -97,6 +97,11 @@ const toEditMyName = async (newName: string) => {
   // 上报远端
   // 销毁心跳、再用新的心跳上报
   await request_heartbeat(pageData.roomId, nickName)
+
+  // 修改缓存
+  let userData = ptUtil.getUserData()
+  userData.nickName = newName
+  ptUtil.setUserData(userData)
 }
 
 export const useRoomPage = () => {
