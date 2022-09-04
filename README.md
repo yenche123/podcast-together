@@ -110,6 +110,12 @@
 
 谢谢你看到这里！
 
+## 支持我
+
+<img src="./public/appreciation_code.jpg" width="200" />
+
+如果有帮助到你，欢迎向我打赏，请我喝☕
+
 ## 开源协议
 
 MIT
