@@ -111,9 +111,6 @@ const _setWeChat = (wxShare: WxShare) => {
     link = location.origin
   } = wxShare
 
-
-  console.log("看一下 frdImgUrl: ", frdImgUrl)
-  console.log(" ")
   wx.updateAppMessageShareData({
     title: frdTitle,
     desc: frdDesc,

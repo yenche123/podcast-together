@@ -9,7 +9,7 @@ export const shareData = (c: ContentData, playStatus: string, nickName: string) 
   let desc = c.title ? c.title : "一起听播客"
 
   let opt: ShareCfgData = {
-    title: pyqTitle,
+    title: frdTitle,
     desc,
     imageUrl: images.APP_LOGO_COS,
     shareWay: "outside",
@@ -20,8 +20,5 @@ export const shareData = (c: ContentData, playStatus: string, nickName: string) 
       link: location.href,
     }
   }
-  console.log("去配置详情页的分享..........")
-  console.log(opt)
-  console.log(" ")
   share.configShare(opt)
 }
