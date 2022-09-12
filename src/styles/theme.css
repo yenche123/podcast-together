@@ -11,6 +11,7 @@
   --note-color: #bababa;
   --desc-color: #606060;
   --tap-color: #4269a5;
+  --theme-a: #fadfb2;
 
   /** 主按钮 */
   --main-btn-bg: #181818;
@@ -33,6 +34,7 @@
   --note-color: #787878;
   --desc-color: #c0c0c0;
   --tap-color: #4269a5;
+  --theme-a: #f1c680;
 
   /** 主按钮 */
   --main-btn-bg: #ddd;
