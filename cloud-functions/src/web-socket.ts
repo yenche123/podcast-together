@@ -146,7 +146,13 @@ async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): P
   const clientId: string = req["x-pt-local-id"]
 
   const room: Room = await _getRoom(roomId) as Room
+  if(!room) return
+  
   let roomCfg: RoomConfig = room.config ?? defaultRoomCfg
+  const isOwner = room.owner === clientId
+  if(!isOwner && roomCfg.everyoneCanOperatePlayer === "N") {
+    return
+  }
 
   const guestId = _getOperatorGuestId(clientId, room)
   if(!guestId) {
@@ -182,7 +188,7 @@ async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): P
     operateStamp: s1,
     operator: guestId,
   }
-  if(everyoneCanOperatePlayer && clientId === room.owner) {
+  if(everyoneCanOperatePlayer && isOwner) {
     roomStatus.everyoneCanOperatePlayer = everyoneCanOperatePlayer
     roomCfg.everyoneCanOperatePlayer = everyoneCanOperatePlayer
     newStatus.config = roomCfg
