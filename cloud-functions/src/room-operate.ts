@@ -51,6 +51,8 @@ interface RoRes {
   operateStamp: number
   participants: ParticipantClient[]
   guestId?: string
+  iamOwner?: "Y" | "N"
+  everyoneCanOperatePlayer?: "Y" | "N"
 }
 
 interface ResType {
@@ -58,6 +60,10 @@ interface ResType {
   errMsg?: string
   showMsg?: string
   data?: RoRes
+}
+
+interface RoomConfig {
+  everyoneCanOperatePlayer: "Y" | "N"
 }
 
 interface Room {
@@ -73,6 +79,11 @@ interface Room {
   createStamp: number
   owner: string
   participants: Participant[]
+  config?: RoomConfig
+}
+
+let defaultRoomCfg: RoomConfig = {
+  everyoneCanOperatePlayer: "Y"
 }
 
 type OperateType = "CREATE" | "ENTER" | "HEARTBEAT" | "LEAVE"
@@ -163,7 +174,8 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
 
   let room = await _getRoom(roomId)
   if(!room || !room._id) return { code: "E4004" }
-  let { oState, participants = [] } = room
+  let { oState, participants = [], config = defaultRoomCfg } = room
+  
   if(oState === "EXPIRED") return { code: "E4006" }
   if(oState === "DELETED") return { code: "E4004" }
 
@@ -203,6 +215,7 @@ async function handle_heartbeat(body: CommonBody): Promise<ResType> {
     contentStamp: room.contentStamp,
     operateStamp: room.operateStamp,
     participants: pClients,
+    everyoneCanOperatePlayer: config.everyoneCanOperatePlayer,
   }
   return { code: "0000", data: roRes }
 }
@@ -219,7 +232,8 @@ async function handle_enter(body: CommonBody, ua?: string, ip?: string | string[
   // 查找房间
   let room = await _getRoom(roomId)
   if(!room || !room._id) return { code: "E4004" }
-  let { oState, participants = [] } = room
+  let { oState, participants = [], config = defaultRoomCfg } = room
+
   if(oState === "EXPIRED") return { code: "E4006" }
   if(oState === "DELETED") return { code: "E4004" }
 
@@ -285,6 +299,8 @@ async function handle_enter(body: CommonBody, ua?: string, ip?: string | string[
     operateStamp: room.operateStamp,
     participants: pClients,
     guestId,
+    iamOwner: room.owner === clientId ? "Y" : "N",
+    everyoneCanOperatePlayer: config.everyoneCanOperatePlayer,
   }
 
   return { code: "0000", data: roRes }
@@ -382,7 +398,8 @@ async function _createRoom(clientId: string, roomData: ContentData): Promise<RoR
     operator: "",
     createStamp: now,
     owner: clientId,
-    participants: []
+    participants: [],
+    config: defaultRoomCfg,
   }
   const res = await col.add(room)
   let roRes: RoRes = {
@@ -393,7 +410,8 @@ async function _createRoom(clientId: string, roomData: ContentData): Promise<RoR
     operator: "",
     contentStamp: 0,
     operateStamp: now,
-    participants: []
+    participants: [],
+    everyoneCanOperatePlayer: defaultRoomCfg.everyoneCanOperatePlayer,
   }
   return roRes
 }
