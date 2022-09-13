@@ -13,6 +13,7 @@ interface RoomStatus {
   operator: string
   contentStamp: number
   operateStamp: number
+  everyoneCanOperatePlayer?: "Y" | "N"
 }
 
 interface ResToFe {
@@ -32,6 +33,11 @@ interface ReqOperatePlayer extends ReqBase {
   playStatus: "PLAYING" | "PAUSED"
   speedRate: "1"
   contentStamp: number
+  everyoneCanOperatePlayer?: "Y" | "N"
+}
+
+let defaultRoomCfg: RoomConfig = {
+  everyoneCanOperatePlayer: "Y"
 }
 
 
@@ -105,7 +111,10 @@ function handle_heartbeat(ctx: FunctionContext, req: ReqBase): void {
 async function handle_first_send(ctx: FunctionContext, req: ReqBase): Promise<void> {
   const { roomId } = req
   const clientId: string = req["x-pt-local-id"]
+
   const room: Room = await _getRoom(roomId) as Room
+  let roomCfg: RoomConfig = room.config ?? defaultRoomCfg
+
   const guestId = _getOperatorGuestId(clientId, room)
   if(!guestId) {
     ctx.socket.close()
@@ -122,6 +131,7 @@ async function handle_first_send(ctx: FunctionContext, req: ReqBase): Promise<vo
     operator: room.operator,
     contentStamp: room.contentStamp,
     operateStamp: room.operateStamp,
+    everyoneCanOperatePlayer: roomCfg.everyoneCanOperatePlayer,
   }
   let resToFe: ResToFe = {
     responseType: "NEW_STATUS",
@@ -132,9 +142,12 @@ async function handle_first_send(ctx: FunctionContext, req: ReqBase): Promise<vo
 }
 
 async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): Promise<void> {
-  const { roomId, playStatus, speedRate, contentStamp } = req
+  const { roomId, playStatus, speedRate, contentStamp, everyoneCanOperatePlayer } = req
   const clientId: string = req["x-pt-local-id"]
+
   const room: Room = await _getRoom(roomId) as Room
+  let roomCfg: RoomConfig = room.config ?? defaultRoomCfg
+
   const guestId = _getOperatorGuestId(clientId, room)
   if(!guestId) {
     ctx.socket.close()
@@ -154,15 +167,29 @@ async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): P
   const diff2 = Math.abs(contentStamp - oContentStamp)
   if(playStatus === oPlayStatus && speedRate === oSpeedRate && diff2 <= 500) return
 
-  let newStatus = {
+  let newStatus: Partial<Room> = {
     playStatus,
     speedRate,
     contentStamp,
     operateStamp: s1,
     operator: guestId,
   }
+  let roomStatus: RoomStatus = {
+    roomId,
+    playStatus,
+    speedRate,
+    contentStamp,
+    operateStamp: s1,
+    operator: guestId,
+  }
+  if(everyoneCanOperatePlayer && clientId === room.owner) {
+    roomStatus.everyoneCanOperatePlayer = everyoneCanOperatePlayer
+    roomCfg.everyoneCanOperatePlayer = everyoneCanOperatePlayer
+    newStatus.config = roomCfg
+  }
+
   await _updateRoom(roomId, newStatus)
-  const roomStatus: RoomStatus = {...newStatus, roomId }
+
   const resToFe: ResToFe = {
     responseType: "NEW_STATUS",
     roomStatus,
@@ -236,6 +263,10 @@ interface Participant {
   nonce: string
 }
 
+interface RoomConfig {
+  everyoneCanOperatePlayer: "Y" | "N"
+}
+
 interface Room {
   _id: string
   title?: string
@@ -249,6 +280,7 @@ interface Room {
   createStamp: number
   owner: string
   participants: Participant[]
+  config?: RoomConfig
 }
 
 /**
