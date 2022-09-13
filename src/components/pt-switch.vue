@@ -20,7 +20,7 @@ const emit = defineEmits(["change"])
 const onTapToggle = () => {
   if(props.disabled) return
   switchVal.value = !switchVal.value
-  emit("change", { msg: "toggle changes" })
+  emit("change", { checked: switchVal.value, msg: "toggle changes" })
 }
 
 </script>
