@@ -79,6 +79,10 @@ export function initPlayer(
   })
 
   player.on("loadeddata", (e: Event) => {
+    console.log("player loadeddata.........")
+    console.log(e)
+    console.log(" ")
+    
     callbacks.loadeddata && callbacks.loadeddata(e)
   })
 
@@ -113,6 +117,9 @@ export function initPlayer(
     console.log(e)
     console.log(" ")
   })
+
+  console.log("已创建播放器........................")
+  console.log(" ")
 
   return player
 }

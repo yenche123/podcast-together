@@ -113,8 +113,9 @@ const doNothing = (e: Event) => {
   font-size: var(--title-font);
   color: var(--text-color);
   width: 70%;
-  line-height: 40px;
+  line-height: 32px;
   margin-right: 10px;
+  padding-top: 4px;
 }
 
 .rmpb-footer {

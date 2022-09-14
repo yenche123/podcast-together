@@ -259,7 +259,7 @@ function createPlayer() {
     }
     collectLatestStatus()
   }
-  let callbacks = {
+  const callbacks = {
     durationchange,
     canplay,
     loadeddata,
@@ -519,9 +519,9 @@ function connectWebSocket() {
       firstSend()
     }
     else if(rT === "NEW_STATUS" && roomStatus) {
-      console.log("web-socket 收到新的的状态.......")
-      console.log(msgRes)
-      console.log(" ")
+      // console.log("web-socket 收到新的的状态.......")
+      // console.log(msgRes)
+      // console.log(" ")
       lastNewStatusFromWsStamp = time.getLocalTime()
       latestStatus = roomStatus
       if(roomStatus.everyoneCanOperatePlayer) {

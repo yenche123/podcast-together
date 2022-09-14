@@ -23,10 +23,6 @@ const _configWxJsSDK = (): Promise<boolean> => {
     webUrl: location.href
   }
 
-  console.log("body1: ")
-  console.log(body1)
-  console.log(" ")
-
   const _handle = async (a: (a1: boolean) => void): Promise<void> => {
     const res1 = await rq.request<WxConfig>(url, body1)
     let { code, data } = res1
