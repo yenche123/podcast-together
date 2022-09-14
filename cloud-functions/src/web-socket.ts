@@ -167,12 +167,6 @@ async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): P
     if(diff < MIN_DURATION_FOR_A_PERSON) return
   }
 
-  let oPlayStatus = room.playStatus
-  let oSpeedRate = room.speedRate
-  let oContentStamp = room.contentStamp
-  const diff2 = Math.abs(contentStamp - oContentStamp)
-  if(playStatus === oPlayStatus && speedRate === oSpeedRate && diff2 <= 500) return
-
   let newStatus: Partial<Room> = {
     playStatus,
     speedRate,
