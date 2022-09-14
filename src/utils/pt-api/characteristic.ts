@@ -25,9 +25,9 @@ const getCharacteristic = (): GetChaRes => {
   const ua = userAgent.toLowerCase()
   const mobileMatch = userAgent.match(/AppleWebKit.*Mobile.*/)
 
-  console.log("userAgentData: ", userAgentData)
-  console.log("ua: ", ua)
-  console.log("mobileMatch: ", mobileMatch)
+  // console.log("userAgentData: ", userAgentData)
+  // console.log("ua: ", ua)
+  // console.log("mobileMatch: ", mobileMatch)
 
   // 判断是否为微信环境
   if(ua.includes("micromessenger")) isWeChat = true
@@ -51,9 +51,9 @@ const getCharacteristic = (): GetChaRes => {
   if(ua.includes("feishu")) isFeishu = true
 
   let res = _returnData()
-  console.log("看一下特征值判断结果...........")
-  console.log(res)
-  console.log(" ")
+  // console.log("看一下特征值判断结果...........")
+  // console.log(res)
+  // console.log(" ")
   return res
 }
 

@@ -110,5 +110,15 @@ export function initBtns(
     }
   }
 
-  return { btnText, btnText2, h1, pText, onTapBtn, onTapBtn2, onTapLeave, onTapShare, onTapEditMyName }
+  return { 
+    btnText, 
+    btnText2, 
+    h1, 
+    pText, 
+    onTapBtn, 
+    onTapBtn2, 
+    onTapLeave, 
+    onTapShare, 
+    onTapEditMyName,
+  }
 }

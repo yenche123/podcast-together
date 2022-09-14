@@ -13,6 +13,7 @@ let {
 } = useContactPage()
 
 const doNothing = (e: Event) => {
+  console.log("doNothing............")
   e.stopPropagation()
 }
 

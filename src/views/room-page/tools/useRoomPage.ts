@@ -43,6 +43,8 @@ const pageData: PageData = reactive({
   roomId: "",
   participants: [],
   showMoreBox: false,   // 是否要展示 “展开更多” 的按钮
+  amIOwner: false,
+  everyoneCanOperatePlayer: "Y"
 })
 
 // 其他杂七杂八的数据
@@ -104,6 +106,12 @@ const toEditMyName = async (newName: string) => {
   ptUtil.setUserData(userData)
 }
 
+const onEveryoneCanOperatePlayerChange = (opt: { checked: boolean }) => {
+  if(!pageData.amIOwner) return
+  pageData.everyoneCanOperatePlayer = opt.checked ? "Y" : "N"
+  collectLatestStatus()
+}
+
 export const useRoomPage = () => {
   const rr = useRouteAndPtRouter()
   router = rr.router
@@ -111,7 +119,16 @@ export const useRoomPage = () => {
   
   init()
 
-  return { pageData, playerEl, route, router, toHome, toContact, toEditMyName }
+  return { 
+    pageData, 
+    playerEl, 
+    route, 
+    router, 
+    toHome, 
+    toContact, 
+    toEditMyName,
+    onEveryoneCanOperatePlayerChange,
+  }
 }
 
 // 初始化一些东西，比如 onActivated / onDeactivated 
@@ -179,6 +196,7 @@ function enterResToErrState(res?: RequestRes) {
 function afterEnter(roRes: RoRes) {
   guestId = roRes?.guestId ?? ""
   pageData.content = roRes.content
+  pageData.amIOwner = roRes?.iamOwner === "Y" ? true : false
   pageData.participants = showParticipants(roRes.participants, guestId)
   pageData.showMoreBox = handleShowMoreBox(roRes.content)
 
@@ -250,8 +268,32 @@ function createPlayer() {
     ratechange,
     seeked
   }
-  player = initPlayer(playerEl, audio, callbacks)
+
+  const onBeforeClick = (target: string): boolean => {
+    if(pageData.amIOwner || !target) return true
+    const list = ["play_or_pause", "forward", "backward", "speed", "seek"]
+    const isRestricted = list.includes(target)
+    if(pageData.everyoneCanOperatePlayer === "N" && isRestricted) {
+      showOperateFailed()
+      return false
+    }
+    return true
+  }
+
+  player = initPlayer(playerEl, audio, callbacks, onBeforeClick)
   checkPlayerReady()
+}
+
+let lastShowOperateFailed = 0
+function showOperateFailed() {
+  const now = time.getLocalTime()
+  if(lastShowOperateFailed + 500 > now) return
+  lastShowOperateFailed = now
+  cui.showModal({
+    title: "提示",
+    content: "房主已设置仅房主能操作播放器。不过，你仍然可以调整是否静音（在\"...\"里）。",
+    showCancel: false,
+  })
 }
 
 // 开始检测 player 是否已经 ready
@@ -288,10 +330,12 @@ function collectLatestStatus() {
 
   const _collect = () => {
     if(!player) return
+    if(!pageData.amIOwner && pageData.everyoneCanOperatePlayer === "N") return
+
     const currentTime = player.currentTime ?? 0
     let contentStamp = currentTime * 1000
     contentStamp = util.numToFix(contentStamp, 0)
-    const param = {
+    let param: Record<string, any> = {
       operateType: "SET_PLAYER",
       roomId: pageData.roomId,
       "x-pt-local-id": localId,
@@ -299,6 +343,9 @@ function collectLatestStatus() {
       playStatus,
       speedRate: String(player.playbackRate),
       contentStamp,
+    }
+    if(pageData.amIOwner) {
+      param.everyoneCanOperatePlayer = pageData.everyoneCanOperatePlayer
     }
     sendToWebSocket(ws, param)
     checkOperated()
@@ -361,6 +408,9 @@ function heartbeat() {
       operator: roRes.operator,
       contentStamp: roRes.contentStamp,
       operateStamp: roRes.operateStamp
+    }
+    if(roRes.everyoneCanOperatePlayer) {
+      pageData.everyoneCanOperatePlayer = roRes.everyoneCanOperatePlayer
     }
     receiveNewStatus("http")
   }
@@ -474,6 +524,9 @@ function connectWebSocket() {
       console.log(" ")
       lastNewStatusFromWsStamp = time.getLocalTime()
       latestStatus = roomStatus
+      if(roomStatus.everyoneCanOperatePlayer) {
+        pageData.everyoneCanOperatePlayer = roomStatus.everyoneCanOperatePlayer
+      }
       receiveNewStatus()
     }
     else if(rT === "HEARTBEAT") {

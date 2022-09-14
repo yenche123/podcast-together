@@ -11,8 +11,6 @@ const _configWxJsSDK = (): Promise<boolean> => {
   if(hasConfigWxJsSDK) return util.getPromise(true)
   let { isWeChat } = ptApi.getCharacteristic()
   if(!isWeChat) {
-    console.log("当前不在微信环境内........")
-    console.log(" ")
     return util.getPromise(true)
   }
 

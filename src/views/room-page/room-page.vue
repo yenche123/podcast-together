@@ -7,9 +7,18 @@ import images from '../../images';
 import { initBtns } from "./tools/handle-btns"
 import { computed, ref, toRef } from 'vue';
 import { useTheme } from '../../hooks/useTheme';
+import { initManage } from './tools/init-manage';
+import RoomManagePopup from './room-manage-popup.vue';
 
 const { theme } = useTheme()
-const { pageData, playerEl, toHome, toContact, toEditMyName } = useRoomPage()
+const { 
+  pageData, 
+  playerEl, 
+  toHome, 
+  toContact, 
+  toEditMyName, 
+  onEveryoneCanOperatePlayerChange 
+} = useRoomPage()
 const state = toRef(pageData, "state")
 const { 
   btnText, 
@@ -22,6 +31,11 @@ const {
   onTapShare,
   onTapEditMyName,
 } = initBtns(state, toHome, toContact, toEditMyName)
+const { 
+  showManagePopup,
+  onTapManageBtn,
+  onTapManageMask,
+} = initManage()
 
 const alwaysFalse = ref(false)
 const hasLink = computed(() => {
@@ -69,7 +83,12 @@ const onTapShowMore = () => {
 
       <div class="room-virtual-one"></div>
 
-      <h2 v-if="pageData.participants?.length" >正在听的有</h2>
+      <div v-if="pageData.participants?.length" class="room-listening">
+        <div class="rl-title">正在听的有</div>
+        <div class="rl-mini-btn" v-if="pageData.amIOwner" @click="onTapManageBtn">
+          <span>管理</span>
+        </div>
+      </div>
       <div v-if="pageData.participants?.length"
         class="room-participants"
       >
@@ -155,6 +174,13 @@ const onTapShowMore = () => {
     </div>
 
   </div>
+  <RoomManagePopup 
+    :show="showManagePopup" 
+    :everyoneCanOperatePlayer="pageData.everyoneCanOperatePlayer"
+    @tapmask="onTapManageMask"
+    @everyoneCanOperatePlayerChange="onEveryoneCanOperatePlayerChange"
+  ></RoomManagePopup>
+  
 </template>
 
 <style scoped lang="scss">
@@ -260,6 +286,47 @@ const onTapShowMore = () => {
     color: var(--text-color);
     margin-block-start: 0;
     margin-block-end: 20px;
+  }
+
+  .room-listening {
+    margin-block-start: 0;
+    margin-block-end: 20px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .rl-title {
+      font-size: var(--title-font);
+      color: var(--text-color);
+      font-weight: 700;
+      width: 60%;
+      display: flex;
+      flex-wrap: wrap;
+      line-height: 32px;
+    }
+
+    .rl-mini-btn {
+      display: flex;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--other-btn-bg);
+      color: var(--other-btn-text);
+      font-size: var(--mini-font);
+      transition: .15s;
+      cursor: pointer;
+      border-radius: 30px;
+      padding: 0 14px;
+      min-width: 50px;
+    }
+
+    .rl-mini-btn:hover, .rl-mini-btn:active {
+      background-color: var(--other-btn-hover);
+    }
+
   }
 
   .room-participants {

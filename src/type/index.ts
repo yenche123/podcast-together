@@ -48,6 +48,8 @@ export interface RoRes {
   operateStamp: number
   participants: Participant[]
   guestId?: string
+  iamOwner?: "Y" | "N"
+  everyoneCanOperatePlayer?: "Y" | "N"
 }
 
 

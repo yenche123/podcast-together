@@ -23,26 +23,20 @@ export interface AudioData {
 export function initPlayer(
   playerEl: Ref, 
   audioData: AudioData, 
-  callbacks: PlayerCallbacks
+  callbacks: PlayerCallbacks,
+  onBeforeClick: (target: string) => boolean,
 ): any {
   let player = new Shikwasa({
     container: () => playerEl.value,
     audio: audioData,
     themeColor: "var(--text-color)",
     speedOptions: playerTool.initSpeedOptions(),
+    onBeforeClick,
   })
 
-  player.on("audioupdate", (e: Event) => {
-    console.log("player audioupdate.............")
-    console.log(e)
-    console.log(" ")
-  })
+  player.on("audioupdate", (e: Event) => {})
 
-  player.on("audioparse", (e: Event) => {
-    console.log("player audioparse.............")
-    console.log(e)
-    console.log(" ")
-  })
+  player.on("audioparse", (e: Event) => {})
 
   // 去监听 播放器的各个事件回调
   player.on("abort", (e: Event) => {
@@ -51,24 +45,16 @@ export function initPlayer(
     console.log(" ")
   })
 
-  player.on("complete", (e: Event) => {
-    console.log("player complete.............")
-    console.log(e)
-    console.log(" ")
-  })
+  player.on("complete", (e: Event) => {})
 
   player.on("durationchange", (e: any) => {
-
-    console.log("player durationchange................")
-    console.log("e:")
-    console.log(e)
     let myAudio = e?.path?.[0]
     if(!myAudio) {
       myAudio = e?.srcElement
     }
     let duration = myAudio?.duration
 
-    console.log("看一下时长: ", duration)
+    console.log("看一下音频总时长: ", duration)
     console.log(" ")
     callbacks.durationchange && callbacks.durationchange(duration)
   })
@@ -79,11 +65,7 @@ export function initPlayer(
     console.log(" ")
   })
 
-  player.on("ended", (e: Event) => {
-    console.log("player ended.............")
-    console.log(e)
-    console.log(" ")
-  })
+  player.on("ended", (e: Event) => {})
 
   player.on("error", (e: Event) => {
     console.log("player error.............")
@@ -97,17 +79,11 @@ export function initPlayer(
   })
 
   player.on("loadeddata", (e: Event) => {
-    console.log("player loadeddata.............")
-    console.log(e)
-    console.log(" ")
     callbacks.loadeddata && callbacks.loadeddata(e)
   })
 
   player.on("pause", (e: Event) => {
     if(!playerTool.checkThrottle("pause")) return
-    console.log("player pause...........")
-    console.log(e)
-    console.log(" ")
     callbacks.pause && callbacks.pause(e)
   })
 
@@ -129,9 +105,6 @@ export function initPlayer(
 
   player.on("seeked", (e: Event) => {
     if(!playerTool.checkThrottle("seek")) return
-    console.log("seeked..................")
-    console.log(e)
-    console.log(" ")
     callbacks.seeked && callbacks.seeked(e)
   })
 

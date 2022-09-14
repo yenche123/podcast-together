@@ -32,6 +32,8 @@ export interface PageData {
   content?: ContentData,
   participants: PageParticipant[],
   showMoreBox: boolean,
+  amIOwner: boolean,
+  everyoneCanOperatePlayer: "Y" | "N"
 }
 
 type SpeedRate = "0.8" | "1" | "1.2" | "1.5" | "1.7"
@@ -45,6 +47,7 @@ export interface RoomStatus {
   operator: string
   contentStamp: number
   operateStamp: number
+  everyoneCanOperatePlayer?: "Y" | "N"
 }
 
 export interface WsMsgRes {

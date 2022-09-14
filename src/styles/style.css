@@ -23,6 +23,7 @@
 
   /** 各字号 */
   --big-word-style: 36px;
+  --head-font: 28px;
   --title-font: 21px;
   --desc-font: 18px;
   --btn-font: 17px;
