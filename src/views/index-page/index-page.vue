@@ -46,7 +46,7 @@ const onTapCreateBtn = (e: Event) => {
         </div>
       </a>
       <div v-else class="index-other-btn" @click="onTapInstall">
-        <img :src="theme === 'light' ? images.IC_DOWNLOAD : images.IC_DOWNLOAD_DM" class="index-github"/>
+        <img :src="theme === 'light' ? images.IC_DOWNLOAD : images.IC_DOWNLOAD_DM" class="index-btn-icon"/>
         <span>安装应用</span>
       </div>
       
@@ -131,6 +131,13 @@ const onTapCreateBtn = (e: Event) => {
         width: 20px;
         height: 20px;
         margin-right: 10px;
+      }
+
+      .index-btn-icon {
+        width: 22px;
+        height: 22px;
+        margin-right: 10px;
+        opacity: .72;
       }
     }
 
