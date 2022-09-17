@@ -7,6 +7,7 @@ import share from "../../utils/share";
 import { useTheme } from "../../hooks/useTheme";
 import { useAddToHomeScreen } from "./tools/useAddToHomeScreen";
 
+const OPEN_SOURCE_URL = "https://github.com/yenche123/podcast-together"
 const { showInstallPwaBtn, onTapInstall } = useAddToHomeScreen()
 let { theme } = useTheme()
 const router = useRouter()
@@ -27,6 +28,10 @@ const onTapCreateBtn = (e: Event) => {
     <div class="page-container">
       <div class="div-bg-img index-icon-img"></div>
       <h1>一起听播客</h1>
+
+      <a v-if="showInstallPwaBtn" class="index-opensource-url" :href="OPEN_SOURCE_URL" target="_blank">
+        <img :src="theme === 'light' ? images.GITHUB : images.GITHUB_DM" class="index-ou-github"/>
+      </a>
     </div>
   </div>
 
@@ -34,7 +39,7 @@ const onTapCreateBtn = (e: Event) => {
     <div class="page-btns">
       <pt-button class="index-main-btn" text="创建房间" @click="onTapCreateBtn"></pt-button>
 
-      <a v-if="!showInstallPwaBtn" href="https://github.com/yenche123/podcast-together" target="_blank">
+      <a v-if="!showInstallPwaBtn" :href="OPEN_SOURCE_URL" target="_blank">
         <div class="index-other-btn">
           <img :src="theme === 'light' ? images.GITHUB : images.GITHUB_DM" class="index-github"/>
           <span>开源地址</span>
@@ -76,6 +81,25 @@ const onTapCreateBtn = (e: Event) => {
       line-height: 50px;
       color: var(--text-color);
       letter-spacing: 2px;
+    }
+
+    .index-opensource-url {
+      position: absolute;
+      top: 14px;
+      right: 4px;
+      width: 40px;
+      height: 40px;
+      transition: opacity .15s;
+
+      .index-ou-github {
+        width: 100%;
+        height: 100%;
+        opacity: .78;
+      }
+
+      &:hover {
+        opacity: .66;
+      }
     }
   }
 }
