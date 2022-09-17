@@ -26,6 +26,7 @@
     "typescript": "^4.6.4",
     "user-agent-data-types": "^0.3.0",
     "vite": "^3.0.0",
+    "vite-plugin-pwa": "^0.12.7",
     "vue-tsc": "^0.38.4"
   },
   "author": "yenche123 <tsuiyenche@outlook.com> (https://github.com/yenche123)",
