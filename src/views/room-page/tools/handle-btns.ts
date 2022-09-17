@@ -1,5 +1,6 @@
 import { computed, Ref } from "vue"
 import cui from "../../../components/custom-ui"
+import { usePwaDisplayMode } from "../../../hooks/usePwaDisplayMode"
 import { PageParticipant, PageState } from "../../../type/type-room-page"
 import ptApi from "../../../utils/pt-api"
 import { enterRoom } from "./useRoomPage"
@@ -10,6 +11,7 @@ export function initBtns(
   toContact: () => void,
   toEditMyName: (newName: string) => void,
 ) {
+  const { displayMode } = usePwaDisplayMode()
   const btnText = computed(() => {
     const v = state.value
     if(v < 11) return ""
@@ -81,7 +83,12 @@ export function initBtns(
   // 点击分享
   const onTapShare = () => {
     const cha = ptApi.getCharacteristic()
-    if(cha.isPC) {
+    const v = displayMode.value
+    console.log("此时的 displayMode..........")
+    console.log(v)
+    console.log(" ")
+
+    if(cha.isPC || v === "standalone") {
       const url = location.href
       ptApi.copyToClipboard(url)
       cui.showModal({
