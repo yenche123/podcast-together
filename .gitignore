@@ -28,3 +28,6 @@ thirdparty-setting.ts
 
 # 公众号的校验文件
 /public/MP_verify*
+
+# vite-plugin-pwa 生成的 dev-dist
+dev-dist
