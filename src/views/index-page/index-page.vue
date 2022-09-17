@@ -5,13 +5,13 @@ import images from "../../images"
 import { onActivated } from "vue";
 import share from "../../utils/share";
 import { useTheme } from "../../hooks/useTheme";
+import { useAddToHomeScreen } from "./tools/useAddToHomeScreen";
 
+const { showInstallPwaBtn, onTapInstall } = useAddToHomeScreen()
 let { theme } = useTheme()
-
 const router = useRouter()
 
 onActivated(() => {
-  console.log("打开首页，去设置分享...........")
   share.configShare()
 })
 
@@ -34,12 +34,16 @@ const onTapCreateBtn = (e: Event) => {
     <div class="page-btns">
       <pt-button class="index-main-btn" text="创建房间" @click="onTapCreateBtn"></pt-button>
 
-      <a href="https://github.com/yenche123/podcast-together" target="_blank">
+      <a v-if="!showInstallPwaBtn" href="https://github.com/yenche123/podcast-together" target="_blank">
         <div class="index-other-btn">
           <img :src="theme === 'light' ? images.GITHUB : images.GITHUB_DM" class="index-github"/>
           <span>开源地址</span>
         </div>
       </a>
+      <div v-else class="index-other-btn" @click="onTapInstall">
+        <img :src="theme === 'light' ? images.IC_DOWNLOAD : images.IC_DOWNLOAD_DM" class="index-github"/>
+        <span>安装应用</span>
+      </div>
       
       <p class="page-btns-p">
         本项目由开源 Serverless 平台 <a class="pbp-a" href="https://www.lafyun.com/" target="_blank">Laf</a> 全力驱动支持

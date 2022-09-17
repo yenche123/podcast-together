@@ -25,4 +25,6 @@ export default {
   IC_EDIT_DM: "/ic_edit_dm.svg",
   IC_EXPAND: "/ic_expand.svg",
   IC_EXPAND_DM: "/ic_expand_dm.svg",
+  IC_DOWNLOAD: "/ic_download.svg",
+  IC_DOWNLOAD_DM: "/ic_download_dm.svg",
 }

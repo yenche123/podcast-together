@@ -6,6 +6,7 @@ let isWeChat: boolean = false;
 let isIOS: boolean = false;
 let isIPadOS: boolean = false;
 let isFeishu: boolean = false;
+let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 
 interface GetChaRes {
   isPC: boolean
@@ -14,6 +15,7 @@ interface GetChaRes {
   isIOS: boolean         // 是否为 iphone
   isIPadOS: boolean      // 是否为 iPad
   isFeishu: boolean
+  isInWebView: boolean
 }
 
 const getCharacteristic = (): GetChaRes => {
@@ -30,7 +32,10 @@ const getCharacteristic = (): GetChaRes => {
   // console.log("mobileMatch: ", mobileMatch)
 
   // 判断是否为微信环境
-  if(ua.includes("micromessenger")) isWeChat = true
+  if(ua.includes("micromessenger")) {
+    isWeChat = true
+    isInWebView = true
+  }
 
   // 判断是否为移动装置
   if(userAgentData?.mobile) {
@@ -48,17 +53,17 @@ const getCharacteristic = (): GetChaRes => {
 
   if(ua.includes("iphone") || ua.includes("ios")) isIOS = true
   if(ua.includes("ipad")) isIPadOS = true
-  if(ua.includes("feishu")) isFeishu = true
+  if(ua.includes("feishu")) {
+    isFeishu = true
+    isInWebView = true
+  }
 
   let res = _returnData()
-  // console.log("看一下特征值判断结果...........")
-  // console.log(res)
-  // console.log(" ")
   return res
 }
 
 function _returnData(): GetChaRes {
-  return { isPC, isMobile, isWeChat, isIOS, isIPadOS, isFeishu }
+  return { isPC, isMobile, isWeChat, isIOS, isIPadOS, isFeishu, isInWebView }
 }
 
 
