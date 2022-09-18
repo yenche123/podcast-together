@@ -151,11 +151,6 @@ const configShare = async (opt?: ShareCfgData): Promise<void> => {
   if(opt.wxShare) _setWeChat(opt.wxShare)
 }
 
-const onTapShare = () => {
-
-}
-
 export default {
-  configShare,
-  onTapShare
+  configShare
 }

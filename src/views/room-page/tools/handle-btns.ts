@@ -1,12 +1,13 @@
 import { computed, Ref } from "vue"
 import cui from "../../../components/custom-ui"
 import { usePwaDisplayMode } from "../../../hooks/usePwaDisplayMode"
-import { PageParticipant, PageState } from "../../../type/type-room-page"
+import { PageData, PageParticipant, PageState } from "../../../type/type-room-page"
 import ptApi from "../../../utils/pt-api"
 import { enterRoom } from "./useRoomPage"
 
 export function initBtns(
   state: Ref<PageState>, 
+  pageData: PageData,
   toHome: () => void, 
   toContact: () => void,
   toEditMyName: (newName: string) => void,
@@ -80,13 +81,27 @@ export function initBtns(
     }
   }
 
+  const getShareData = (): ShareData => {
+    const c = pageData.content
+    const url = location.href
+    let shareData: ShareData = {
+      title: c?.seriesName ? `邀请你一起听《${c.seriesName}》` : `邀请你一起听播客`,
+      text: c?.title ? c.title : `实时在线一起听！`,
+      url,
+    }
+    return shareData
+  }
+
   // 点击分享
   const onTapShare = () => {
     const cha = ptApi.getCharacteristic()
     const v = displayMode.value
-    console.log("此时的 displayMode..........")
-    console.log(v)
-    console.log(" ")
+
+    const shareData = getShareData()
+    if(ptApi.canShare(shareData)) {
+      ptApi.share(shareData)
+      return
+    }
 
     if(cha.isPC || v === "standalone") {
       const url = location.href

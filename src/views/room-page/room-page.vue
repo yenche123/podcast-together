@@ -30,7 +30,7 @@ const {
   onTapLeave,
   onTapShare,
   onTapEditMyName,
-} = initBtns(state, toHome, toContact, toEditMyName)
+} = initBtns(state, pageData, toHome, toContact, toEditMyName)
 const { 
   showManagePopup,
   onTapManageBtn,
