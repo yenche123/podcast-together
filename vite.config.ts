@@ -65,7 +65,8 @@ export default defineConfig(() => {
     },
     define: {
       "PT_ENV": {
-        "version": version
+        "version": version,
+        "client": "web"
       }
     }
   }

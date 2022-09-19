@@ -10,7 +10,7 @@ let local_id: string = ""
  */
 const _getCommonParam = (): RequestParam => {
   const version: string = PT_ENV.version
-  const client: string = "web"
+  const client: string = PT_ENV.client
   const stamp: number = time.getTime()
   const language = navigator.language
   if(!local_id) {

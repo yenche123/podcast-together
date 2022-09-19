@@ -6,7 +6,11 @@ let diff = 0
 
 const _init = async (): Promise<void> => {
   const url = api.PT_SERVICE
-  const param = { operate: "TIME" }
+  const param = { 
+    "operate": "TIME",
+    "x-pt-version": PT_ENV.version,
+    "x-pt-client": PT_ENV.client,
+  }
   const s1 = Date.now()
 
   const response = await fetch(url, {
