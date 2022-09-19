@@ -89,7 +89,10 @@ const getTargetLink = (route: VueRoute): string => {
 
 const useLinkFromQuery = async (router: PtRouter, route: VueRoute) => {
   const link = getTargetLink(route)
-  if(!link) return
+  if(!link) {
+    _showQueryErr(router)
+    return
+  }
   const res = await request_parse(link)
   if(res?.code !== "0000") {
     _showQueryErr(router)
