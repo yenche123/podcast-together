@@ -89,6 +89,50 @@ const getChineseCharNum = (val: string): number => {
   return num
 }
 
+//获取小写字符串的数量
+const getLowerCaseNum = (text: string): number => {
+  if(!text || text.length < 1) return 0
+  let list = text.split("")
+  let num = 0
+  list.forEach(v => {
+    if(v >= "a" && v <= "z") num++
+  })
+  return num
+}
+
+// 给定一段文本，返回一个文本里有的链接所组成的数组
+// 没有规定必须是 http(s) 的协议
+const getUrls = (text: string): string[] => {
+  const MIN_LENGTH = 6
+  if(!text || text.length < MIN_LENGTH) return []
+  const REG = /[\w\.\/:-]*\w{1,32}\.\w{2,6}\S*/g
+
+  let results: string[] = []
+  const matches = text.matchAll(REG)
+  for(const match of matches) {
+    const url = match[0]
+    if(url.length < MIN_LENGTH) continue
+
+    // 开始加强检测 url
+    if(url.indexOf("http") === 0) {
+      results.push(url)
+      continue
+    }
+
+    // 避免字符串里 全是: 数字 . - 的情况
+    const REG_2 = /^[\d\.-]{2,}$/
+    if(REG_2.test(url)) continue
+    const enNum = getLowerCaseNum(url)
+    if(enNum < 3) continue
+    const chNum = getChineseCharNum(url)
+    if(chNum > 2 && !url.includes("/")) continue
+
+    results.push(url)
+  }
+
+  return results
+} 
+
 export default {
   waitMilli,
   copyObj,
@@ -99,5 +143,7 @@ export default {
   numToFix,
   format0,
   getChineseCharNum,
+  getLowerCaseNum,
+  getUrls,
 }
 

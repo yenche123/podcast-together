@@ -41,7 +41,17 @@ export default defineConfig(() => {
               "type": "image/png"
             }
           ],
-          lang: "zh-CN"
+          lang: "zh-CN",
+          //@ts-ignore
+          share_target: {
+            action: "/create",
+            method: "GET",
+            params: {
+              title: "title",
+              text: "text",
+              url: "link"
+            }
+          }
         }
       })
     ],

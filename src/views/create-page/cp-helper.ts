@@ -1,8 +1,10 @@
 import { PtRouter, VueRoute } from "../../routes/pt-router"
+import { LocationQueryValue } from "vue-router"
 import time from "../../utils/time"
 import { ContentData, RoRes } from "../../type"
 import cui from "../../components/custom-ui"
 import { request_create, request_parse } from "./cp-request"
+import util from "../../utils/util"
 
 let lastIntoFinishInput: number = 0
 
@@ -65,11 +67,30 @@ const finishInput = async (link: string, router: PtRouter, route: VueRoute): Pro
   _createRoom(contentData, router, route)
 }
 
+const getTargetLink = (route: VueRoute): string => {
+  let list: string[] = []
+
+  let link = ""
+  const keys = ["link", "text", "title"]
+  for(let k of keys) {
+    // 已完成解码
+    let target = route.query[k]
+    if(typeof target !== "string") continue
+
+    list = util.getUrls(target)
+    if(list.length > 0) {
+      link = list[0]
+      break
+    }
+  }
+
+  return link
+}
+
 const useLinkFromQuery = async (router: PtRouter, route: VueRoute) => {
-  const link = route.query.link
-  if(!link || typeof link !== "string") return
-  const deLink = decodeURIComponent(link)
-  const res = await request_parse(deLink)
+  const link = getTargetLink(route)
+  if(!link) return
+  const res = await request_parse(link)
   if(res?.code !== "0000") {
     _showQueryErr(router)
     return

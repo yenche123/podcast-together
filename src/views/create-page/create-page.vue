@@ -22,7 +22,6 @@ const canSubmit = computed(() => {
 })
 
 const onInputConfirm = () => {
-  console.log("取消聚焦....................")
   inputEl?.value?.blur()
   if(!canSubmit.value) return
   cp.finishInput(inputValue.value, router, route)
@@ -40,7 +39,10 @@ const onTapBack = () => {
 }
 
 onActivated(() => {
-  if(route.query.link) cp.useLinkFromQuery(router, route)
+  const { title, text, link } = route.query
+
+  // 有从外部传来值时
+  if(title || text || link) cp.useLinkFromQuery(router, route)
   else {
     if(canSubmit.value) return
     inputEl.value?.focus()
