@@ -1,5 +1,4 @@
 import { PtRouter, VueRoute } from "../../routes/pt-router"
-import { LocationQueryValue } from "vue-router"
 import time from "../../utils/time"
 import { ContentData, RoRes } from "../../type"
 import cui from "../../components/custom-ui"
@@ -21,6 +20,7 @@ const _showQueryErr = async (router: PtRouter) => {
   await cui.showModal({
     title: "创建房间失败",
     content: "不妨手动黏贴单集链接以创建房间",
+    showCancel: false,
   })
   router.replace({ name: "create" })
 }

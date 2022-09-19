@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onActivated } from 'vue';
+import { computed, ref, onActivated, watch } from 'vue';
 import { hasPreviousRouteInApp, goHome, useRouteAndPtRouter } from "../../routes/pt-router";
 import PtButton from "../../components/pt-button.vue"
 import cp from "./cp-helper"
@@ -12,6 +12,15 @@ const { router, route } = useRouteAndPtRouter()
 const hasPrev = hasPreviousRouteInApp()
 const inputValue = ref<string>("")
 const inputEl = ref<HTMLInputElement | null>(null)
+
+const hasQuery = ref(false)
+// 监听 query 的变化，更新 hasQuery
+watch(() => route.query, (newV, oldV) => {
+  if(route.name !== "create") return
+  const { title, text, link } = newV
+  const newHasQuery = Boolean(title || text || link)
+  hasQuery.value = newHasQuery
+})
 
 const canSubmit = computed(() => {
   let val = inputValue.value
@@ -42,7 +51,10 @@ onActivated(() => {
   const { title, text, link } = route.query
 
   // 有从外部传来值时
-  if(title || text || link) cp.useLinkFromQuery(router, route)
+  if(title || text || link) {
+    hasQuery.value = true
+    cp.useLinkFromQuery(router, route)
+  }
   else {
     if(canSubmit.value) return
     inputEl.value?.focus()
@@ -86,7 +98,7 @@ onActivated(() => {
   </div>
 
   <!-- 从参数创建房间 -->
-  <div v-if="route.query.link" class="page-full">
+  <div v-if="hasQuery" class="page-full">
     <ListeningLoader />
     <div class="pf-text">
       <span>正在创建房间..</span>
