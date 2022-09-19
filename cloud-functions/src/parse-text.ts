@@ -19,6 +19,7 @@ interface ResType {
 }
 
 const MAX_FETCH_MILLI = 4000
+const WX_AUDIO_URL = "https://res.wx.qq.com/voice/getvoice?mediaid="
 
 exports.main = async function (ctx: FunctionContext): Promise<ResType> {
   // body, query 为请求参数, auth 是授权对象
@@ -155,16 +156,14 @@ function parseHtml(html: string, originLink: string): ResType {
   let seriesName = ""
   let seriesUrl = ""
 
+  // 是否为微信公众号
+  const isMp = originLink.includes("mp.weixin.qq.com")
+
   $("head meta").each((i, el) => {
     let meta = $(el)
     let meta_property = meta.attr("property")
     let meta_name = meta.attr("name")
     let meta_content = meta.attr("content")
-
-    // console.log("meta_property: ", meta_property)
-    // console.log("meta_name: ", meta_name)
-    // console.log("meta_content: ", meta_content)
-    // console.log(" ")
 
     if(meta_property === "og:title") {
       title = meta_content ?? ""
@@ -193,14 +192,7 @@ function parseHtml(html: string, originLink: string): ResType {
   })
 
   if(!audioUrl) {
-    // 开始全局查找 mp3 或 m4a 的链接
-    const reg = /http(s)?:\/\/[^\s\/]{2,40}\/\S{2,240}\.(mp3|m4a)/g
-    //@ts-ignore
-    let matches = html.matchAll(reg)
-    for(let match of matches) {
-      audioUrl = match[0]
-      break
-    }
+    audioUrl = getAudioUrl(html, { isMp })
     if(!audioUrl) return { code: "E4004" }
   }
 
@@ -271,6 +263,18 @@ function parseHtml(html: string, originLink: string): ResType {
       if(elText) seriesName = elText.trim()
     })
   }
+
+  // 适配微信公众号
+  if(isMp) {
+    sourceType = "weixin_mp"
+    imageUrl = ""    // 置为空，因为微信图片有防盗链
+    const reg4Mp = /(?<=class\="profile_nickname"\>)\S+(?=\<\/strong\>)/g
+    //@ts-ignore
+    const matches4Mp = html.matchAll(reg4Mp)
+    for(let match4Mp of matches4Mp) {
+      seriesName = match4Mp[0]
+    }
+  }
   
   if(!linkUrl) linkUrl = originLink
 
@@ -300,4 +304,38 @@ function parseHtml(html: string, originLink: string): ResType {
   }
 
   return rData
+}
+
+interface GetAudioUrlParam2 {
+  isMp: boolean
+}
+
+function getAudioUrl(html: string, opt: GetAudioUrlParam2): string {
+
+  // 全局查找 mp3 或 m4a 的链接
+  const reg = /http(s)?:\/\/[^\s\/]{2,40}\/\S{2,240}\.(mp3|m4a)/g
+  //@ts-ignore
+  let matches = html.matchAll(reg)
+  for(let match1 of matches) {
+    return match1[0]
+  }
+
+  // 适配微信公众号里的图文
+  if(!opt.isMp) return ""
+
+  const reg2 = /(?<="voice_id":")\w{10,50}(?=")/g
+  //@ts-ignore
+  matches = html.matchAll(reg2)
+  for(let match2 of matches) {
+    return WX_AUDIO_URL + match2[0]
+  }
+
+  const reg3 = /(?<='voice_id':')\w{10,50}(?=')/g
+  //@ts-ignore
+  matches = html.matchAll(reg3)
+  for(let match3 of matches) {
+    return WX_AUDIO_URL + match3[0]
+  }
+
+  return ""
 }
