@@ -14,10 +14,11 @@ import { ContentData } from "./index"
  * 16: 停留过久
  * 17: 房门外（超过 5 分钟闲置，你似乎游走到门外啦！）: 重新进入
  * 18：连接异常（你的连接似乎已断开）: 重新进入 或 联系开发者 （用于 WebSocket 的问题）
+ * 19: 未知的异常（可能是浏览器的原因，建议关闭后重新打开）: 重新进入 或 联系开发者
  * 
  * 20: 未知的异常 （请检查网络状态）: 重新进入 或 联系开发者
  */
-export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20
+export type PageState = 1 | 2 | 3 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
 
 export interface PageParticipant {
   guestId: string

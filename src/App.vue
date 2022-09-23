@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import CustomUi from "./components/custom-ui/custom-ui.vue"
 import { useTheme } from './hooks/useTheme'
-import time from "./utils/time"
 import { initPtRouter } from './routes/pt-router'
 import { useApp } from "./hooks/useApp"
 
 useApp()
 const { theme } = useTheme()
-let a1 = time.getTime()
 const { route } = initPtRouter()
 
 // 打印当前版本号

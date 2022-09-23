@@ -17,13 +17,13 @@ export function initBtns(
     const v = state.value
     if(v < 11) return ""
     if (v === 11 || v === 12 || v === 14 || v === 15) return "回首页"
-    else if (v === 13 || v === 16 || v === 17 || v === 18) return "重新进入"
+    if (v === 13 || v === 16 || v === 17 || v === 18 || v === 19) return "重新进入"
     return "重新尝试"
   })
 
   const btnText2 = computed(() => {
     const v = state.value
-    if (v === 13 || v === 18 || v === 20) return "联系开发者"
+    if (v === 13 || v === 18 || v === 19 || v === 20) return "联系开发者"
     return ""
   })
 
@@ -38,6 +38,7 @@ export function initBtns(
     if(v === 16) return "长时间未操作"
     if(v === 17) return "房门外"
     if(v === 18) return "连接异常"
+    if(v === 19) return "未知的异常"
     return "未知的错误"
   })
 
@@ -47,11 +48,13 @@ export function initBtns(
     const p1 = `请检查网络状态；\n如果重新尝试仍无改善，请联系开发者。`
     const p2 = `已超过 5 分钟闲置；\n你似乎游走到房门外啦！`
     const p3 = `你的连接似乎已断开`
+    const p4 = `开发者也遇到过这问题，目前没有解法555；我之前试过关闭浏览器重新打开，你可以试试看。`
 
     if(v <= 10) return ""
     if(v === 13 || v === 20) return p1
     if(v === 17) return p2
     if(v === 18) return p3
+    if(v === 19) return p4
     return ""
   })
 

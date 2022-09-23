@@ -299,8 +299,11 @@ function showOperateFailed() {
 // 开始检测 player 是否已经 ready
 async function checkPlayerReady() {
   const cha = ptApi.getCharacteristic()
-  if(!cha.isIOS && !cha.isIPadOS) return
-  await util.waitMilli(1500)
+  if(!cha.isIOS && !cha.isIPadOS) {
+    checkPlayerReadyAgain()
+    return
+  }
+  await util.waitMilli(2000)
   if(srcDuration) return
 
   let res1 = await cui.showModal({
@@ -314,6 +317,16 @@ async function checkPlayerReady() {
     return
   }
   player.preloadForIOS()
+  checkPlayerReadyAgain()
+}
+
+// 初始化播放器后再次检查播放器，是否加载到播放时长
+async function checkPlayerReadyAgain() {
+  await util.waitMilli(6000)
+  if(pageData.state >= 3) return
+  console.log("######## 等了 6s 无果，切换到未知的异常 ########")
+  console.log(" ")
+  pageData.state = 19
 }
 
 function showPage(): void {
@@ -581,7 +594,7 @@ async function receiveNewStatus(fromType: RevokeType = "ws") {
   if(latestStatus.roomId !== pageData.roomId) return
 
   await waitPlayer
-  let { contentStamp, operator } = latestStatus
+  let { contentStamp } = latestStatus
 
   // 判断时间
   let reSeekSec = playerTool.getReSeek(latestStatus, srcDuration, player.currentTime, fromType)
