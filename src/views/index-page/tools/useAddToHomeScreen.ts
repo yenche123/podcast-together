@@ -26,10 +26,8 @@ async function onTapInstall() {
 
 async function startToListening() {
 
-  // console.log("等个 500ms...........")
-  // await util.waitMilli(500)
-  console.log("start to listen beforeinstallprompt.............")
-  console.log(" ")
+  // console.log("start to listen beforeinstallprompt.............")
+  // console.log(" ")
 
   window.addEventListener("beforeinstallprompt", (e: Event) => {
     console.log("beforeinstallprompt.........")
