@@ -30,7 +30,9 @@
 
 目前已知支持 `xiaoyuzhoufm.com/episode/` 或者 `podcasts.apple.com/cn/` 的链接（不支持短链），后者解析稍慢是正常的，如果解析失败不妨稍后再尝试。
 
-另外，还支持 https 协议的 CDN 链接，也就是你上传 `.mp3` 文件至任意可公网访问的云上，获得 https 链接后即可黏贴到 [https://fm.lemonsjtu.cn/create](https://fm.lemonsjtu.cn/create) 中一起听！
+另外，还支持 https 协议的 CDN 链接，也就是你上传 `.mp3` 文件至任意可公网访问的云上，获得 https 链接后即可黏贴到 [https://fm.lemonsjtu.cn/create](https://fm.lemonsjtu.cn/create) 中一起听。
+
+更多音源详情请参见[这里](https://github.com/yenche123/podcast-together/discussions/3)
 
 ### 3 支持深色模式
 
