@@ -1,6 +1,6 @@
 {
   "name": "podcast-together",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "一个基于 vite + vue + vue-router + ts + laf 的全栈项目，让你跟好友一起实时在线听播客！",
   "type": "module",
   "scripts": {
