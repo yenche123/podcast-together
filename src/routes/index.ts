@@ -18,7 +18,7 @@ import ptUtil from "../utils/pt-util"
 declare module 'vue-router' {
   interface RouteMeta {
     // 可选的属性
-    keeyAlive?: boolean
+    keepAlive?: boolean
   }
 }
 
@@ -74,7 +74,7 @@ const routes: Array<RouteRecordRaw> = [
     component: ContactPage,
     name: "contact",
     meta: {
-      keeyAlive: true,
+      keepAlive: true,
     },
   },
   // 其他路由，全部重定向到首页
