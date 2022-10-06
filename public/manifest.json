@@ -1,0 +1,95 @@
+{
+  "scope": "/",
+  "display": "standalone",
+  "start_url": "/",
+  "name": "\u4e00\u8d77\u542c\u64ad\u5ba2",
+  "short_name": "\u4e00\u8d77\u542c\u64ad\u5ba2",
+  "description": "一起跟好友听播客吧！",
+  "theme_color": "#282828",
+  "background_color": "#181818",
+  "orientation": "any",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "pwa/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa/maskable_icon192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "pwa/android-chrome-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa/maskable_icon256x256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    
+    {
+      "src": "pwa/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa/maskable_icon512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "lang": "zh-CN",
+  "share_target": {
+    "action": "/create",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "link"
+    }
+  },
+  "features": [
+    "Podcast",
+    "listening together",
+    "realtime",
+    "simple"
+  ],
+  "categories": [
+    "utility",
+    "music"
+  ],
+  "shortcuts": [
+    {
+      "name": "创建房间",
+      "short_name": "创建",
+      "url": "/create",
+      "description":"创建新房间",
+      "icons": [{ "src": "pwa/ic_add.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "联系开发者",
+      "short_name": "联系",
+      "url": "/contact",
+      "description": "立即加群，一起听播客！",
+      "icons": [{ "src": "pwa/ic_phone.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "pwa/screenshot.jpeg",
+      "sizes": "949x876",
+      "type": "image/jpeg"
+    }
+  ]
+}

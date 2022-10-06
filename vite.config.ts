@@ -13,6 +13,7 @@ export default defineConfig(() => {
       vue(),
       VitePWA({
         registerType: "autoUpdate",
+        manifest: false,
         devOptions: {
           enabled: true,
           type: 'module'
@@ -22,51 +23,7 @@ export default defineConfig(() => {
           "favicon-32x32.png", 
           "favicon-16x16.png", 
           "safari-pinned-tab.svg"
-        ],
-        manifest: {
-          name: "\u4e00\u8d77\u542c\u64ad\u5ba2",
-          short_name: "\u4e00\u8d77\u542c\u64ad\u5ba2",
-          description: "一起跟好友听播客吧！",
-          theme_color: "#282828",
-          background_color: "#181818",
-          icons: [
-            {
-              "src": "/android-chrome-192x192.png",
-              "sizes": "192x192",
-              "type": "image/png",
-              "purpose": "any"
-            },
-            {
-              "src": "/maskable_icon192x192.png",
-              "sizes": "192x192",
-              "type": "image/png",
-              "purpose": "maskable"
-            },
-            {
-              "src": "/android-chrome-256x256.png",
-              "sizes": "256x256",
-              "type": "image/png",
-              "purpose": "any"
-            },
-            {
-              "src": "/maskable_icon256x256.png",
-              "sizes": "256x256",
-              "type": "image/png",
-              "purpose": "maskable"
-            }
-          ],
-          lang: "zh-CN",
-          //@ts-ignore
-          share_target: {
-            action: "/create",
-            method: "GET",
-            params: {
-              title: "title",
-              text: "text",
-              url: "link"
-            }
-          }
-        }
+        ]
       })
     ],
     server: {
