@@ -1,6 +1,8 @@
 import cloud from "@/cloud-sdk"
 import * as cheerio from "cheerio"
 
+type CheerioAPI = ReturnType<typeof cheerio.load>
+
 interface ContentData {
   infoType: "podcast"
   audioUrl: string
@@ -246,22 +248,22 @@ function parseHtml(html: string, originLink: string): ResType {
     }
   })
 
+  // 适配 pod.link
+  const isPodLink = originLink.includes("pod.link")
+  if(isPodLink) {
+    let forPodLink = _handleForPodLink($)
+    if(forPodLink.title) title = forPodLink.title
+    if(forPodLink.description) description = forPodLink.description
+    if(forPodLink.seriesName) seriesName = forPodLink.seriesName
+    if(forPodLink.seriesUrl) seriesUrl = forPodLink.seriesUrl
+  }
+
   // 适配 youzhiyouxing.cn 的图片
   let isYZYX = originLink.includes("youzhiyouxing.cn")
-  if(!imageUrl && isYZYX) {
-    $(".lazy-image-container img").each((i, el) => {
-      const theEl = $(el)
-      const src = theEl.attr("data-src")
-      if(src) imageUrl = src
-    })
-  }
-  // 适配 youzhiyouxing.cn 的播客名称
-  if(!seriesName && isYZYX) {
-    $("body .tw-text-14.tw-leading-none").each((i, el) => {
-      const theEl = $(el)
-      const elText = theEl.text()
-      if(elText) seriesName = elText.trim()
-    })
+  if(isYZYX) {
+    const forYZYX = _handleForYouZhiYouXing($)
+    if(!imageUrl && forYZYX.imageUrl) imageUrl = forYZYX.imageUrl
+    if(!seriesName && forYZYX.seriesName) seriesName = forYZYX.seriesName
   }
 
   // 适配微信公众号
@@ -304,6 +306,54 @@ function parseHtml(html: string, originLink: string): ResType {
   }
 
   return rData
+}
+
+// 处理 podlink 的情况
+function _handleForPodLink(
+  $: CheerioAPI,
+) {
+
+  let title = ""
+  let description = ""
+  let seriesName = ""
+  let seriesUrl = ""
+
+  // 寻找 title / seriesName
+  $(".aj.ff.gp .am.dq .am.ao").each((i, el) => {
+    const theEl = $(el)
+    const elText = theEl.text()
+    if(elText) {
+      if(i < 1) title = elText
+      else seriesName = elText
+    }
+  })
+
+  // 寻找 description
+  $(".cx .ef.eg").each((i, el) => {
+    const theEl = $(el)
+    const elText = theEl.text()
+    if(elText) description = elText.trim() 
+  })
+
+  return { title, description, seriesName, seriesUrl }
+}
+
+function _handleForYouZhiYouXing(
+  $: CheerioAPI,
+) {
+  let imageUrl = ""
+  let seriesName = ""
+  $(".lazy-image-container img").each((i, el) => {
+    const theEl = $(el)
+    const src = theEl.attr("data-src")
+    if(src) imageUrl = src
+  })
+  $("body .tw-text-14.tw-leading-none").each((i, el) => {
+    const theEl = $(el)
+    const elText = theEl.text()
+    if(elText) seriesName = elText.trim()
+  })
+  return { imageUrl, seriesName }
 }
 
 interface GetAudioUrlParam2 {
