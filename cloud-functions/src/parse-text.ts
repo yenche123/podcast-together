@@ -251,11 +251,12 @@ function parseHtml(html: string, originLink: string): ResType {
   // 适配 pod.link
   const isPodLink = originLink.includes("pod.link")
   if(isPodLink) {
-    let forPodLink = _handleForPodLink($)
+    let forPodLink = _handleForPodLink($, html)
     if(forPodLink.title) title = forPodLink.title
     if(forPodLink.description) description = forPodLink.description
     if(forPodLink.seriesName) seriesName = forPodLink.seriesName
     if(forPodLink.seriesUrl) seriesUrl = forPodLink.seriesUrl
+    if(forPodLink.audioUrl) audioUrl = forPodLink.audioUrl
   }
 
   // 适配 youzhiyouxing.cn 的图片
@@ -311,12 +312,14 @@ function parseHtml(html: string, originLink: string): ResType {
 // 处理 podlink 的情况
 function _handleForPodLink(
   $: CheerioAPI,
+  html: string,
 ) {
 
   let title = ""
   let description = ""
   let seriesName = ""
   let seriesUrl = ""
+  let audioUrl = ""
 
   // 寻找 title / seriesName
   $(".aj.ff.gp .am.dq .am.ao").each((i, el) => {
@@ -335,7 +338,22 @@ function _handleForPodLink(
     if(elText) description = elText.trim() 
   })
 
-  return { title, description, seriesName, seriesUrl }
+  // 根据 title 寻找 audioUrl
+  if(title) {
+    // 截断 html
+    let newHtml = html
+    let idx = newHtml.indexOf("window.__STATE__")
+    if(idx > 0) {
+      newHtml = newHtml.substring(idx)
+      let idx2 = newHtml.indexOf(title)
+      if(idx2 > 0) {
+        newHtml = newHtml.substring(idx2)
+        audioUrl = getAudioUrl(newHtml, { isMp: false })
+      }
+    }
+  }
+
+  return { title, description, seriesName, seriesUrl, audioUrl }
 }
 
 function _handleForYouZhiYouXing(
