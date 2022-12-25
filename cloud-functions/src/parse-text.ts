@@ -381,14 +381,14 @@ interface GetAudioUrlParam2 {
 function getAudioUrl(html: string, opt: GetAudioUrlParam2): string {
 
   // 全局查找 mp3 或 m4a 的链接
-  const reg0 = /http(s)?:\/\/[^\s\/]{2,40}\/\S{2,240}\.(mp3|m4a)\?[^\s\/\"\']{3,240}/g
+  const reg0 = /http(s)?:\/\/[^\s\/\"\']{2,40}\/[^\s\"\']{2,240}\.(mp3|m4a)\?[^\s\/\"\']{3,240}/g
   //@ts-ignore
   let matches = html.matchAll(reg0)
   for(let match0 of matches) {
     return match0[0]
   }
 
-  const reg = /http(s)?:\/\/[^\s\/]{2,40}\/\S{2,240}\.(mp3|m4a)/g
+  const reg = /http(s)?:\/\/[^\s\/\"\']{2,40}\/[^\s\"\']{2,240}\.(mp3|m4a)/g
   //@ts-ignore
   matches = html.matchAll(reg)
   for(let match1 of matches) {
