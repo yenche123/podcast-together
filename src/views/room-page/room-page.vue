@@ -9,6 +9,7 @@ import { computed, ref, toRef } from 'vue';
 import { useTheme } from '../../hooks/useTheme';
 import { initManage } from './tools/init-manage';
 import RoomManagePopup from './room-manage-popup.vue';
+import { useCccee } from "./tools/cccee"
 
 const { theme } = useTheme()
 const { 
@@ -36,6 +37,8 @@ const {
   onTapManageBtn,
   onTapManageMask,
 } = initManage()
+
+useCccee(pageData)
 
 const alwaysFalse = ref(false)
 const hasLink = computed(() => {

@@ -16,6 +16,7 @@ interface ModalParam {
   cancelText?: string
   confirmText?: string
   success?: (res: ModalSuccessRes) => void
+  priority?: number
 }
 
 type ModalResolver = (res: ModalSuccessRes) => void
@@ -36,6 +37,7 @@ const modalData = reactive({
   showCancel: true,
   cancelText: DEFAULT_CANCEL,
   confirmText: DEFAULT_CONFIRM,
+  priority: 0
 })
 
 const _openModal = async (): Promise<void> => {
@@ -49,6 +51,7 @@ const _openModal = async (): Promise<void> => {
 const _closeModal = async (): Promise<void> => {
   if(!show.value) return
   show.value = false
+  modalData.priority = 0
 
   cancelListenEnterKeyUp()
 
@@ -77,6 +80,14 @@ const initModal = () => {
 }
 
 const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
+  let newPriority = opt.priority ?? 0
+
+  if(newPriority < modalData.priority) {
+    const _fakeWait = (a: ModalResolver) => {}
+    return new Promise(_fakeWait)
+  }
+  modalData.priority = newPriority
+
   if(opt.title) modalData.title = opt.title
   else modalData.title = ""
 
