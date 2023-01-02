@@ -54,21 +54,10 @@
 
 ## ✉️ 联系我
 
-1. 微信群
+1. Github [讨论区](https://github.com/yenche123/podcast-together/discussions)
 
-<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/wecom_qrcode.png" width="200" />
+2. [Email](mailto:tsuiyenche@outlook.com)
 
-2. Github [讨论区](https://github.com/yenche123/podcast-together/discussions)
-
-3. [我的飞书](https://www.feishu.cn/invitation/page/add_contact/?token=affgb85a-37d6-470f-8e50-42dc6de3f57c)
-
-<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/feishu_qrcode.png" width="200" />
-
-请备注 "一起听播客 + 说明来意"
-
-4. [Email](mailto:tsuiyenche@outlook.com)
-
----
 
 ## 特别鸣谢
 
