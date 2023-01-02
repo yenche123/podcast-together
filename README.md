@@ -6,6 +6,8 @@
 
 > 跟你的好友一起实时连线听播客！
 
+<br>
+
 ## 😎 如何使用
 
 1. 打开小宇宙 App，在单集详情页，点击屏幕右上角的分享按钮（如下图所示），再点击复制链接。
@@ -15,6 +17,8 @@
 2. 访问 [https://fm.lemonsjtu.cn/](https://fm.lemonsjtu.cn/) 创建房间，依页面的提示黏贴上一步复制到的链接，即可创建能跟好友一起实时聆听的播客房间啦！
 
 详情参见[使用指南](https://yenche.zhubai.love/posts/2172097942360440832)
+
+<br>
 
 ## 🎧 介绍
 
@@ -36,7 +40,7 @@
 
 ### 3 支持深色模式
 
-<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm2.png" width="700" />
+<img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_index_dm3.png" width="700" />
 
 <img src="https://yenche123-1300458905.cos.ap-shanghai.myqcloud.com/podcast-together/screenshot_listening_dm.png" width="700" />
 
@@ -48,9 +52,13 @@
 
 功能这么少？一起听，应该如此简单！
 
+<br>
+
 ## 🧑‍💻 自行构建/部署
 
 非常欢迎自己兜一套减轻我的云服务资源，详情参见[语雀文档](https://www.yuque.com/cuiyanzhe/sx698m/etgegl)
+
+<br>
 
 ## ✉️ 联系我
 
@@ -58,6 +66,7 @@
 
 2. [Email](mailto:tsuiyenche@outlook.com)
 
+<br>
 
 ## 特别鸣谢
 
@@ -100,6 +109,8 @@
 ~~谢谢你玩我~~
 
 谢谢你看到这里！
+
+<br>
 
 ## 支持我
 
