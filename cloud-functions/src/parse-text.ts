@@ -1,4 +1,4 @@
-import cloud from "@/cloud-sdk"
+import cloud from "@lafjs/cloud"
 import * as cheerio from "cheerio"
 
 type CheerioAPI = ReturnType<typeof cheerio.load>

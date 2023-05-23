@@ -15,8 +15,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["other/*"]
+      "@lafjs/*": ["built-in/lafjs/*"],
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "type", "other"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "type", "built-in"],
 }
