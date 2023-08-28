@@ -26,7 +26,7 @@ const canSubmit = computed(() => {
   let val = inputValue.value
   let v = val.trim()
   if(v.length < 10) return false
-  const reg = /^http(s)?:\/\/[\w\.]*\w{1,32}\.\w{2,6}\S*$/g
+  const reg = /^http(s)?:\/\/[\w\.-]*\w{1,32}\.\w{2,6}\S*$/g
   return reg.test(val)
 })
 

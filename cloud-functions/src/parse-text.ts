@@ -56,7 +56,7 @@ exports.main = async function (ctx: FunctionContext): Promise<ResType> {
  * 判断是否为 .mp3 或 .m4a 结尾的链接
  */
 function judgeIsCdnLink(link: string): boolean {
-  const reg = /^http(s)?:\/\/[^\s\/]{2,40}\/\S{2,240}\.(mp3|m4a)[\?=\w]*$/g
+  const reg = /^http(s)?:\/\/[\w\.-]*\w{1,32}\.\w{2,6}\/\S+.(mp3|m4a)[\?=\w]*$/g
   //@ts-ignore
   let matches = link.matchAll(reg)
   for(let match of matches) {
