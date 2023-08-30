@@ -67,4 +67,6 @@ export interface EnvType {
   THIRD_PARTY_SETTING_URL?: string
   CONTACT_EMAIL?: string
   CONTACT_FEISHU?: string
+  PLAUSIBLE_DOMAIN?: string
+  PLAUSIBLE_SRC?: string
 }

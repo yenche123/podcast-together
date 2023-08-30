@@ -49,6 +49,9 @@ const getEnv = (): EnvType => {
   const THIRD_PARTY_SETTING_URL = import.meta.env.VITE_THIRD_PARTY_SETTING_URL
   const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL
   const CONTACT_FEISHU = import.meta.env.VITE_CONTACT_FEISHU
+  const PLAUSIBLE_SRC = import.meta.env.VITE_PLAUSIBLE_SRC
+  const PLAUSIBLE_DOMAIN = import.meta.env.VITE_PLAUSIBLE_DOMAIN
+
   return {
     DEV,
     WEBSOCKET_URL,
@@ -56,7 +59,9 @@ const getEnv = (): EnvType => {
     HEARTBEAT_PERIOD: Number(HEARTBEAT_PERIOD),
     THIRD_PARTY_SETTING_URL,
     CONTACT_EMAIL,
-    CONTACT_FEISHU
+    CONTACT_FEISHU,
+    PLAUSIBLE_SRC,
+    PLAUSIBLE_DOMAIN,
   }
 }
 
