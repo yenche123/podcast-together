@@ -1,6 +1,6 @@
 {
   "name": "podcast-together",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "一个基于 vite + vue + vue-router + ts + laf 的全栈项目，让你跟好友一起实时在线听播客！",
   "type": "module",
   "scripts": {
@@ -11,26 +11,26 @@
     "start": "npx http-server -P http://127.0.0.1:${PORT} ./dist"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "dependencies": {
-    "nanoid": "^5.0.2",
+    "nanoid": "^5.0.4",
     "pinia": "^2.1.7",
     "shikwasa2": "^2.3.0",
     "vconsole": "^3.15.1",
-    "vue": "^3.3.5",
+    "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "weixin-js-sdk-ts": "^1.6.1"
   },
   "devDependencies": {
-    "@types/node": "^18.16.16",
-    "@vitejs/plugin-vue": "^4.4.0",
-    "sass": "^1.69.4",
-    "typescript": "^5.2.2",
+    "@types/node": "^20.10.4",
+    "@vitejs/plugin-vue": "^4.5.2",
+    "sass": "^1.69.5",
+    "typescript": "^5.3.3",
     "user-agent-data-types": "^0.4.2",
-    "vite": "^4.5.0",
-    "vite-plugin-pwa": "^0.16.5",
-    "vue-tsc": "^1.8.19"
+    "vite": "^5.0.8",
+    "vite-plugin-pwa": "^0.17.4",
+    "vue-tsc": "^1.8.25"
   },
   "author": "yenche123 <tsuiyenche@outlook.com> (https://github.com/yenche123)",
   "contributors": [],
