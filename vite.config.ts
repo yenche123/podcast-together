@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from "path"
 import { VitePWA } from 'vite-plugin-pwa'
+import mkcert from 'vite-plugin-mkcert'
 const { version } = require("./package.json")
 
 const projectRoot = __dirname
@@ -11,6 +12,9 @@ export default defineConfig(() => {
   return {
     plugins: [
       vue(),
+
+      mkcert(),
+      
       VitePWA({
         registerType: "autoUpdate",
         manifest: false,
