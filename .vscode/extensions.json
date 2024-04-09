@@ -3,5 +3,6 @@
     "Vue.volar",
     "eamodio.gitlens",
     "kisstkondoros.vscode-gutter-preview",
+    "yoavbls.pretty-ts-errors",
   ]
 }
