@@ -55,9 +55,17 @@ const getLocalTimeStr = (): string => {
   return `${mon}-${date} ${hr}:${min}:${sec}`
 }
 
+const isWithinMillis = (stamp: number, ms: number) => {
+  const now = getTime()
+  const diff = now - stamp
+  if(diff < ms) return true
+  return false
+}
+
 
 export default {
   getTime,
   getLocalTime,
-  getLocalTimeStr
+  getLocalTimeStr,
+  isWithinMillis,
 }
