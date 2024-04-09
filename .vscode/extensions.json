@@ -3,6 +3,5 @@
     "Vue.volar",
     "eamodio.gitlens",
     "kisstkondoros.vscode-gutter-preview",
-    "Vue.vscode-typescript-vue-plugin",
   ]
 }
