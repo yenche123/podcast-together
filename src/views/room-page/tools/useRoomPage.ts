@@ -226,7 +226,39 @@ function createPlayer() {
     showPage()
   }
   const canplay = (e: Event) => {}
-  const loadeddata = (e: Event) => {}
+  const loadeddata = (e: Event) => {
+    // 确保音频数据完全加载完成
+    try {
+      const audioElement = e.target as HTMLAudioElement;
+      if (audioElement && audioElement.readyState >= 2) {
+        console.log("音频数据加载完成，准备发送 FIRST_SEND")
+        if (pageData.state <= 2) {
+          showPage()
+          return
+        }
+
+        // 延迟发送 FIRST_SEND 消息，确保 WebSocket 连接稳定
+        setTimeout(() => {
+          const send = {
+            operateType: "FIRST_SEND",
+            roomId: pageData.roomId,
+            "x-pt-local-id": localId,
+            "x-pt-stamp": time.getTime()
+          }
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            console.log("发送 FIRST_SEND 消息")
+            sendToWebSocket(ws, send)
+
+          } else {
+            console.log("WebSocket 未就绪，重新连接")
+            connectWebSocket()
+          }
+        }, 1000)
+      }
+    } catch (err) {
+      console.error("处理音频加载事件出错:", err)
+    }
+  }
 
   const pause = (e: Event) => {
     playStatus = "PAUSED"
@@ -345,6 +377,9 @@ function collectLatestStatus() {
     if(!player) return
     if(!pageData.amIOwner && pageData.everyoneCanOperatePlayer === "N") return
 
+    // 添加日志，查看发送时的状态
+    console.log("发送播放器状态更新，当前时间戳:", time.getLocalTime())
+
     const currentTime = player.currentTime ?? 0
     let contentStamp = currentTime * 1000
     contentStamp = util.numToFix(contentStamp, 0)
@@ -360,8 +395,13 @@ function collectLatestStatus() {
     if(pageData.amIOwner) {
       param.everyoneCanOperatePlayer = pageData.everyoneCanOperatePlayer
     }
-    sendToWebSocket(ws, param)
-    checkOperated()
+    try {
+      sendToWebSocket(ws, param)
+      checkOperated()
+    } catch (err) {
+      console.error("发送 SET_PLAYER 消息失败:", err)
+      connectWebSocket()
+    }
   }
 
   timeoutCollect = setTimeout(() => {
@@ -435,6 +475,7 @@ function heartbeat() {
       "x-pt-local-id": localId,
       "x-pt-stamp": time.getTime()
     }
+    console.log("HEARTBEAT----pageData.roomId: %s", pageData.roomId)
     sendToWebSocket(ws, send)
   }
 
@@ -530,12 +571,18 @@ function connectWebSocket() {
     // 刚连接
     if(rT === "CONNECTED") {
       firstSend()
+      console.log("WebSocket 连接成功")
     }
     else if(rT === "NEW_STATUS" && roomStatus) {
-      // console.log("web-socket 收到新的的状态.......")
-      // console.log(msgRes)
-      // console.log(" ")
+      console.log("web-socket 收到新的的状态.......")
+      console.log(msgRes)
+      console.log(" ")
+
       lastNewStatusFromWsStamp = time.getLocalTime()
+      
+      console.log("lastNewStatusFromWsStamp：%s", lastNewStatusFromWsStamp)
+      console.log(" ")
+
       latestStatus = roomStatus
       if(roomStatus.everyoneCanOperatePlayer) {
         pageData.everyoneCanOperatePlayer = roomStatus.everyoneCanOperatePlayer
@@ -567,6 +614,7 @@ function connectWebSocket() {
     onclose
   }
   ws = initWebSocket(callbacks)
+  console.log("开始等待")
   checkWebSocket()
 }
 
@@ -592,8 +640,15 @@ function firstSend() {
 
 async function receiveNewStatus(fromType: RevokeType = "ws") {
   if(latestStatus.roomId !== pageData.roomId) return
-
+  
+  // 添加日志，看看是否真的等待了 Promise
+  console.log("等待播放器就绪...")
   await waitPlayer
+  console.log("播放器就绪状态:", !!player)
+  if (!player) {
+    console.log("播放器为空，可能在等待期间被销毁")
+    return
+  }
   let { contentStamp } = latestStatus
 
   // 判断时间

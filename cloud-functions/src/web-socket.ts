@@ -1,5 +1,10 @@
-import cloud from '@/cloud-sdk'
-const db = cloud.database()
+import { Redis } from '@upstash/redis'
+import { wss } from '../../server/webSocketPlugin';
+
+const redis = new Redis({
+    url: 'https://polished-mantis-17335.upstash.io',
+    token: 'AUO3AAIjcDE0OGFlN2FjNTczZDE0NzU0OWU5MjI4ZjhkYTUzZWJlYnAxMA'
+})
 
 // 最小可操作的时间间隔，小于该值，不响应
 const MIN_DURATION_FOR_A_PERSON = 250   
@@ -195,12 +200,12 @@ async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): P
     roomStatus,
   }
   const msg: string = JSON.stringify(resToFe)
-  cloud.sockets.forEach(socket => {
+  wss.clients.forEach((socket: WebSocket) => {
     //@ts-ignore
-    if(socket.roomId === roomId) {
-      socket.send(msg)
+    if(socket.roomId === roomId && socket.readyState === WebSocket.OPEN) {
+        socket.send(msg)
     }
-  })
+  });
 }
 
 
@@ -287,12 +292,18 @@ interface Room {
  * 修改房间
  */
  async function _updateRoom(roomId: string, data: Record<string, any>) {
-  const col = db.collection("Room")
-  const res = await col.doc(roomId).update(data)
-  console.log("查看一下因为播放状态 修改房间的结果........")
-  console.log(res)
-  console.log(" ")
-  return res
+  try {
+    const res = await redis.set(`room:${roomId}`, data)
+    console.log("查看一下因为播放状态 修改房间的结果........")
+    console.log(res)
+    console.log(" ")
+    return res
+  } catch (err) {
+    console.log("修改房间的失败：", err)
+    return undefined
+  }
+  
+  
 }
 
 /**
@@ -313,8 +324,11 @@ function _getOperatorGuestId(clientId: string, room?: Room): string | undefined 
  * 查找房间
  */
  async function _getRoom(roomId: string): Promise<Room | undefined> {
-  const col = db.collection("Room")
-  const res = await col.doc(roomId).get()
-  let room: Room | undefined = res.data
-  return room
+  try {
+    const room = await redis.get<Room>(`room:${roomId}`)
+    return room || undefined
+  } catch (err) {
+    console.error("获取房间信息失败：", err)
+    return undefined
+  }
 }

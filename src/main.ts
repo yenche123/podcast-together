@@ -3,7 +3,6 @@
  * @author yenche123 <tsuiyenche@outlook.com>
  * @copyright TSUI YEN-CHE 2022
  */
-
 import { createApp } from 'vue'
 import './styles/style.css'
 import './styles/theme.css'

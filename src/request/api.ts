@@ -7,6 +7,6 @@ const apiUrl = _env.API_URL + "/"
 
 export default {
   ROOM_OPERATE: apiUrl + "room-operate",
-  PARSE_TEXT: apiUrl + "parse-text",
+  PARSE_TEXT: "/api/parse-text",
   PT_SERVICE: apiUrl + "pt-service"
 }

@@ -31,3 +31,4 @@ thirdparty-setting.ts
 
 # vite-plugin-pwa 生成的 dev-dist
 dev-dist
+.vercel

@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api",
+      "destination": "/api/app.ts"
+    },
+    {
+      "source": "/api/parse-text",
+      "destination": "/api/parse-text.ts"
+    },
+    {
+      "source": "/api/pt-service",
+      "destination": "/api/pt-service.ts"
+    },
+    {
+      "source": "/api/room-clock",
+      "destination": "/api/room-clock.ts"
+    },
+    {
+      "source": "/api/redis-test",
+      "destination": "/api/redis-test.ts"
+    },
+    {
+      "source": "/api/room-operate",
+      "destination": "/api/room-operate.ts"
+    },
+    {
+      "source": "/api/web-socket",
+      "destination": "/api/web-socket.ts"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,PUT,DELETE,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-pt-version, x-pt-client, x-pt-stamp, x-pt-language, x-pt-local-id"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        }
+      ]
+    }
+  ]
+}

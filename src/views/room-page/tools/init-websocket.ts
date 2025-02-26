@@ -11,34 +11,53 @@ interface WsCallbacks {
 export function initWebSocket(callbacks: WsCallbacks) {
   const _env = util.getEnv()
   const { WEBSOCKET_URL } = _env
-  let ws = new WebSocket(WEBSOCKET_URL)
-  ws.onopen = (socket: Event) => {
-    console.log("ws opened.........")
-    console.log(socket)
-    console.log(" ")
-  }
-
-  ws.onmessage = (res) => {
-    const message = res.data
-    const msgRes = util.strToObj<WsMsgRes>(message)
+  console.log(`start init websocket: ${WEBSOCKET_URL}`)
+  
+  const connect = () => {
+    const ws = new WebSocket(WEBSOCKET_URL)
     
-    if(!msgRes) return
-    callbacks.onmessage && callbacks.onmessage(msgRes)
-  }
+    ws.onopen = (socket: Event) => {
+      console.log("ws opened.........")
+      callbacks.onopen?.(socket)
+    }
 
-  ws.onclose = (res) => {
-    console.log("ws.onclose.......")
-    console.log(`res: `, res)
-    console.log(` `)
-    callbacks.onclose && callbacks.onclose(res)
-  }
+    ws.onerror = (error: Event) => {
+      const wsError = error.target as WebSocket;
+      console.log("WebSocket 错误详情:", {
+        readyState: wsError.readyState,
+        url: wsError.url,
+        protocol: wsError.protocol,
+        bufferedAmount: wsError.bufferedAmount,
+        extensions: wsError.extensions,
+        binaryType: wsError.binaryType
+      });
+      callbacks.onerror?.(error)
+    }
 
-  ws.onerror = (res) => {
-    console.log("ws.onerror.......")
-    console.log(res)
-    console.log(" ")
+    ws.onclose = (event: CloseEvent) => {
+      console.log("WebSocket 关闭详情:", {
+        code: event.code,        // 关闭状态码
+        reason: event.reason,    // 关闭原因
+        wasClean: event.wasClean, // 是否正常关闭
+        timestamp: new Date().toISOString(),
+        readyState: ws.readyState
+      });
+      callbacks.onclose?.(event)
+    }
+
+    ws.onmessage = (event) => {
+      console.log('收到服务器消息:', event.data)
+      try {
+        const data = JSON.parse(event.data)
+        callbacks.onmessage?.(data)
+        console.log('消息处理完成，WebSocket状态:', ws.readyState)
+      } catch (err) {
+        console.error('解析消息失败:', err)
+      }
+    }
+    return ws
   }
-  return ws
+  return connect()
 }
 
 
@@ -66,6 +85,7 @@ export function sendToWebSocket(ws: WebSocket | null, obj: Record<string, any>):
   
 
   try {
+    console.log("ws 发送消息: %s", msg)
     ws.send(msg)
   }
   catch(err) {

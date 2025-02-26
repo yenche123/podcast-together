@@ -83,7 +83,18 @@ export function initPlayer(
     console.log(e)
     console.log(" ")
     
-    callbacks.loadeddata && callbacks.loadeddata(e)
+    try {
+      // 确保音频元素已经准备就绪
+      const audioElement = e.target as HTMLAudioElement;
+      if (audioElement && audioElement.readyState >= 2) { // HAVE_CURRENT_DATA
+        console.log("音频数据加载完成，readyState:", audioElement.readyState);
+        callbacks.loadeddata && callbacks.loadeddata(e)
+      } else {
+        console.log("音频数据未完全加载，readyState:", audioElement?.readyState);
+      }
+    } catch (err) {
+      console.error("处理音频加载事件时出错:", err);
+    }
   })
 
   player.on("pause", (e: Event) => {
