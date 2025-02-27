@@ -38,14 +38,15 @@ export default defineConfig({
   },
   server: {
     //host: "0.0.0.0"
-    port: 3000,
+    port: 3003,
     host: true,
-    //https: false,
+    strictPort: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001/',
-        changeOrigin: true
-      }
+       '/api': {
+         //target: 'https://podcast-together-cloud-server.vercel.app/',
+         target: 'http://localhost:3000',
+         changeOrigin: true
+       }
     },
     hmr: {
       overlay: true,    // 错误遮罩
@@ -65,5 +66,8 @@ export default defineConfig({
       "version": version,
       "client": "web"
     }
+  },
+  build: {
+    outDir: 'dist' // 显式指定输出目录
   }
 })
