@@ -378,7 +378,7 @@ function collectLatestStatus() {
     if(!pageData.amIOwner && pageData.everyoneCanOperatePlayer === "N") return
 
     // 添加日志，查看发送时的状态
-    console.log("发送播放器状态更新，当前时间戳:", time.getLocalTime())
+    console.log('发送播放器状态更新')
 
     const currentTime = player.currentTime ?? 0
     let contentStamp = currentTime * 1000

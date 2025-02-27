@@ -247,7 +247,7 @@ async function handle_set_player(ctx: FunctionContext, req: ReqOperatePlayer): P
             roomCfg.everyoneCanOperatePlayer = everyoneCanOperatePlayer
             newStatus.config = roomCfg
         }
-
+        
         await _updateRoom
 
         const resToFe: ResToFe = {
